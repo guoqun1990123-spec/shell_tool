@@ -50,3 +50,50 @@ ds_empty <- shell_tool_env$.extract_dataset(no_table_block, "ds_fig")
 stopifnot(nrow(ds_empty) == 1)
 stopifnot(ds_empty$exclude == 0L)
 cat("Task 4 test PASSED\n")
+
+# --- Task 5 integration test ---
+e2e_summary <- data.frame(
+  doc_index    = 1:7,
+  content_type = c("paragraph","table cell","table cell","table cell",
+                   "paragraph","paragraph","paragraph"),
+  style_name   = c("heading 2","Normal","Normal","Normal","Normal","Normal","Normal"),
+  text         = c("表14.1.1 受试者基线特征（FAS）",
+                   "指标","A组","B组",
+                   "年龄（岁）",
+                   "注：FAS=全分析集",
+                   ""),
+  table_index  = c(NA, 1L, 1L, 1L, NA, NA, NA),
+  row_id       = c(NA, 1L, 1L, 1L, NA, NA, NA),
+  cell_id      = c(NA, 1L, 2L, 3L, NA, NA, NA),
+  stringsAsFactors = FALSE
+)
+
+cfg  <- shell_tool_env$.parse_config_rows(e2e_summary)
+ds   <- shell_tool_env$.parse_datasets(e2e_summary, cfg)
+
+stopifnot(nrow(cfg) == 1)
+stopifnot(cfg$MacVar == "PStab")
+stopifnot(cfg$Trtlab == "A组|B组")
+stopifnot(cfg$footnote1 == "注：FAS=全分析集")
+stopifnot(!is.null(ds[["ds_1"]]))
+cat("Task 5 integration test PASSED\n")
+
+# --- Task 6 round-trip test ---
+source("R/utils/read_yaml_config.R")
+
+tmp_yaml <- tempfile(fileext = ".yaml")
+cfg_list <- lapply(seq_len(nrow(cfg)), function(i) as.list(cfg[i, ]))
+result6  <- list(version = 1L, config = cfg_list, datasets = ds)
+yaml::write_yaml(result6, tmp_yaml)
+
+tryCatch({
+  read_back <- read_yaml_input(tmp_yaml)
+  stopifnot(nrow(read_back$config) == 1)
+  stopifnot(read_back$config$MacVar[1] %in% c("PStab","pstab"))
+  cat("Task 6 round-trip PASSED\n")
+}, error = function(e) {
+  cat("Task 6 FAILED:", conditionMessage(e), "\n")
+  cat("YAML written to:", tmp_yaml, "\n")
+  stop(e)
+})
+unlink(tmp_yaml)

@@ -144,8 +144,22 @@
   do.call(rbind, rows)
 }
 
-.parse_config_rows <- function(summary) list()
-.parse_datasets    <- function(summary, config) list()
+.parse_config_rows <- function(summary) {
+  blocks <- .split_tfl_blocks(summary)
+  if (length(blocks) == 0) return(data.frame())
+  rows <- mapply(.extract_config_row, blocks, seq_along(blocks), SIMPLIFY = FALSE)
+  do.call(rbind, rows)
+}
+
+.parse_datasets <- function(summary, config) {
+  blocks <- .split_tfl_blocks(summary)
+  if (length(blocks) == 0) return(list())
+  ds_names <- config$Datasets
+  ds_list  <- mapply(function(block, nm) .extract_dataset(block, nm),
+                     blocks, ds_names, SIMPLIFY = FALSE)
+  names(ds_list) <- ds_names
+  ds_list
+}
 
 parse_word_to_yaml <- function(word_file, output_yaml = NULL) {
   if (!requireNamespace("officer", quietly = TRUE)) {
@@ -161,7 +175,13 @@ parse_word_to_yaml <- function(word_file, output_yaml = NULL) {
   config   <- .parse_config_rows(summary)
   datasets <- .parse_datasets(summary, config)
 
-  result <- list(version = 1, config = config, datasets = datasets)
+  config_list <- if (is.data.frame(config) && nrow(config) > 0) {
+    lapply(seq_len(nrow(config)), function(i) as.list(config[i, ]))
+  } else {
+    list()
+  }
+
+  result <- list(version = 1L, config = config_list, datasets = datasets)
 
   if (!is.null(output_yaml)) {
     yaml::write_yaml(result, output_yaml)
