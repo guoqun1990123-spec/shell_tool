@@ -26,3 +26,13 @@ table_only <- fake_summary[fake_summary$content_type == "table cell", ]
 no_title_blocks <- shell_tool_env$.split_tfl_blocks(table_only)
 stopifnot(length(no_title_blocks) == 0)
 cat("Task 2 test PASSED\n")
+
+# --- Task 3 test ---
+block_1 <- fake_summary[fake_summary$doc_index %in% 1:4, ]
+row <- shell_tool_env$.extract_config_row(block_1, seq_num = 1L)
+
+stopifnot(row$SeqNum == 1)
+stopifnot(row$MacVar == "PStab")
+stopifnot(grepl("14.1.1", row[["table no"]]))
+stopifnot(row[["Section no"]] == "14")
+cat("Task 3 test PASSED\n")
