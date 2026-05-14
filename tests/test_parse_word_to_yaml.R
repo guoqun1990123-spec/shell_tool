@@ -36,3 +36,17 @@ stopifnot(row$MacVar == "PStab")
 stopifnot(grepl("14.1.1", row[["table no"]]))
 stopifnot(row[["Section no"]] == "14")
 cat("Task 3 test PASSED\n")
+
+# --- Task 4 test ---
+ds <- shell_tool_env$.extract_dataset(fake_summary[1:4, ], "ds_1")
+stopifnot(is.data.frame(ds))
+stopifnot(all(c("Class", "Label", "Order", "Aval", "exclude", "BlankCol") %in% names(ds)))
+# row_id > 1 only: row 4 is "Mean" with cell_id=1 (label col), no Aval → treated as Class
+stopifnot(nrow(ds) >= 1)
+
+# Figure/listing block (no table cells) → placeholder row
+no_table_block <- fake_summary[fake_summary$content_type == "paragraph", ]
+ds_empty <- shell_tool_env$.extract_dataset(no_table_block, "ds_fig")
+stopifnot(nrow(ds_empty) == 1)
+stopifnot(ds_empty$exclude == 0L)
+cat("Task 4 test PASSED\n")

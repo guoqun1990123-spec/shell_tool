@@ -91,6 +91,52 @@
   trimws(fn_rows$text)
 }
 
+.ltrimws <- function(x) sub("^\\s+", "", x)
+
+.extract_dataset <- function(block, ds_name) {
+  cells <- block[!is.na(block$table_index), ]
+  if (nrow(cells) == 0) {
+    return(data.frame(
+      Class = "", Label = "(图形/清单，无数据行)", Order = 0L,
+      Aval = "", exclude = 0L, BlankCol = "",
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  data_cells <- cells[cells$row_id > 1, ]
+  if (nrow(data_cells) == 0) {
+    return(data.frame(
+      Class = "", Label = "", Order = 0L,
+      Aval = "", exclude = 0L, BlankCol = "",
+      stringsAsFactors = FALSE
+    ))
+  }
+
+  rows <- lapply(sort(unique(data_cells$row_id)), function(rid) {
+    rc <- data_cells[data_cells$row_id == rid, ]
+    rc <- rc[order(rc$cell_id), ]
+
+    label_text <- if (nrow(rc) >= 1) trimws(rc$text[1]) else ""
+    aval_text  <- if (nrow(rc) >= 2) paste(trimws(rc$text[-1]), collapse = "|") else ""
+
+    is_class  <- nchar(aval_text) == 0 && nchar(label_text) > 0
+    n_leading <- nchar(label_text) - nchar(.ltrimws(label_text))
+    order_val <- min(as.integer(n_leading / 2L), 5L)
+
+    data.frame(
+      Class    = if (is_class) label_text else "",
+      Label    = if (is_class) "" else label_text,
+      Order    = order_val,
+      Aval     = aval_text,
+      exclude  = 0L,
+      BlankCol = "",
+      stringsAsFactors = FALSE
+    )
+  })
+
+  do.call(rbind, rows)
+}
+
 .parse_config_rows <- function(summary) list()
 .parse_datasets    <- function(summary, config) list()
 
