@@ -1,12 +1,27 @@
-# R/utils/parse_word_to_yaml.R
-# Parses a TFL Shell Word document into a draft config+datasets YAML.
+.split_tfl_blocks <- function(summary) {
+  tfl_title_re <-
+    "(?:表|图|列表|Table|Figure|Fig|Listing)[\\s ]*(\\d+\\.\\d+)"
+  is_tfl_title <-
+    grepl(tfl_title_re, summary$text, perl = TRUE,
+          ignore.case = TRUE) &
+    summary$content_type == "paragraph"
+
+  block_id <- cumsum(is_tfl_title)
+  block_id[block_id == 0] <- NA
+
+  Filter(Negate(is.null), split(summary, block_id))
+}
 
 .parse_config_rows <- function(summary) list()
 .parse_datasets    <- function(summary, config) list()
 
 parse_word_to_yaml <- function(word_file, output_yaml = NULL) {
-  if (!requireNamespace("officer", quietly = TRUE)) stop("officer package required")
-  if (!requireNamespace("yaml",    quietly = TRUE)) stop("yaml package required")
+  if (!requireNamespace("officer", quietly = TRUE)) {
+    stop("officer package required")
+  }
+  if (!requireNamespace("yaml", quietly = TRUE)) {
+    stop("yaml package required")
+  }
 
   doc     <- officer::read_docx(word_file)
   summary <- officer::docx_summary(doc)
@@ -23,5 +38,4 @@ parse_word_to_yaml <- function(word_file, output_yaml = NULL) {
   invisible(result)
 }
 
-# Expose internals for testing
 shell_tool_env <- environment(parse_word_to_yaml)
