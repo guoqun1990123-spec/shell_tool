@@ -112,13 +112,20 @@
     ))
   }
 
-  rows <- lapply(sort(unique(data_cells$row_id)), function(rid) {
-    rc <- data_cells[data_cells$row_id == rid, ]
-    rc <- rc[order(rc$cell_id), ]
+  tbl_row_keys <- unique(data_cells[, c("table_index", "row_id")])
+  tbl_row_keys <- tbl_row_keys[order(tbl_row_keys$table_index, tbl_row_keys$row_id), ]
+
+  rows <- lapply(seq_len(nrow(tbl_row_keys)), function(i) {
+    tid <- tbl_row_keys$table_index[i]
+    rid <- tbl_row_keys$row_id[i]
+    rc  <- data_cells[data_cells$table_index == tid & data_cells$row_id == rid, ]
+    rc  <- rc[order(rc$cell_id), ]
 
     label_text <- if (nrow(rc) >= 1) trimws(rc$text[1]) else ""
     aval_text  <- if (nrow(rc) >= 2) paste(trimws(rc$text[-1]), collapse = "|") else ""
 
+    # Heuristic: rows with no value cells are treated as group headers (Class).
+    # Blank value rows or single-column tables may be misclassified — review output.
     is_class  <- nchar(aval_text) == 0 && nchar(label_text) > 0
     n_leading <- nchar(label_text) - nchar(.ltrimws(label_text))
     order_val <- min(as.integer(n_leading / 2L), 5L)
