@@ -1,6 +1,6 @@
 .split_tfl_blocks <- function(summary) {
   tfl_title_re <-
-    "(?:表|图|列表|Table|Figure|Fig|Listing)[\\s ]*(\\d+\\.\\d+)"
+    "(?:表|图|列表|Table|Figure|Fig|Listing)[\\s\\x{00A0}]*(\\d+\\.\\d+)"
   is_tfl_title <-
     grepl(tfl_title_re, summary$text, perl = TRUE,
           ignore.case = TRUE) &
@@ -9,7 +9,7 @@
   block_id <- cumsum(is_tfl_title)
   block_id[block_id == 0] <- NA
 
-  Filter(Negate(is.null), split(summary, block_id))
+  split(summary, block_id)
 }
 
 .parse_config_rows <- function(summary) list()

@@ -19,4 +19,10 @@ fake_summary <- data.frame(
 # --- Task 2 test ---
 blocks <- shell_tool_env$.split_tfl_blocks(fake_summary)
 stopifnot(length(blocks) == 2)
+stopifnot(nrow(blocks[[1]]) == 4)
+stopifnot(nrow(blocks[[2]]) == 2)
+# Non-paragraph rows with matching text should not create new blocks
+table_only <- fake_summary[fake_summary$content_type == "table cell", ]
+no_title_blocks <- shell_tool_env$.split_tfl_blocks(table_only)
+stopifnot(length(no_title_blocks) == 0)
 cat("Task 2 test PASSED\n")
