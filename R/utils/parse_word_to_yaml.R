@@ -181,7 +181,10 @@ parse_word_to_yaml <- function(word_file, output_yaml = NULL) {
     list()
   }
 
-  result <- list(version = 1L, config = config_list, datasets = datasets)
+  datasets_list <- lapply(datasets, function(df) {
+    lapply(seq_len(nrow(df)), function(i) as.list(df[i, ]))
+  })
+  result <- list(version = 1L, config = config_list, datasets = datasets_list)
 
   if (!is.null(output_yaml)) {
     yaml::write_yaml(result, output_yaml)

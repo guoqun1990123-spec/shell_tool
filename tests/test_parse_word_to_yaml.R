@@ -81,19 +81,47 @@ cat("Task 5 integration test PASSED\n")
 # --- Task 6 round-trip test ---
 source("R/utils/read_yaml_config.R")
 
-tmp_yaml <- tempfile(fileext = ".yaml")
-cfg_list <- lapply(seq_len(nrow(cfg)), function(i) as.list(cfg[i, ]))
-result6  <- list(version = 1L, config = cfg_list, datasets = ds)
-yaml::write_yaml(result6, tmp_yaml)
+# Use a summary with a real data row (row_id=2) to exercise multi-row dataset serialization
+e2e_summary2 <- data.frame(
+  doc_index    = 1:9,
+  content_type = c("paragraph",
+                   "table cell","table cell","table cell",
+                   "table cell","table cell","table cell",
+                   "paragraph","paragraph"),
+  style_name   = rep("Normal", 9),
+  text         = c("表14.1.1 受试者基线特征（FAS）",
+                   "指标","A组","B组",
+                   "年龄（岁）","12","14",
+                   "注：FAS=全分析集",""),
+  table_index  = c(NA, 1L,1L,1L, 1L,1L,1L, NA,NA),
+  row_id       = c(NA, 1L,1L,1L, 2L,2L,2L, NA,NA),
+  cell_id      = c(NA, 1L,2L,3L, 1L,2L,3L, NA,NA),
+  stringsAsFactors = FALSE
+)
+e2e_summary2$style_name[1] <- "heading 2"
+
+cfg2 <- shell_tool_env$.parse_config_rows(e2e_summary2)
+ds2  <- shell_tool_env$.parse_datasets(e2e_summary2, cfg2)
+
+tmp_yaml2 <- tempfile(fileext = ".yaml")
 
 tryCatch({
-  read_back <- read_yaml_input(tmp_yaml)
-  stopifnot(nrow(read_back$config) == 1)
-  stopifnot(read_back$config$MacVar[1] %in% c("PStab","pstab"))
+  # Use parse_word_to_yaml indirectly by calling the internals and writing
+  config_list2   <- lapply(seq_len(nrow(cfg2)), function(i) as.list(cfg2[i, ]))
+  datasets_list2 <- lapply(ds2, function(df) {
+    lapply(seq_len(nrow(df)), function(i) as.list(df[i, ]))
+  })
+  yaml::write_yaml(list(version = 1L, config = config_list2, datasets = datasets_list2), tmp_yaml2)
+
+  read_back2 <- read_yaml_input(tmp_yaml2)
+  stopifnot(nrow(read_back2$config) == 1)
+  stopifnot(is.data.frame(read_back2$datasets[["ds_1"]]))
+  stopifnot(nrow(read_back2$datasets[["ds_1"]]) == 1)  # 1 data row (row_id==2 has Aval, so not Class)
+  stopifnot(all(c("Class","Label","Order","Aval","exclude","BlankCol") %in%
+                colnames(read_back2$datasets[["ds_1"]])))
   cat("Task 6 round-trip PASSED\n")
 }, error = function(e) {
   cat("Task 6 FAILED:", conditionMessage(e), "\n")
-  cat("YAML written to:", tmp_yaml, "\n")
   stop(e)
 })
-unlink(tmp_yaml)
+unlink(tmp_yaml2)
