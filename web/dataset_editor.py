@@ -248,7 +248,7 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
 
     # ── 行渲染 ────────────────────────────────────────────────────────────
     for row in state:
-        if row.get("_parent_id") is not None:
+        if row.get("_parent_id") is not None or int(row.get("Order") or 0) != 0:
             continue  # 子行在父行处理中渲染
 
         row_id = row["_id"]
