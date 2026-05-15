@@ -126,18 +126,18 @@ def add_parent_row(state: list[dict]) -> list[dict]:
 def delete_row(state: list[dict], row_id: str, cascade: bool) -> list[dict]:
     """
     删除指定行。
-    cascade=True：同时删除所有 _linked=True 且 _parent_id==row_id 的子行。
-    cascade=False：子行 _parent_id 置 None 且 _linked=False，变为独立行。
+    cascade=True：同时删除所有 _linked=True 的子行；_linked=False 的子行清除 _parent_id 引用。
+    cascade=False：所有子行（无论是否 linked）的 _parent_id 置 None、_linked=False，变为独立行。
     """
     new_state = []
     for r in state:
         if r["_id"] == row_id:
             continue
-        if r.get("_parent_id") == row_id and r.get("_linked"):
-            if cascade:
-                continue
-            else:
-                r = {**r, "_parent_id": None, "_linked": False}
+        if r.get("_parent_id") == row_id:
+            if cascade and r.get("_linked"):
+                continue  # 级联删除 linked 子行
+            # cascade=True 的 unlinked 子行，或 cascade=False 的任意子行：清除 parent 引用
+            r = {**r, "_parent_id": None, "_linked": False}
         new_state.append(r)
     return new_state
 

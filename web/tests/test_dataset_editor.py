@@ -289,3 +289,25 @@ def test_sync_children_class_does_not_update_unlinked():
     # 断链子行 _parent_id=None，不应被更新
     uc = next(r for r in new_state if r["_id"] == "c1")
     assert uc["Class"] == 1  # unchanged
+
+
+def test_delete_parent_no_cascade_clears_unlinked_child_parent_ref():
+    """cascade=False 时，断链子行（_linked=False）的 _parent_id 也应被清除。"""
+    unlinked = {**_child_row(id_="cu"), "_linked": False}
+    state = [_parent_row(), unlinked]
+    new_state = delete_row(state, "p1", cascade=False)
+    assert len(new_state) == 1
+    assert new_state[0]["_parent_id"] is None
+    assert new_state[0]["_linked"] is False
+
+
+def test_delete_parent_cascade_clears_unlinked_child_parent_ref():
+    """cascade=True 时，断链子行不被删除，但 _parent_id 应清除（避免悬空引用）。"""
+    unlinked = {**_child_row(id_="cu"), "_linked": False}
+    linked = _child_row(id_="cl")
+    state = [_parent_row(), unlinked, linked]
+    new_state = delete_row(state, "p1", cascade=True)
+    # linked 子行被删除，unlinked 子行保留但 _parent_id 清除
+    assert len(new_state) == 1
+    assert new_state[0]["_id"] == "cu"
+    assert new_state[0]["_parent_id"] is None
