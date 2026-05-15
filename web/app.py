@@ -14,7 +14,7 @@ from schema import (
     VALID_MACVAR, WIDE_TEXT_COLS,
 )
 from validators import validate
-from dataset_editor import render_dataset_editor, df_to_card_state, _state_key
+from dataset_editor import render_dataset_editor, df_to_card_state, state_key
 from templates_io import load_templates
 from yaml_io import dump_yaml, list_yaml_files, load_yaml
 
@@ -112,12 +112,10 @@ def _build_config_column_config(dataset_keys: list[str]) -> dict:
     return cc
 
 
-def _build_dataset_column_config(is_list: bool) -> dict:
-    cols = DATASET_LIST_COLS if is_list else DATASET_TABLE_COLS
-    num_cols = DATASET_LIST_NUM_COLS if is_list else DATASET_TABLE_NUM_COLS
+def _build_list_column_config() -> dict:
     cc = {}
-    for col in cols:
-        if col in num_cols:
+    for col in DATASET_LIST_COLS:
+        if col in DATASET_LIST_NUM_COLS:
             cc[col] = st.column_config.NumberColumn(col, step=1, min_value=0)
         else:
             cc[col] = st.column_config.TextColumn(col)
@@ -269,7 +267,7 @@ def main():
 
             if is_list:
                 # list 子表保持原 data_editor
-                ds_cc = _build_dataset_column_config(is_list=True)
+                ds_cc = _build_list_column_config()
                 edited_ds = st.data_editor(
                     ds_df,
                     column_config=ds_cc,
@@ -281,7 +279,7 @@ def main():
             else:
                 # PStab 表格：卡片编辑器
                 # 加载/新建时（editor_version 变化）重置 card state
-                card_key = _state_key(ds_name)
+                card_key = state_key(ds_name)
                 version_key = f"_ds_version_{ds_name}"
                 if st.session_state.get(version_key) != st.session_state.editor_version:
                     st.session_state[card_key] = df_to_card_state(ds_df)

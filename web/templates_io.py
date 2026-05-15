@@ -1,6 +1,7 @@
 """变量类型模板的加载/保存，读写 web/variable_templates.yaml。"""
 from pathlib import Path
 import yaml
+import streamlit as st
 
 _TEMPLATE_FILE = Path(__file__).parent / "variable_templates.yaml"
 
@@ -20,6 +21,7 @@ _DEFAULT: dict = {
 }
 
 
+@st.cache_data(ttl=60)
 def load_templates() -> dict:
     """加载模板，文件不存在时返回内置默认值。"""
     if not _TEMPLATE_FILE.exists():

@@ -202,14 +202,14 @@ def sync_children_class(state: list[dict], parent_id: str, new_class: int) -> li
 
 # ── Streamlit UI ────────────────────────────────────────────────────────────
 
-def _state_key(ds_name: str) -> str:
+def state_key(ds_name: str) -> str:
     return f"card_state_{ds_name}"
 
 
 def _ensure_card_state(ds_name: str, df) -> list[dict]:
     """确保 session_state 中有该 dataset 的 card state，不存在则从 df 初始化。"""
     import streamlit as st
-    key = _state_key(ds_name)
+    key = state_key(ds_name)
     if key not in st.session_state:
         st.session_state[key] = df_to_card_state(df)
     return st.session_state[key]
@@ -224,7 +224,7 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
     from schema import VAR_TYPES
 
     state = _ensure_card_state(ds_name, df)
-    key = _state_key(ds_name)
+    key = state_key(ds_name)
 
     # ── 全局控制栏 ────────────────────────────────────────────────────────
     col_exp, col_col, col_add = st.columns([1, 1, 3])
