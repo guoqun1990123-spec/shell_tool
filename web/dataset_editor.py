@@ -304,9 +304,15 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                     key=f"vartype_{row_id}"
                 )
                 if new_type != cur_type:
+                    # 切换离开时清除旧的子分类输入
+                    pending_sub_key = f"pending_subclass_{row_id}"
+                    if pending_sub_key in st.session_state:
+                        del st.session_state[pending_sub_key]
                     st.session_state[key] = expand_var_type(
                         st.session_state[key], row_id, new_type, templates
                     )
+                    if new_type == "分类变量-有子分类":
+                        st.session_state[pending_sub_key] = ""
                     st.rerun()
 
             with c_del:
@@ -352,6 +358,41 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                 if st.button("否，保留子行", key=f"del_no_{row_id}"):
                     st.session_state[key] = delete_row(st.session_state[key], row_id, cascade=False)
                     del st.session_state[confirm_del_key]
+                    st.rerun()
+
+        # ── 子分类输入框（分类变量-有子分类，等待用户确认）────────────
+        pending_sub_key = f"pending_subclass_{row_id}"
+        if pending_sub_key in st.session_state:
+            st.info(f"请输入「{row.get('Label', '')}」的子分类，每行一个：")
+            subclass_text = st.text_area(
+                "子分类列表",
+                value=st.session_state[pending_sub_key],
+                placeholder="例：\n男\n女",
+                key=f"subclass_input_{row_id}",
+                label_visibility="collapsed",
+                height=120,
+            )
+            st.session_state[pending_sub_key] = subclass_text
+            col_ok, col_cancel = st.columns(2)
+            with col_ok:
+                if st.button("确认生成子行", key=f"subclass_ok_{row_id}", type="primary"):
+                    names = [n.strip() for n in subclass_text.splitlines() if n.strip()]
+                    cls = row.get("Class", 0)
+                    new_children = []
+                    for name in names:
+                        child_data = _new_data_row(class_val=cls, order=1)
+                        child_data["Label"] = name
+                        child_data["Aval"] = "xx (xx.x)"
+                        child_meta = _new_meta(parent_id=row_id, linked=True)
+                        new_children.append({**child_data, **child_meta})
+                    cur_state = st.session_state[key]
+                    parent_idx = next(i for i, r in enumerate(cur_state) if r["_id"] == row_id)
+                    st.session_state[key] = cur_state[:parent_idx + 1] + new_children + cur_state[parent_idx + 1:]
+                    del st.session_state[pending_sub_key]
+                    st.rerun()
+            with col_cancel:
+                if st.button("取消", key=f"subclass_cancel_{row_id}"):
+                    del st.session_state[pending_sub_key]
                     st.rerun()
 
         # ── 子行渲染（仅展开时）──────────────────────────────────────
