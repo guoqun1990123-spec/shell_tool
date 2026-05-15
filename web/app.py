@@ -75,6 +75,8 @@ def _init_state():
         st.session_state.protocol_name = ""
     if "editor_version" not in st.session_state:
         st.session_state.editor_version = 0
+    if "tmpl_version" not in st.session_state:
+        st.session_state.tmpl_version = 0
 
 
 # ── 纯函数：合并 edited_config 到完整 df（不写 session_state）─────────────
@@ -311,16 +313,16 @@ def main():
                 lbl = st.text_input(
                     "Label", value=child.get("Label", ""),
                     label_visibility="collapsed",
-                    key=f"tmpl_label_{j}"
+                    key=f"tmpl_label_{st.session_state.tmpl_version}_{j}"
                 )
             with c2:
                 avl = st.text_input(
                     "Aval", value=child.get("Aval", ""),
                     label_visibility="collapsed",
-                    key=f"tmpl_aval_{j}"
+                    key=f"tmpl_aval_{st.session_state.tmpl_version}_{j}"
                 )
             with c3:
-                if not st.button("🗑", key=f"tmpl_del_{j}"):
+                if not st.button("🗑", key=f"tmpl_del_{st.session_state.tmpl_version}_{j}"):
                     new_children.append({"Label": lbl, "Aval": avl})
         if st.button("＋ 添加子行", key="tmpl_add"):
             new_children.append({"Label": "", "Aval": ""})
@@ -348,6 +350,7 @@ def main():
             try:
                 save_templates(templates_edit)
                 st.cache_data.clear()  # 清除 load_templates 缓存，使新模板即时生效
+                st.session_state.tmpl_version += 1
                 st.success("模板已保存")
             except OSError as e:
                 st.error(f"保存失败：{e}")
