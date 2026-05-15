@@ -108,3 +108,93 @@ def get_next_class(state: list[dict]) -> int:
             except (ValueError, TypeError):
                 parent_classes.append(0)
     return max(parent_classes, default=0) + 1
+
+
+# ── 状态操作函数 ────────────────────────────────────────────────────────────
+
+def _new_data_row(class_val: int = 0, order: int = 0) -> dict:
+    return {col: "" for col in DATASET_TABLE_COLS} | {"Class": class_val, "Order": order, "exclude": 0}
+
+
+def add_parent_row(state: list[dict]) -> list[dict]:
+    """在末尾追加一个新父行，Class = max父行Class + 1。"""
+    cls = get_next_class(state)
+    row = _new_data_row(class_val=cls, order=0) | _new_meta()
+    return state + [row]
+
+
+def delete_row(state: list[dict], row_id: str, cascade: bool) -> list[dict]:
+    """
+    删除指定行。
+    cascade=True：同时删除所有 _linked=True 且 _parent_id==row_id 的子行。
+    cascade=False：子行 _parent_id 置 None 且 _linked=False，变为独立行。
+    """
+    new_state = []
+    for r in state:
+        if r["_id"] == row_id:
+            continue
+        if r.get("_parent_id") == row_id and r.get("_linked"):
+            if cascade:
+                continue
+            else:
+                r = {**r, "_parent_id": None, "_linked": False}
+        new_state.append(r)
+    return new_state
+
+
+def expand_var_type(
+    state: list[dict],
+    parent_id: str,
+    new_var_type: str,
+    templates: dict,
+) -> list[dict]:
+    """
+    切换父行变量类型：
+    1. 删除该父行的所有 _linked 子行
+    2. 按模板插入新子行（继承父行 Class）
+    3. 更新父行 _var_type 和 Aval（若模板有 aval 字段）
+    """
+    parent = next((r for r in state if r["_id"] == parent_id), None)
+    if parent is None:
+        return state
+
+    cls = parent.get("Class", 0)
+    tmpl = templates.get(new_var_type, {})
+
+    # 删除旧 linked 子行
+    new_state = [r for r in state if not (r.get("_parent_id") == parent_id and r.get("_linked"))]
+
+    # 更新父行
+    new_state = [
+        {**r, "_var_type": new_var_type, "Aval": tmpl.get("aval", r.get("Aval", ""))}
+        if r["_id"] == parent_id else r
+        for r in new_state
+    ]
+
+    # 在父行之后插入子行
+    parent_idx = next(i for i, r in enumerate(new_state) if r["_id"] == parent_id)
+    children = []
+    for child_tmpl in tmpl.get("children", []):
+        child_data = _new_data_row(class_val=cls, order=1) | child_tmpl
+        child_meta = _new_meta(parent_id=parent_id, linked=True)
+        children.append({**child_data, **child_meta})
+
+    return new_state[:parent_idx + 1] + children + new_state[parent_idx + 1:]
+
+
+def unlink_child(state: list[dict], child_id: str) -> list[dict]:
+    """断开子行链接：_linked=False，_parent_id=None，使其变为独立行。"""
+    return [
+        {**r, "_linked": False, "_parent_id": None} if r["_id"] == child_id else r
+        for r in state
+    ]
+
+
+def sync_children_class(state: list[dict], parent_id: str, new_class: int) -> list[dict]:
+    """将父行及其所有 _linked 子行的 Class 同步为 new_class。"""
+    return [
+        {**r, "Class": new_class}
+        if r["_id"] == parent_id or (r.get("_parent_id") == parent_id and r.get("_linked"))
+        else r
+        for r in state
+    ]

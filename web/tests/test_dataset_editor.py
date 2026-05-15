@@ -150,3 +150,142 @@ def test_df_to_card_state_leading_child_row():
     result = df_to_card_state(df)
     assert len(result) == 1
     assert result[0]["_parent_id"] is None
+
+
+# ── 状态操作函数 ─────────────────────────────────────────────────────────────
+
+from dataset_editor import (
+    add_parent_row, delete_row, expand_var_type,
+    unlink_child, sync_children_class,
+)
+
+
+def _make_templates():
+    return {
+        "连续变量": {
+            "children": [
+                {"Label": "例数", "Aval": "xx"},
+                {"Label": "均值（标准差）", "Aval": "xx.x (xx.xx)"},
+            ]
+        },
+        "分类变量-无子分类": {"aval": "xx (xx.x)"},
+        "手动输入": {},
+    }
+
+
+def _parent_row(id_="p1", class_=1):
+    return {
+        "_id": id_, "_parent_id": None, "Class": class_, "Order": 0,
+        "Label": "A", "Aval": "", "exclude": 0, "BlankCol": "",
+        "Drug": "", "Visit": "", "Base": "",
+        "_var_type": "手动输入", "_linked": False, "_expanded": True,
+    }
+
+
+def _child_row(id_="c1", parent_id="p1", class_=1):
+    return {
+        "_id": id_, "_parent_id": parent_id, "Class": class_, "Order": 1,
+        "Label": "例数", "Aval": "xx", "exclude": 0, "BlankCol": "",
+        "Drug": "", "Visit": "", "Base": "",
+        "_var_type": "手动输入", "_linked": True, "_expanded": True,
+    }
+
+
+def test_add_parent_row_gets_next_class():
+    state = [_parent_row(class_=2)]
+    new_state = add_parent_row(state)
+    new_row = new_state[-1]
+    assert new_row["Class"] == 3
+    assert new_row["Order"] == 0
+    assert new_row["_parent_id"] is None
+    assert new_row["_linked"] is False
+
+
+def test_add_parent_row_to_empty_state():
+    new_state = add_parent_row([])
+    assert len(new_state) == 1
+    assert new_state[0]["Class"] == 1
+
+
+def test_delete_parent_cascades_children():
+    state = [_parent_row(), _child_row()]
+    new_state = delete_row(state, "p1", cascade=True)
+    assert len(new_state) == 0
+
+
+def test_delete_parent_no_cascade_keeps_child_as_independent():
+    state = [_parent_row(), _child_row()]
+    new_state = delete_row(state, "p1", cascade=False)
+    assert len(new_state) == 1
+    assert new_state[0]["_parent_id"] is None
+    assert new_state[0]["_linked"] is False
+
+
+def test_delete_child_directly():
+    state = [_parent_row(), _child_row()]
+    new_state = delete_row(state, "c1", cascade=True)
+    assert len(new_state) == 1
+    assert new_state[0]["_id"] == "p1"
+
+
+def test_expand_var_type_continuous_inserts_children():
+    state = [_parent_row()]
+    templates = _make_templates()
+    new_state = expand_var_type(state, "p1", "连续变量", templates)
+    parent = next(r for r in new_state if r["_id"] == "p1")
+    children = [r for r in new_state if r.get("_parent_id") == "p1"]
+    assert parent["_var_type"] == "连续变量"
+    assert len(children) == 2
+    assert all(c["_linked"] for c in children)
+    assert all(c["Class"] == 1 for c in children)
+    assert all(c["Order"] == 1 for c in children)
+
+
+def test_expand_var_type_replaces_existing_linked_children():
+    """切换变量类型时删除旧的 linked 子行，插入新子行。"""
+    state = [_parent_row(), _child_row(id_="old_c")]
+    # 先切换为连续变量
+    templates = _make_templates()
+    new_state = expand_var_type(state, "p1", "连续变量", templates)
+    children = [r for r in new_state if r.get("_parent_id") == "p1"]
+    child_ids = [c["_id"] for c in children]
+    assert "old_c" not in child_ids
+    assert len(children) == 2
+
+
+def test_expand_var_type_no_subclass_sets_aval():
+    """分类变量-无子分类：父行 Aval 自动填充，不生成子行。"""
+    state = [_parent_row()]
+    templates = _make_templates()
+    new_state = expand_var_type(state, "p1", "分类变量-无子分类", templates)
+    parent = next(r for r in new_state if r["_id"] == "p1")
+    children = [r for r in new_state if r.get("_parent_id") == "p1"]
+    assert parent["Aval"] == "xx (xx.x)"
+    assert len(children) == 0
+
+
+def test_unlink_child():
+    state = [_parent_row(), _child_row()]
+    new_state = unlink_child(state, "c1")
+    child = next(r for r in new_state if r["_id"] == "c1")
+    assert child["_linked"] is False
+    assert child["_parent_id"] is None
+
+
+def test_sync_children_class_updates_parent_and_linked_children():
+    state = [_parent_row(), _child_row()]
+    new_state = sync_children_class(state, "p1", new_class=5)
+    parent = next(r for r in new_state if r["_id"] == "p1")
+    child = next(r for r in new_state if r["_id"] == "c1")
+    assert parent["Class"] == 5
+    assert child["Class"] == 5
+
+
+def test_sync_children_class_does_not_update_unlinked():
+    """断链子行（_linked=False）不随父行 Class 同步。"""
+    unlinked_child = {**_child_row(), "_linked": False, "_parent_id": None}
+    state = [_parent_row(), unlinked_child]
+    new_state = sync_children_class(state, "p1", new_class=5)
+    # 断链子行 _parent_id=None，不应被更新
+    uc = next(r for r in new_state if r["_id"] == "c1")
+    assert uc["Class"] == 1  # unchanged
