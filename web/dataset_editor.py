@@ -11,10 +11,6 @@ import pandas as pd
 
 from schema import DATASET_TABLE_COLS, VAR_TYPE_DEFAULT
 
-# ── 元数据键（不写入 YAML）──────────────────────────────────────────────────
-_META_KEYS = {"_id", "_var_type", "_parent_id", "_linked", "_expanded"}
-
-
 def _new_meta(
     var_type: str = VAR_TYPE_DEFAULT,
     parent_id: str | None = None,
@@ -32,7 +28,7 @@ def _new_meta(
 
 def _row_data(row: dict) -> dict:
     """提取数据字段（去除 _* 元数据）。"""
-    return {k: v for k, v in row.items() if k not in _META_KEYS}
+    return {k: v for k, v in row.items() if not k.startswith("_")}
 
 
 def df_to_card_state(df: pd.DataFrame) -> list[dict]:
@@ -49,6 +45,9 @@ def df_to_card_state(df: pd.DataFrame) -> list[dict]:
 
     for rec in records:
         order = int(rec.get("Order") or 0)
+        if order != 0 and current_parent_id is None:
+            # Leading child row with no parent yet — treat as independent parent
+            order = 0
         data = {col: rec.get(col, "") for col in DATASET_TABLE_COLS}
         data["Order"] = order
         data["exclude"] = int(rec.get("exclude") or 0)
@@ -71,20 +70,28 @@ def df_to_card_state(df: pd.DataFrame) -> list[dict]:
 def card_state_to_df(state: list[dict]) -> pd.DataFrame:
     """
     card state → DataFrame。
-    按 (Class, _is_child, Order) 排序后，去除 _* 字段，打平输出。
+    父行按 Class 排序，每个父行后紧跟其子行（按 Order 排序）。
     折叠状态子行仍保留。
     """
     if not state:
         return pd.DataFrame(columns=DATASET_TABLE_COLS)
 
-    def sort_key(r):
-        cls = int(r.get("Class") or 0)
-        is_child = 1 if r.get("_parent_id") else 0
-        order = int(r.get("Order") or 0)
-        return (cls, is_child, order)
+    # 父行按 Class 排序（稳定排序保留同 Class 的插入顺序）
+    parents = sorted(
+        [r for r in state if r.get("_parent_id") is None],
+        key=lambda r: int(r.get("Class") or 0),
+    )
 
-    sorted_state = sorted(state, key=sort_key)
-    rows = [_row_data(r) for r in sorted_state]
+    ordered: list[dict] = []
+    for parent in parents:
+        ordered.append(parent)
+        children = sorted(
+            [r for r in state if r.get("_parent_id") == parent["_id"]],
+            key=lambda r: int(r.get("Order") or 0),
+        )
+        ordered.extend(children)
+
+    rows = [_row_data(r) for r in ordered]
     df = pd.DataFrame(rows, columns=DATASET_TABLE_COLS)
     df["Order"] = pd.to_numeric(df["Order"], errors="coerce").fillna(0).astype(int)
     df["exclude"] = pd.to_numeric(df["exclude"], errors="coerce").fillna(0).astype(int)
@@ -93,9 +100,11 @@ def card_state_to_df(state: list[dict]) -> pd.DataFrame:
 
 def get_next_class(state: list[dict]) -> int:
     """计算新父行应得的 Class（当前所有父行最大 Class + 1）。"""
-    parent_classes = [
-        int(r.get("Class") or 0)
-        for r in state
-        if r.get("_parent_id") is None
-    ]
+    parent_classes = []
+    for r in state:
+        if r.get("_parent_id") is None:
+            try:
+                parent_classes.append(int(r.get("Class") or 0))
+            except (ValueError, TypeError):
+                parent_classes.append(0)
     return max(parent_classes, default=0) + 1

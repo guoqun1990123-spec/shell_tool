@@ -101,3 +101,52 @@ def test_get_next_class_ignores_children():
         {"Class": 5, "_parent_id": "p1"},  # child with higher Class — ignored
     ]
     assert get_next_class(state) == 2
+
+
+def test_card_state_to_df_preserves_parent_child_grouping():
+    """同 Class 有两个父行时，每个父行紧跟自己的子行。"""
+    state = [
+        {"_id": "p1", "_parent_id": None, "Class": 1, "Order": 0, "Label": "A",
+         "Aval": "", "exclude": 0, "BlankCol": "", "Drug": "", "Visit": "", "Base": "",
+         "_var_type": "连续变量", "_linked": False, "_expanded": True},
+        {"_id": "c1", "_parent_id": "p1", "Class": 1, "Order": 1, "Label": "例数",
+         "Aval": "xx", "exclude": 0, "BlankCol": "", "Drug": "", "Visit": "", "Base": "",
+         "_var_type": "手动输入", "_linked": True, "_expanded": True},
+        {"_id": "p2", "_parent_id": None, "Class": 1, "Order": 0, "Label": "B",
+         "Aval": "", "exclude": 0, "BlankCol": "", "Drug": "", "Visit": "", "Base": "",
+         "_var_type": "连续变量", "_linked": False, "_expanded": True},
+        {"_id": "c2", "_parent_id": "p2", "Class": 1, "Order": 1, "Label": "均值",
+         "Aval": "xx.x", "exclude": 0, "BlankCol": "", "Drug": "", "Visit": "", "Base": "",
+         "_var_type": "手动输入", "_linked": True, "_expanded": True},
+    ]
+    df = card_state_to_df(state)
+    assert len(df) == 4
+    labels = df["Label"].tolist()
+    # 每个父行紧跟自己的子行
+    assert labels.index("A") < labels.index("例数")
+    assert labels.index("B") < labels.index("均值")
+    # A 和 A 的子行在 B 之前（同 Class，保留插入顺序）
+    assert labels.index("例数") < labels.index("B")
+
+
+def test_card_state_to_df_strips_any_underscore_key():
+    """任意 _ 前缀字段都不出现在输出中。"""
+    state = [
+        {"Class": 1, "Label": "X", "Order": 0, "Aval": "", "exclude": 0,
+         "BlankCol": "", "Drug": "", "Visit": "", "Base": "",
+         "_id": "x1", "_var_type": "手动输入", "_parent_id": None,
+         "_linked": False, "_expanded": True, "_future_key": "should_not_appear"},
+    ]
+    df = card_state_to_df(state)
+    assert not any(c.startswith("_") for c in df.columns)
+
+
+def test_df_to_card_state_leading_child_row():
+    """Order=1 行在任何 Order=0 行之前时，应被视为独立父行（Order 降为 0）。"""
+    df = pd.DataFrame([
+        {"Class": 1, "Label": "孤儿行", "Order": 1, "Aval": "xx", "exclude": 0,
+         "BlankCol": "", "Drug": "", "Visit": "", "Base": ""},
+    ])
+    result = df_to_card_state(df)
+    assert len(result) == 1
+    assert result[0]["_parent_id"] is None
