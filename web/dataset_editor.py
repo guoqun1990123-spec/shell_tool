@@ -198,3 +198,242 @@ def sync_children_class(state: list[dict], parent_id: str, new_class: int) -> li
         else r
         for r in state
     ]
+
+
+# ── Streamlit UI ────────────────────────────────────────────────────────────
+
+def _state_key(ds_name: str) -> str:
+    return f"card_state_{ds_name}"
+
+
+def _ensure_card_state(ds_name: str, df) -> list[dict]:
+    """确保 session_state 中有该 dataset 的 card state，不存在则从 df 初始化。"""
+    import streamlit as st
+    key = _state_key(ds_name)
+    if key not in st.session_state:
+        st.session_state[key] = df_to_card_state(df)
+    return st.session_state[key]
+
+
+def render_dataset_editor(ds_name: str, df, templates: dict):
+    """
+    渲染卡片式编辑器，返回当前编辑结果（DataFrame）。
+    调用方负责将返回值写回 session_state.datasets[ds_name]。
+    """
+    import streamlit as st
+    from schema import VAR_TYPES
+
+    state = _ensure_card_state(ds_name, df)
+    key = _state_key(ds_name)
+
+    # ── 全局控制栏 ────────────────────────────────────────────────────────
+    col_exp, col_col, col_add = st.columns([1, 1, 3])
+    with col_exp:
+        if st.button("展开全部", key=f"{ds_name}_expand_all"):
+            st.session_state[key] = [{**r, "_expanded": True} for r in st.session_state[key]]
+            st.rerun()
+    with col_col:
+        if st.button("折叠全部", key=f"{ds_name}_collapse_all"):
+            st.session_state[key] = [
+                {**r, "_expanded": False} if r.get("_parent_id") is None else r
+                for r in st.session_state[key]
+            ]
+            st.rerun()
+    with col_add:
+        if st.button("＋ 添加变量行", key=f"{ds_name}_add_row", type="secondary"):
+            st.session_state[key] = add_parent_row(st.session_state[key])
+            st.rerun()
+
+    state = st.session_state[key]
+
+    # ── 行渲染 ────────────────────────────────────────────────────────────
+    for row in state:
+        if row.get("_parent_id") is not None:
+            continue  # 子行在父行处理中渲染
+
+        row_id = row["_id"]
+        is_expanded = row.get("_expanded", True)
+        linked_children = [r for r in state if r.get("_parent_id") == row_id and r.get("_linked")]
+
+        # ── 父行卡片 ──────────────────────────────────────────────────
+        with st.container(border=True):
+            c_toggle, c_class, c_label, c_type, c_del = st.columns([0.5, 1, 4, 2, 0.5])
+
+            with c_toggle:
+                toggle_label = "▼" if is_expanded else "▶"
+                if st.button(toggle_label, key=f"toggle_{row_id}", help="展开/折叠"):
+                    st.session_state[key] = [
+                        {**r, "_expanded": not r["_expanded"]} if r["_id"] == row_id else r
+                        for r in st.session_state[key]
+                    ]
+                    st.rerun()
+
+            with c_class:
+                new_class = st.number_input(
+                    "Class", value=int(row.get("Class") or 0),
+                    step=1, min_value=0, label_visibility="collapsed",
+                    key=f"class_{row_id}"
+                )
+                if new_class != int(row.get("Class") or 0):
+                    if linked_children:
+                        st.session_state[f"pending_class_{row_id}"] = new_class
+                    else:
+                        st.session_state[key] = [
+                            {**r, "Class": new_class} if r["_id"] == row_id else r
+                            for r in st.session_state[key]
+                        ]
+
+            with c_label:
+                new_label = st.text_input(
+                    "Label", value=str(row.get("Label") or ""),
+                    placeholder="变量名称", label_visibility="collapsed",
+                    key=f"label_{row_id}"
+                )
+                if new_label != str(row.get("Label") or ""):
+                    st.session_state[key] = [
+                        {**r, "Label": new_label} if r["_id"] == row_id else r
+                        for r in st.session_state[key]
+                    ]
+
+            with c_type:
+                cur_type = row.get("_var_type", "手动输入")
+                new_type = st.selectbox(
+                    "类型", options=VAR_TYPES,
+                    index=VAR_TYPES.index(cur_type) if cur_type in VAR_TYPES else 0,
+                    label_visibility="collapsed",
+                    key=f"vartype_{row_id}"
+                )
+                if new_type != cur_type:
+                    st.session_state[key] = expand_var_type(
+                        st.session_state[key], row_id, new_type, templates
+                    )
+                    st.rerun()
+
+            with c_del:
+                if st.button("🗑", key=f"del_{row_id}", help="删除此变量行"):
+                    if linked_children:
+                        st.session_state[f"confirm_del_{row_id}"] = True
+                        st.rerun()
+                    else:
+                        st.session_state[key] = delete_row(st.session_state[key], row_id, cascade=True)
+                        st.rerun()
+
+        # ── Class 修改确认 ────────────────────────────────────────────
+        pending_class_key = f"pending_class_{row_id}"
+        if pending_class_key in st.session_state:
+            new_cls = st.session_state[pending_class_key]
+            st.warning(f"变量「{row.get('Label')}」有 {len(linked_children)} 个子行，是否同步修改 Class → {new_cls}？")
+            col_y, col_n = st.columns(2)
+            with col_y:
+                if st.button("是，同步子行", key=f"cls_yes_{row_id}"):
+                    st.session_state[key] = sync_children_class(st.session_state[key], row_id, new_cls)
+                    del st.session_state[pending_class_key]
+                    st.rerun()
+            with col_n:
+                if st.button("否，仅当前行", key=f"cls_no_{row_id}"):
+                    st.session_state[key] = [
+                        {**r, "Class": new_cls} if r["_id"] == row_id else r
+                        for r in st.session_state[key]
+                    ]
+                    del st.session_state[pending_class_key]
+                    st.rerun()
+
+        # ── 删除确认 ─────────────────────────────────────────────────
+        confirm_del_key = f"confirm_del_{row_id}"
+        if confirm_del_key in st.session_state:
+            st.warning(f"变量「{row.get('Label')}」有 {len(linked_children)} 个子行，是否一并删除？")
+            col_y, col_n = st.columns(2)
+            with col_y:
+                if st.button("是，级联删除", key=f"del_yes_{row_id}"):
+                    st.session_state[key] = delete_row(st.session_state[key], row_id, cascade=True)
+                    del st.session_state[confirm_del_key]
+                    st.rerun()
+            with col_n:
+                if st.button("否，保留子行", key=f"del_no_{row_id}"):
+                    st.session_state[key] = delete_row(st.session_state[key], row_id, cascade=False)
+                    del st.session_state[confirm_del_key]
+                    st.rerun()
+
+        # ── 子行渲染（仅展开时）──────────────────────────────────────
+        if is_expanded:
+            for child in linked_children:
+                child_id = child["_id"]
+                with st.container():
+                    cc_link, cc_class, cc_label, cc_aval, cc_unlink = st.columns([0.4, 1, 3, 3, 1.5])
+                    with cc_link:
+                        st.markdown("🔗")
+                    with cc_class:
+                        st.text_input(
+                            "Class", value=str(child.get("Class") or ""),
+                            disabled=True, label_visibility="collapsed",
+                            key=f"child_class_{child_id}"
+                        )
+                    with cc_label:
+                        st.text_input(
+                            "Label", value=str(child.get("Label") or ""),
+                            disabled=True, label_visibility="collapsed",
+                            key=f"child_label_{child_id}"
+                        )
+                    with cc_aval:
+                        new_aval = st.text_input(
+                            "Aval", value=str(child.get("Aval") or ""),
+                            label_visibility="collapsed",
+                            key=f"child_aval_{child_id}"
+                        )
+                        if new_aval != str(child.get("Aval") or ""):
+                            st.session_state[key] = [
+                                {**r, "Aval": new_aval} if r["_id"] == child_id else r
+                                for r in st.session_state[key]
+                            ]
+                    with cc_unlink:
+                        if st.button("断开链接", key=f"unlink_{child_id}"):
+                            st.session_state[key] = unlink_child(st.session_state[key], child_id)
+                            st.rerun()
+
+    # ── 断链独立行渲染（_parent_id=None 但 _linked 已为 False 的原子行）────
+    for row in st.session_state[key]:
+        if row.get("_parent_id") is not None:
+            continue
+        if int(row.get("Order") or 0) != 1:
+            continue
+        # 断链的 Order=1 行：作为独立行渲染
+        row_id = row["_id"]
+        with st.container(border=True):
+            cc, cl, ca, cd = st.columns([1, 3, 3, 0.5])
+            with cc:
+                new_class = st.number_input(
+                    "Class", value=int(row.get("Class") or 0),
+                    step=1, min_value=0, label_visibility="collapsed",
+                    key=f"unlinked_class_{row_id}"
+                )
+                if new_class != int(row.get("Class") or 0):
+                    st.session_state[key] = [
+                        {**r, "Class": new_class} if r["_id"] == row_id else r
+                        for r in st.session_state[key]
+                    ]
+            with cl:
+                new_label = st.text_input(
+                    "Label", value=str(row.get("Label") or ""),
+                    label_visibility="collapsed", key=f"unlinked_label_{row_id}"
+                )
+                if new_label != str(row.get("Label") or ""):
+                    st.session_state[key] = [
+                        {**r, "Label": new_label} if r["_id"] == row_id else r
+                        for r in st.session_state[key]
+                    ]
+            with ca:
+                new_aval = st.text_input(
+                    "Aval", value=str(row.get("Aval") or ""),
+                    label_visibility="collapsed", key=f"unlinked_aval_{row_id}"
+                )
+                if new_aval != str(row.get("Aval") or ""):
+                    st.session_state[key] = [
+                        {**r, "Aval": new_aval} if r["_id"] == row_id else r
+                        for r in st.session_state[key]
+                    ]
+            with cd:
+                if st.button("🗑", key=f"del_unlinked_{row_id}"):
+                    st.session_state[key] = delete_row(st.session_state[key], row_id, cascade=False)
+                    st.rerun()
+
+    return card_state_to_df(st.session_state[key])
