@@ -1,0 +1,18 @@
+连续变量:
+  children:
+  - Label: 例数
+    Aval: xx
+  - Label: 均值（标准差）
+    Aval: xx.x (xx.xx)
+  - Label: 中位数
+    Aval: xx.x
+  - Label: 最小值 - 最大值
+    Aval: xx – xx
+分类变量-有子分类:
+  children: []
+分类变量-无子分类:
+  aval: xx (xx.x)
+日期变量:
+  aval: YYYY-MM-DD
+  children: []
+手动输入: {}
