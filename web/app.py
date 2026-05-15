@@ -296,6 +296,62 @@ def main():
     else:
         st.info("在主表中点击某行以编辑其对应的数据表。")
 
+    # ── 模板管理 ────────────────────────────────────────────────────────────
+    with st.expander("变量类型模板配置"):
+        from templates_io import save_templates
+        templates_edit = load_templates()
+
+        st.caption("连续变量子行（Label + Aval 模板）")
+        cont_tmpl = templates_edit.get("连续变量", {})
+        cont_children = cont_tmpl.get("children", [])
+        new_children = []
+        for j, child in enumerate(cont_children):
+            c1, c2, c3 = st.columns([3, 3, 0.5])
+            with c1:
+                lbl = st.text_input(
+                    "Label", value=child.get("Label", ""),
+                    label_visibility="collapsed",
+                    key=f"tmpl_label_{j}"
+                )
+            with c2:
+                avl = st.text_input(
+                    "Aval", value=child.get("Aval", ""),
+                    label_visibility="collapsed",
+                    key=f"tmpl_aval_{j}"
+                )
+            with c3:
+                if not st.button("🗑", key=f"tmpl_del_{j}"):
+                    new_children.append({"Label": lbl, "Aval": avl})
+        if st.button("＋ 添加子行", key="tmpl_add"):
+            new_children.append({"Label": "", "Aval": ""})
+        templates_edit.setdefault("连续变量", {})["children"] = new_children
+
+        col_a, col_b = st.columns(2)
+        with col_a:
+            st.caption("分类变量-无子分类 Aval")
+            templates_edit.setdefault("分类变量-无子分类", {})["aval"] = st.text_input(
+                "Aval",
+                value=templates_edit.get("分类变量-无子分类", {}).get("aval", "xx (xx.x)"),
+                key="tmpl_cat_aval",
+                label_visibility="collapsed",
+            )
+        with col_b:
+            st.caption("日期变量 Aval")
+            templates_edit.setdefault("日期变量", {})["aval"] = st.text_input(
+                "Aval",
+                value=templates_edit.get("日期变量", {}).get("aval", "YYYY-MM-DD"),
+                key="tmpl_date_aval",
+                label_visibility="collapsed",
+            )
+
+        if st.button("保存模板", key="btn_save_tmpl", type="secondary"):
+            try:
+                save_templates(templates_edit)
+                st.cache_data.clear()  # 清除 load_templates 缓存，使新模板即时生效
+                st.success("模板已保存")
+            except OSError as e:
+                st.error(f"保存失败：{e}")
+
     # ── 状态栏 + 保存按钮 ───────────────────────────────────────────────────
     st.divider()
     col_status, col_btn = st.columns([5, 1])
