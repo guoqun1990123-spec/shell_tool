@@ -356,7 +356,7 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
             c_toggle, c_up, c_down, c_ins, c_class, c_label, c_type, c_del = st.columns([0.4, 0.4, 0.4, 0.4, 0.8, 4, 2, 0.4])
 
             with c_toggle:
-                toggle_label = "▼" if is_expanded else "▶"
+                toggle_label = "⊟" if is_expanded else "⊞"
                 if st.button(toggle_label, key=f"toggle_{row_id}", help="展开/折叠"):
                     st.session_state[key] = [
                         {**r, "_expanded": not r["_expanded"]} if r["_id"] == row_id else r
