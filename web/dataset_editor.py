@@ -475,25 +475,37 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
         pending_sub_key = f"pending_subclass_{row_id}"
         if pending_sub_key in st.session_state:
             st.info(f"请输入「{row.get('Label', '')}」的子分类，每行一个：")
-            subclass_text = st.text_area(
-                "子分类列表",
-                value=st.session_state[pending_sub_key],
-                placeholder="例：\n男\n女",
-                key=f"subclass_input_{row_id}",
-                label_visibility="collapsed",
-                height=120,
-            )
-            st.session_state[pending_sub_key] = subclass_text
+            sc_col_text, sc_col_aval = st.columns([3, 1])
+            with sc_col_text:
+                subclass_text = st.text_area(
+                    "子分类列表",
+                    value=st.session_state[pending_sub_key],
+                    placeholder="例：\n男\n女",
+                    key=f"subclass_input_{row_id}",
+                    label_visibility="collapsed",
+                    height=120,
+                )
+                st.session_state[pending_sub_key] = subclass_text
+            with sc_col_aval:
+                st.caption("子行 Aval 默认值")
+                default_aval = st.radio(
+                    "Aval",
+                    options=["空", "xx (xx.x)"],
+                    index=0,
+                    key=f"subclass_aval_{row_id}",
+                    label_visibility="collapsed",
+                )
             col_ok, col_cancel = st.columns(2)
             with col_ok:
                 if st.button("确认生成子行", key=f"subclass_ok_{row_id}", type="primary"):
                     names = [n.strip() for n in subclass_text.splitlines() if n.strip()]
                     cls = row.get("Class", 0)
+                    aval_val = "" if default_aval == "空" else "xx (xx.x)"
                     new_children = []
                     for name in names:
                         child_data = _new_data_row(class_val=cls, order=1)
                         child_data["Label"] = name
-                        child_data["Aval"] = "xx (xx.x)"
+                        child_data["Aval"] = aval_val
                         child_meta = _new_meta(parent_id=row_id, linked=True)
                         new_children.append({**child_data, **child_meta})
                     cur_state = st.session_state[key]
