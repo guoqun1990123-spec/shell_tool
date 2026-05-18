@@ -15,6 +15,7 @@ from schema import (
 )
 from validators import validate
 from dataset_editor import render_dataset_editor, df_to_card_state, state_key
+from dataset_preview import render_preview
 from templates_io import load_templates
 from yaml_io import dump_yaml, list_yaml_files, load_yaml
 
@@ -279,17 +280,22 @@ def main():
                 )
                 st.session_state.datasets[ds_name] = edited_ds
             else:
-                # PStab 表格：卡片编辑器
-                # 加载/新建时（editor_version 变化）重置 card state
+                # PStab 表格：卡片编辑器 + 结构预览
                 card_key = state_key(ds_name)
                 version_key = f"_ds_version_{ds_name}"
                 if st.session_state.get(version_key) != st.session_state.editor_version:
                     st.session_state[card_key] = df_to_card_state(ds_df)
                     st.session_state[version_key] = st.session_state.editor_version
 
-                templates = load_templates()
-                result_df = render_dataset_editor(ds_name, ds_df, templates)
-                st.session_state.datasets[ds_name] = result_df
+                tab_edit, tab_preview = st.tabs(["✏️ 编辑", "👁️ 结构预览"])
+
+                with tab_edit:
+                    templates = load_templates()
+                    result_df = render_dataset_editor(ds_name, ds_df, templates)
+                    st.session_state.datasets[ds_name] = result_df
+
+                with tab_preview:
+                    render_preview(ds_name, st.session_state.get(card_key, []))
 
         elif ds_name:
             st.info(f"数据表 '{ds_name}' 尚未创建，请在上方新建。")
