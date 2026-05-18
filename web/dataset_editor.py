@@ -353,7 +353,7 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
 
         # ── 父行卡片 ──────────────────────────────────────────────────
         with st.container(border=True):
-            c_toggle, c_up, c_down, c_ins, c_class, c_label, c_type, c_del = st.columns([0.4, 0.4, 0.4, 0.4, 0.8, 4, 2, 0.4])
+            c_toggle, c_up, c_down, c_ins, c_class, c_label, c_type, c_aval, c_del = st.columns([0.4, 0.4, 0.4, 0.4, 0.8, 3.5, 2, 1.5, 0.4])
 
             with c_toggle:
                 toggle_label = "⊟" if is_expanded else "⊞"
@@ -425,6 +425,23 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                     if new_type == "分类变量-有子分类":
                         st.session_state[pending_sub_key] = ""
                     st.rerun()
+
+            with c_aval:
+                if cur_type == "分类变量-有子分类":
+                    cur_aval = str(row.get("Aval") or "")
+                    aval_options = ["空", "xx (xx.x)"]
+                    aval_idx = 1 if cur_aval == "xx (xx.x)" else 0
+                    sel_aval = st.radio(
+                        "父行Aval", options=aval_options, index=aval_idx,
+                        key=f"parent_aval_{row_id}", label_visibility="collapsed",
+                        horizontal=True,
+                    )
+                    new_aval_val = "" if sel_aval == "空" else "xx (xx.x)"
+                    if new_aval_val != cur_aval:
+                        st.session_state[key] = [
+                            {**r, "Aval": new_aval_val} if r["_id"] == row_id else r
+                            for r in st.session_state[key]
+                        ]
 
             with c_del:
                 if st.button("🗑", key=f"del_{row_id}", help="删除此变量行"):
