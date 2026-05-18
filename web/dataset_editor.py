@@ -200,6 +200,96 @@ def sync_children_class(state: list[dict], parent_id: str, new_class: int) -> li
     ]
 
 
+def _parent_order(state: list[dict]) -> list[dict]:
+    """返回所有 Order=0 父行，按当前在 state 中的出现顺序。"""
+    return [r for r in state if r.get("_parent_id") is None and int(r.get("Order") or 0) == 0]
+
+
+def _reindex_class(state: list[dict]) -> list[dict]:
+    """
+    按父行在 state 中的顺序重新分配 Class（从 1 递增），
+    同步更新每个父行的 linked 子行 Class，断链行 Class 不变。
+    """
+    parents = _parent_order(state)
+    class_map: dict[str, int] = {p["_id"]: i + 1 for i, p in enumerate(parents)}
+    result = []
+    for r in state:
+        rid = r["_id"]
+        pid = r.get("_parent_id")
+        if rid in class_map:
+            result.append({**r, "Class": class_map[rid]})
+        elif pid in class_map and r.get("_linked"):
+            result.append({**r, "Class": class_map[pid]})
+        else:
+            result.append(r)
+    return result
+
+
+def _group_slice(state: list[dict], parent_id: str) -> tuple[int, int]:
+    """
+    返回 (start, end) 使 state[start:end] 包含父行及其所有 linked 子行。
+    断链行（_linked=False）不含在内。
+    """
+    start = next(i for i, r in enumerate(state) if r["_id"] == parent_id)
+    end = start + 1
+    while end < len(state):
+        r = state[end]
+        if r.get("_parent_id") == parent_id and r.get("_linked"):
+            end += 1
+        else:
+            break
+    return start, end
+
+
+def move_parent(state: list[dict], parent_id: str, direction: int) -> list[dict]:
+    """
+    将父行（及其 linked 子行）整体上移（direction=-1）或下移（direction=1）一位。
+    断链行不跟随移动。移动后按新顺序重排 Class。
+    """
+    parents = _parent_order(state)
+    idx = next((i for i, p in enumerate(parents) if p["_id"] == parent_id), None)
+    if idx is None:
+        return state
+    target_idx = idx + direction
+    if target_idx < 0 or target_idx >= len(parents):
+        return state
+
+    # 找到要交换的邻居
+    neighbor_id = parents[target_idx]["_id"]
+
+    # 切出两个 group 的 slice
+    s1, e1 = _group_slice(state, parent_id)
+    s2, e2 = _group_slice(state, neighbor_id)
+
+    group_self = state[s1:e1]
+    group_neighbor = state[s2:e2]
+
+    # 重组：把两段交换
+    if direction == -1:
+        # self 在 neighbor 之后，上移 → neighbor 先
+        before = state[:s2]
+        after = state[e1:]
+        new_state = before + group_self + group_neighbor + after
+    else:
+        # self 在 neighbor 之前，下移 → neighbor 先
+        before = state[:s1]
+        after = state[e2:]
+        new_state = before + group_neighbor + group_self + after
+
+    return _reindex_class(new_state)
+
+
+def insert_after(state: list[dict], parent_id: str) -> list[dict]:
+    """
+    在指定父行（及其 linked 子行）之后插入一个新空白父行。
+    新行 Class 由移动后 _reindex_class 自动分配，此处先用占位值 0。
+    """
+    _, end = _group_slice(state, parent_id)
+    new_row = _new_data_row(class_val=0, order=0) | _new_meta()
+    new_state = state[:end] + [new_row] + state[end:]
+    return _reindex_class(new_state)
+
+
 # ── Streamlit UI ────────────────────────────────────────────────────────────
 
 def state_key(ds_name: str) -> str:
@@ -247,6 +337,9 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
     state = st.session_state[key]
 
     # ── 行渲染 ────────────────────────────────────────────────────────────
+    # 计算父行列表（用于边界判断）
+    parent_ids = [r["_id"] for r in state if r.get("_parent_id") is None and int(r.get("Order") or 0) == 0]
+
     for row in state:
         if row.get("_parent_id") is not None or int(row.get("Order") or 0) != 0:
             continue  # 子行在父行处理中渲染
@@ -254,10 +347,13 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
         row_id = row["_id"]
         is_expanded = row.get("_expanded", True)
         linked_children = [r for r in state if r.get("_parent_id") == row_id and r.get("_linked")]
+        p_idx = parent_ids.index(row_id) if row_id in parent_ids else 0
+        is_first = p_idx == 0
+        is_last = p_idx == len(parent_ids) - 1
 
         # ── 父行卡片 ──────────────────────────────────────────────────
         with st.container(border=True):
-            c_toggle, c_class, c_label, c_type, c_del = st.columns([0.5, 1, 4, 2, 0.5])
+            c_toggle, c_up, c_down, c_ins, c_class, c_label, c_type, c_del = st.columns([0.4, 0.4, 0.4, 0.4, 0.8, 4, 2, 0.4])
 
             with c_toggle:
                 toggle_label = "▼" if is_expanded else "▶"
@@ -266,6 +362,21 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                         {**r, "_expanded": not r["_expanded"]} if r["_id"] == row_id else r
                         for r in st.session_state[key]
                     ]
+                    st.rerun()
+
+            with c_up:
+                if st.button("▲", key=f"up_{row_id}", disabled=is_first, help="上移"):
+                    st.session_state[key] = move_parent(st.session_state[key], row_id, -1)
+                    st.rerun()
+
+            with c_down:
+                if st.button("▼", key=f"down_{row_id}", disabled=is_last, help="下移"):
+                    st.session_state[key] = move_parent(st.session_state[key], row_id, 1)
+                    st.rerun()
+
+            with c_ins:
+                if st.button("＋", key=f"ins_{row_id}", help="在此后插入变量行"):
+                    st.session_state[key] = insert_after(st.session_state[key], row_id)
                     st.rerun()
 
             with c_class:
@@ -410,11 +521,16 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                             key=f"child_class_{child_id}"
                         )
                     with cc_label:
-                        st.text_input(
+                        new_child_label = st.text_input(
                             "Label", value=str(child.get("Label") or ""),
-                            disabled=True, label_visibility="collapsed",
+                            label_visibility="collapsed",
                             key=f"child_label_{child_id}"
                         )
+                        if new_child_label != str(child.get("Label") or ""):
+                            st.session_state[key] = [
+                                {**r, "Label": new_child_label} if r["_id"] == child_id else r
+                                for r in st.session_state[key]
+                            ]
                     with cc_aval:
                         new_aval = st.text_input(
                             "Aval", value=str(child.get("Aval") or ""),
