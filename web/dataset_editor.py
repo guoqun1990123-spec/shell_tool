@@ -506,7 +506,7 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                 if st.button("确认生成子行", key=f"subclass_ok_{row_id}", type="primary"):
                     names = [n.strip() for n in subclass_text.splitlines() if n.strip()]
                     cls = row.get("Class", 0)
-                    aval_val = ""
+                    aval_val = "xx (xx.x)"
                     new_children = []
                     for name in names:
                         child_data = _new_data_row(class_val=cls, order=1)
