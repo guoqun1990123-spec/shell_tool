@@ -121,8 +121,8 @@ def render_section_nav(card_state: list[dict]) -> None:
 
         # 子条目列表（仅展开时显示）
         if not is_collapsed:
-            for card in items:
-                card_id = card.get("_id", "")
+            for ci, card in enumerate(items):
+                card_id = card.get("_id") or f"{sec_no}_{ci}"
                 tbl_no = str(card.get("table no") or "")
                 title = str(card.get("title") or "")
                 label_text = tbl_no
