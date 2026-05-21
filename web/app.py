@@ -16,7 +16,7 @@ from validators import validate
 from dataset_editor import render_dataset_editor, df_to_card_state, state_key
 from dataset_preview import render_preview
 from templates_io import load_templates
-from config_editor import render_config_editor
+from config_editor import render_config_editor, _CARD_STATE_KEY as _CFG_CARD_KEY, _FOCUS_KEY, _update_card
 from config_templates_io import load_config_templates, save_config_templates
 from renderer import run_render
 from config_display_io import load_display_levels, save_display_levels, REQUIRED_FIELDS
@@ -181,7 +181,6 @@ def main():
     # ── Config 主表（左右分栏）──────────────────────────────────────────────
     st.subheader("Config 主表")
 
-    from config_editor import _CARD_STATE_KEY as _CFG_CARD_KEY
     _nav_col, _edit_col = st.columns([1, 3], gap="small")
 
     with _nav_col:
@@ -527,8 +526,7 @@ def main():
         if seq_hint is not None:
             if st.button(f"📍 定位到 Seq {seq_hint}", key="btn_locate_seq"):
                 # 把 focus 设到对应卡片
-                from config_editor import _CARD_STATE_KEY, _FOCUS_KEY, _update_card
-                card_state = st.session_state.get(_CARD_STATE_KEY, [])
+                card_state = st.session_state.get(_CFG_CARD_KEY, [])
                 target = None
                 for i, c in enumerate(card_state):
                     if i + 1 == seq_hint:
