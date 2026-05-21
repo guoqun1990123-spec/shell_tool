@@ -8,16 +8,20 @@ import streamlit as st
 from excel_io import list_excel_pairs, load_excel
 from git_ops import GitOps, make_commit_msg, make_filename
 from schema import (
-    CONFIG_COLS, CONFIG_COLS_PRIMARY, CONFIG_NUM_COLS,
+    CONFIG_COLS,
     DATASET_LIST_COLS, DATASET_LIST_NUM_COLS,
     DATASET_TABLE_COLS, DATASET_TABLE_NUM_COLS,
-    VALID_MACVAR, WIDE_TEXT_COLS,
 )
 from validators import validate
 from dataset_editor import render_dataset_editor, df_to_card_state, state_key
 from dataset_preview import render_preview
 from templates_io import load_templates
+from config_editor import render_config_editor
+from config_templates_io import load_config_templates, save_config_templates
+from renderer import run_render
+from config_display_io import load_display_levels, save_display_levels, REQUIRED_FIELDS
 from yaml_io import dump_yaml, list_yaml_files, load_yaml
+from section_nav import render_section_nav
 
 # ── 配置加载 ────────────────────────────────────────────────────────────────
 
@@ -78,41 +82,16 @@ def _init_state():
         st.session_state.editor_version = 0
     if "tmpl_version" not in st.session_state:
         st.session_state.tmpl_version = 0
-
-
-# ── 纯函数：合并 edited_config 到完整 df（不写 session_state）─────────────
-
-def _merge_edited(edited: pd.DataFrame, full: pd.DataFrame, display_cols: list) -> pd.DataFrame:
-    """返回合并后的新 df，不修改任何 session_state。"""
-    if edited.empty:
-        return _empty_config()
-    out = full.copy()
-    if len(edited) != len(out):
-        out = out.reindex(range(len(edited)))
-    for col in display_cols:
-        if col in edited.columns:
-            out[col] = edited[col].values
-    return out
-
-
-# ── column_config 构建 ──────────────────────────────────────────────────────
-
-def _build_config_column_config(dataset_keys: list[str]) -> dict:
-    cc = {}
-    for col in CONFIG_COLS:
-        if col in CONFIG_NUM_COLS:
-            cc[col] = st.column_config.NumberColumn(col, step=1, min_value=0)
-        elif col == "MacVar":
-            cc[col] = st.column_config.SelectboxColumn(col, options=VALID_MACVAR)
-        elif col == "Datasets":
-            cc[col] = st.column_config.SelectboxColumn(
-                col, options=[""] + dataset_keys
-            )
-        elif col in WIDE_TEXT_COLS:
-            cc[col] = st.column_config.TextColumn(col, width="large")
-        else:
-            cc[col] = st.column_config.TextColumn(col)
-    return cc
+    if "render_status" not in st.session_state:
+        st.session_state.render_status = {
+            "status": "idle",      # idle / pending / success / error
+            "output_bytes": None,
+            "output_name": None,
+            "error_log": None,
+            "error_summary": None,
+            "seq_hint": None,
+            "elapsed": None,
+        }
 
 
 def _build_list_column_config() -> dict:
@@ -199,51 +178,35 @@ def main():
             st.session_state.selected_row = None
             st.session_state.editor_version += 1
 
-    # ── Config 主表 ─────────────────────────────────────────────────────────
+    # ── Config 主表（左右分栏）──────────────────────────────────────────────
     st.subheader("Config 主表")
 
-    dataset_keys = list(st.session_state.datasets.keys())
-    cc = _build_config_column_config(dataset_keys)
-    display_cols = [c for c in CONFIG_COLS_PRIMARY if c in CONFIG_COLS]
+    from config_editor import _CARD_STATE_KEY as _CFG_CARD_KEY
+    _nav_col, _edit_col = st.columns([1, 3], gap="small")
 
-    # key 含版本号，加载/新建时版本递增 → 编辑器以新数据干净重置
-    editor_key = f"config_editor_{st.session_state.editor_version}"
+    with _nav_col:
+        _current_card_state = st.session_state.get(_CFG_CARD_KEY, [])
+        render_section_nav(_current_card_state)
 
-    edited_config = st.data_editor(
-        st.session_state.config_df[display_cols] if not st.session_state.config_df.empty
-        else pd.DataFrame(columns=display_cols),
-        column_config={k: cc[k] for k in display_cols if k in cc},
-        num_rows="dynamic",
-        width="stretch",
-        key=editor_key,
-    )
-    # 关键：渲染过程中绝不写回 session_state.config_df，
-    # 防止 data_editor 的 data 入参在两次渲染间变化导致双击问题。
+    with _edit_col:
+        dataset_keys = list(st.session_state.datasets.keys())
+        cfg_templates = load_config_templates()
 
-    # ── 校验（直接读 edited_config）────────────────────────────────────────
-    errors = validate(edited_config, st.session_state.datasets)
-
-    # ── 行选择器（整数索引 + format_func，options 稳定不随内容变化）─────────
-    if not edited_config.empty:
-        def _row_label(i: int) -> str:
-            r = edited_config.iloc[i]
-            return f"[{r.get('SeqNum', '')}] {r.get('table no', '')}  →  {r.get('Datasets', '')}"
-
-        sel_idx = st.selectbox(
-            "选择行以编辑其数据表",
-            options=list(range(len(edited_config))),
-            format_func=_row_label,
-            key="row_selector",
+        edited_config, selected_idx = render_config_editor(
+            st.session_state.config_df,
+            dataset_keys,
+            cfg_templates,
         )
-        st.session_state.selected_row = sel_idx
-    else:
-        st.session_state.selected_row = None
+        st.session_state.selected_row = selected_idx
+
+    # ── 校验 ─────────────────────────────────────────────────────────────────
+    errors = validate(edited_config, st.session_state.datasets)
 
     # ── Datasets 子表 ───────────────────────────────────────────────────────
     st.divider()
     st.subheader("Datasets 子表")
 
-    sel_idx = st.session_state.selected_row
+    sel_idx = selected_idx
     if sel_idx is not None and sel_idx < len(edited_config):
         sel_row = edited_config.iloc[sel_idx]
         ds_name = str(sel_row.get("Datasets", "") or "").strip()
@@ -361,36 +324,232 @@ def main():
             except OSError as e:
                 st.error(f"保存失败：{e}")
 
+    # ── Config 模板管理 ──────────────────────────────────────────────────────
+    cfg_tmpl_ver = st.session_state.get("cfg_tmpl_version", 0)
+    with st.expander("⚙️ Config 模板配置"):
+        tab_sec, tab_pop, tab_levels = st.tabs(["Section 映射", "pop 选项", "显示级别"])
+
+        # ── Tab1: Section 映射 ────────────────────────────────────────────────
+        with tab_sec:
+            cfg_tmpl_edit = load_config_templates()
+            sec_map: dict = dict(cfg_tmpl_edit.get("section_map", {}))
+            sec_items = list(sec_map.items())
+            new_sec_map: dict = {}
+            for j, (k, v) in enumerate(sec_items):
+                sc1, sc2, sc3 = st.columns([2, 3, 0.5])
+                with sc1:
+                    new_k = st.text_input(
+                        "Section no", value=k, label_visibility="collapsed",
+                        key=f"cfgtmpl_secno_{cfg_tmpl_ver}_{j}",
+                    )
+                with sc2:
+                    new_v = st.text_input(
+                        "Section title", value=v, label_visibility="collapsed",
+                        key=f"cfgtmpl_sectitle_{cfg_tmpl_ver}_{j}",
+                    )
+                with sc3:
+                    if not st.button("🗑", key=f"cfgtmpl_secdel_{cfg_tmpl_ver}_{j}"):
+                        if new_k.strip():
+                            new_sec_map[new_k.strip()] = new_v
+            if st.button("＋ 添加 Section", key="cfgtmpl_secadd"):
+                new_sec_map[""] = ""
+            cfg_tmpl_edit["section_map"] = new_sec_map
+
+            if st.button("保存 Section 映射", key="btn_save_secmap", type="secondary"):
+                try:
+                    save_config_templates(cfg_tmpl_edit)
+                    st.cache_data.clear()
+                    st.session_state["cfg_tmpl_version"] = cfg_tmpl_ver + 1
+                    st.success("已保存")
+                except OSError as e:
+                    st.error(f"保存失败：{e}")
+
+        # ── Tab2: pop 选项 ────────────────────────────────────────────────────
+        with tab_pop:
+            cfg_tmpl_pop = load_config_templates()
+            pop_opts: list = list(cfg_tmpl_pop.get("pop_options", []))
+            new_pop_opts: list = []
+            for j, opt in enumerate(pop_opts):
+                pc1, pc2 = st.columns([4, 0.5])
+                with pc1:
+                    new_opt = st.text_input(
+                        "pop", value=opt, label_visibility="collapsed",
+                        key=f"cfgtmpl_pop_{cfg_tmpl_ver}_{j}",
+                    )
+                with pc2:
+                    if not st.button("🗑", key=f"cfgtmpl_popdel_{cfg_tmpl_ver}_{j}"):
+                        if new_opt.strip():
+                            new_pop_opts.append(new_opt.strip())
+            if st.button("＋ 添加人群", key="cfgtmpl_popadd"):
+                new_pop_opts.append("")
+            cfg_tmpl_pop["pop_options"] = new_pop_opts
+
+            if st.button("保存 pop 选项", key="btn_save_pop", type="secondary"):
+                try:
+                    save_config_templates(cfg_tmpl_pop)
+                    st.cache_data.clear()
+                    st.session_state["cfg_tmpl_version"] = cfg_tmpl_ver + 1
+                    st.success("已保存")
+                except OSError as e:
+                    st.error(f"保存失败：{e}")
+
+        # ── Tab3: 显示级别 ────────────────────────────────────────────────────
+        with tab_levels:
+            from schema import CONFIG_COLS as _ALL_COLS
+            disp_cfg = load_display_levels()
+            field_levels: dict = disp_cfg.get("field_levels", {})
+            level_options = ["一级", "二级", "不显示"]
+            level_map = {"level1": "一级", "level2": "二级", "hidden": "不显示"}
+            level_rev = {"一级": "level1", "二级": "level2", "不显示": "hidden"}
+
+            new_field_levels: dict = {}
+            st.caption("字段  →  显示级别（必显示字段锁定不可修改）")
+            for field in _ALL_COLS:
+                cur_level = field_levels.get(field, "level2")
+                if field in REQUIRED_FIELDS:
+                    st.text(f"  {field:<28} 必显示 🔒")
+                    new_field_levels[field] = "required"
+                else:
+                    cur_label = level_map.get(cur_level, "二级")
+                    lc1, lc2 = st.columns([3, 1.5])
+                    with lc1:
+                        st.caption(field)
+                    with lc2:
+                        new_label = st.selectbox(
+                            field, options=level_options,
+                            index=level_options.index(cur_label),
+                            key=f"disp_level_{cfg_tmpl_ver}_{field}",
+                            label_visibility="collapsed",
+                        )
+                    new_field_levels[field] = level_rev[new_label]
+
+            if st.button("保存显示设置", key="btn_save_disp", type="secondary"):
+                try:
+                    save_display_levels({
+                        "default_collapse": disp_cfg.get("default_collapse", True),
+                        "field_levels": new_field_levels,
+                    })
+                    st.cache_data.clear()
+                    st.session_state["cfg_tmpl_version"] = cfg_tmpl_ver + 1
+                    st.success("显示设置已保存")
+                except OSError as e:
+                    st.error(f"保存失败：{e}")
+
     # ── 状态栏 + 保存按钮 ───────────────────────────────────────────────────
     st.divider()
-    col_status, col_btn = st.columns([5, 1])
 
-    with col_status:
-        if errors:
-            for e in errors[:5]:
-                st.error(str(e))
-            if len(errors) > 5:
-                st.warning(f"...还有 {len(errors) - 5} 条错误")
-        else:
-            st.success("校验通过")
+    # ── 校验状态 ─────────────────────────────────────────────────────────────
+    if errors:
+        for e in errors[:5]:
+            st.error(str(e))
+        if len(errors) > 5:
+            st.warning(f"...还有 {len(errors) - 5} 条错误")
+    else:
+        st.success("校验通过")
 
-    with col_btn:
-        save_disabled = bool(errors) or not st.session_state.protocol_name.strip()
+    # ── 操作按钮栏 ───────────────────────────────────────────────────────────
+    save_disabled = bool(errors) or not st.session_state.protocol_name.strip()
+    btn_c1, btn_c2, btn_c3, btn_spacer = st.columns([1.4, 1.6, 2.0, 3])
+
+    with btn_c1:
+        if st.button("💾 保存草稿", key="btn_draft"):
+            try:
+                content = dump_yaml(edited_config, st.session_state.datasets,
+                                    st.session_state.protocol_name or "draft")
+                from renderer import _TEMP_YAML, _ensure_output_dir
+                _ensure_output_dir()
+                _TEMP_YAML.write_text(content, encoding="utf-8")
+                st.toast(f"草稿已保存至 {_TEMP_YAML.name}")
+            except Exception as e:
+                st.error(f"保存草稿失败：{e}")
+
+    with btn_c2:
+        render_disabled = bool(errors)
+        if st.button("🚀 生成 TFL Shell", key="btn_render",
+                     disabled=render_disabled, type="secondary"):
+            try:
+                yaml_content = dump_yaml(
+                    edited_config, st.session_state.datasets,
+                    st.session_state.protocol_name or "preview"
+                )
+            except Exception as e:
+                st.error(f"YAML 序列化失败：{e}")
+                yaml_content = None
+
+            if yaml_content:
+                st.session_state.render_status["status"] = "pending"
+                with st.spinner("R 正在渲染文档，请稍候（最长 5 分钟）..."):
+                    result = run_render(yaml_content)
+
+                import datetime
+                fname = f"output_{datetime.datetime.now():%Y%m%d_%H%M%S}.docx"
+                st.session_state.render_status.update({
+                    "status": result["status"],
+                    "output_bytes": result.get("output_bytes"),
+                    "output_name": fname if result["status"] == "success" else None,
+                    "error_log": (result.get("stderr") or "") + "\n" + (result.get("stdout") or ""),
+                    "error_summary": result.get("error_summary"),
+                    "seq_hint": result.get("seq_hint"),
+                    "elapsed": result.get("elapsed"),
+                })
+                st.rerun()
+
+    with btn_c3:
         if not st.session_state.protocol_name.strip():
             st.caption("请先填写方案简称")
-        if st.button("保存并提交 Git", disabled=save_disabled, type="primary", key="btn_save"):
-            # 保存时才合并 edited_config → final_config
-            final_config = _merge_edited(edited_config, st.session_state.config_df, display_cols)
-            st.session_state.config_df = final_config
+        if st.button("🔒 保存并提交 Git", disabled=save_disabled,
+                     type="primary", key="btn_save"):
+            st.session_state.config_df = edited_config
             _do_save(git_ops)
+
+    # ── 渲染结果区 ───────────────────────────────────────────────────────────
+    rs = st.session_state.render_status
+    if rs["status"] == "success":
+        elapsed = rs.get("elapsed") or 0
+        size_kb = len(rs["output_bytes"]) // 1024 if rs["output_bytes"] else 0
+        st.success(f"✅ 渲染成功（耗时 {elapsed:.1f}s，文件大小 {size_kb} KB）")
+        st.download_button(
+            label="📥 下载 output.docx",
+            data=rs["output_bytes"],
+            file_name=rs["output_name"] or "output.docx",
+            mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            key="btn_download",
+        )
+
+    elif rs["status"] == "error":
+        elapsed = rs.get("elapsed") or 0
+        summary = rs.get("error_summary") or "未知错误"
+        seq_hint = rs.get("seq_hint")
+
+        st.error(f"❌ 渲染失败（耗时 {elapsed:.1f}s）")
+        st.code(f"R 错误：\n{summary}", language=None)
+
+        if seq_hint is not None:
+            if st.button(f"📍 定位到 Seq {seq_hint}", key="btn_locate_seq"):
+                # 把 focus 设到对应卡片
+                from config_editor import _CARD_STATE_KEY, _FOCUS_KEY, _update_card
+                card_state = st.session_state.get(_CARD_STATE_KEY, [])
+                target = None
+                for i, c in enumerate(card_state):
+                    if i + 1 == seq_hint:
+                        target = c["_id"]
+                        break
+                if target:
+                    st.session_state[_FOCUS_KEY] = target
+                    st.session_state[_CARD_STATE_KEY] = _update_card(
+                        card_state, target, _level="focus"
+                    )
+                    st.rerun()
+
+        if rs.get("error_log"):
+            with st.expander("查看 R 完整日志"):
+                st.code(rs["error_log"], language=None)
 
     # ── YAML 预览（只读，不写 session_state）────────────────────────────────
     with st.expander("YAML 预览"):
         try:
-            # 用临时 df 生成预览，不污染 session_state.config_df
-            preview_df = _merge_edited(edited_config, st.session_state.config_df, display_cols)
             preview = dump_yaml(
-                preview_df,
+                edited_config,
                 st.session_state.datasets,
                 st.session_state.protocol_name,
             )
