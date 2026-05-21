@@ -57,4 +57,7 @@ def group_by_section(card_state: list[dict]) -> list[dict]:
             }
         groups[sec]["items"].append(card)
 
-    return sorted(groups.values(), key=lambda g: _sec_sort_key(g["section_no"]))
+    return sorted(
+        groups.values(),
+        key=lambda g: (1,) if g["section_no"] == "（无章节）" else (0, *_sec_sort_key(g["section_no"])),
+    )
