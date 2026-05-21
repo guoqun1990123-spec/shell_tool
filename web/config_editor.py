@@ -622,13 +622,16 @@ def render_config_editor(
         st.session_state[_CARD_STATE_KEY] = _add_card(card_state)
         st.rerun()
 
+    # 章节导航树筛选（提升到循环外，避免重复赋值）
+    nav_section = st.session_state.get("section_nav_filter", {}).get("section", "")
+    # nav_section 激活时，跳过筛选栏的 section 过滤（避免双重 section 取交集）
+    if nav_section and not focus_id:
+        filt = {**filt, "section": ""}
+
     total = len(card_state)
     for i, card in enumerate(card_state):
         if not focus_id and not _card_visible(card, filt):
             continue
-        # 章节导航树筛选
-        _NAV_FILTER_KEY = "section_nav_filter"
-        nav_section = st.session_state.get(_NAV_FILTER_KEY, {}).get("section", "")
         if not focus_id and nav_section and str(card.get("Section no") or "") != nav_section:
             continue
         _render_card(card, i, total, card_state, dataset_keys, templates, version, focus_id)
