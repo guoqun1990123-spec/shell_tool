@@ -348,6 +348,7 @@ def _render_level1(
     tbl_overridden = bool(card.get("_tableno_overridden"))
     title_overridden = bool(card.get("_title_overridden"))
     sec_title_val = str(card.get("Section title", "") or "")
+    cur_ds = str(card.get("Datasets", "") or "")
 
     with st.container():
         # 行A: Section no / Section title / cat / table no
@@ -455,7 +456,6 @@ def _render_level1(
                 st.rerun()
 
         with rC3:
-            cur_ds = str(card.get("Datasets", "") or "")
             ds_opts = [""] + dataset_keys
             new_ds = st.selectbox(
                 "Datasets", options=ds_opts,
@@ -471,11 +471,39 @@ def _render_level1(
         # 行D: Trtlab
         _field(st, card, "Trtlab", card_id, version)
 
-        # 行E: footnote（折叠 expander，整体属于 level1）
-        with st.expander("脚注 (footnote1-7)"):
+        # Datasets 迷你面板
+        ds_open_set = _ds_open()
+        is_ds_open = card_id in ds_open_set
+        ds_btn_label = (
+            f"📎 {cur_ds}  {'收起▲' if is_ds_open else '展开▼'}"
+            if cur_ds else "📎 未关联 Datasets"
+        )
+        if st.button(ds_btn_label, key=f"cfg_ds_toggle_{card_id}_{version}"):
+            if is_ds_open:
+                ds_open_set.discard(card_id)
+            else:
+                ds_open_set.add(card_id)
+            st.session_state[_DS_OPEN_KEY] = ds_open_set
+            st.rerun()
+
+        if is_ds_open:
+            datasets = st.session_state.get("datasets", {})
+            if cur_ds and cur_ds in datasets:
+                ds_df = datasets[cur_ds]
+                st.dataframe(ds_df.head(20), height=150, use_container_width=True)
+                if st.button("编辑完整 Datasets ▶", key=f"cfg_ds_edit_{card_id}_{version}"):
+                    st.session_state[_SELECTED_ID_KEY] = card_id
+                    st.toast("已关联到下方 Datasets 编辑器 ↓")
+                    st.rerun()
+            else:
+                st.caption("未关联 Datasets 或数据表尚未创建")
+
+        # 展开更多：footnote + level2 字段
+        with st.expander("展开更多 ▼"):
             for fn in ["footnote1", "footnote2", "footnote3", "footnote4",
                        "footnote5", "footnote6", "footnote7"]:
                 _field(st, card, fn, card_id, version)
+            _render_level2(card, card_state, version)
 
 
 # ── Level2 字段 ───────────────────────────────────────────────────────────────
