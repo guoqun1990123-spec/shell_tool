@@ -6,6 +6,7 @@ import streamlit as st
 from config_editor import (
     _CARD_STATE_KEY,
     _FOCUS_KEY,
+    _SELECTED_ID_KEY,
     _update_card,
     _compute_table_nos,
     _delete_card,
@@ -251,8 +252,9 @@ def _render_row(
         if st.button(btn_label, key=f"tbl_goto_{card_id}_{ver}", use_container_width=True):
             st.session_state["section_nav_view_mode"] = "card"
             st.session_state[_FOCUS_KEY] = card_id
+            st.session_state[_SELECTED_ID_KEY] = card_id
             st.session_state[_CARD_STATE_KEY] = _update_card(
-                st.session_state[_CARD_STATE_KEY], card_id, _level="level1"
+                st.session_state[_CARD_STATE_KEY], card_id, _level="focus"
             )
             st.rerun()
 
