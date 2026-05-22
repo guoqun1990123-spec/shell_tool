@@ -541,6 +541,9 @@ def _render_card(
 ) -> None:
     card_id = card["_id"]
     level = card.get("_level", "collapsed")
+    # 兼容旧数据：level2 视为 level1（level2 字段已移入 expander）
+    if level == "level2":
+        level = "level1"
 
     # 专注模式下其他卡片只显示占位
     if focus_id and focus_id != card_id:
@@ -555,13 +558,7 @@ def _render_card(
         st.divider()
         return
 
-    # level1 内容
     _render_level1(card, card_state, dataset_keys, templates, version)
-
-    # level2 或 focus 时追加二级字段
-    if level in ("level2", "focus"):
-        _render_level2(card, card_state, version)
-
     st.divider()
 
 
@@ -652,7 +649,14 @@ def render_config_editor(
 
     # 专注模式横幅
     if focus_id:
-        st.info(f"🔍 专注模式中  —  点击卡片上的「退出🔍」按钮退出")
+        col_info, col_back = st.columns([4, 1])
+        with col_info:
+            st.info("🔍 专注模式中 — 点击卡片上的「退出🔍」按钮退出")
+        with col_back:
+            if st.button("← 返回表格", key="cfg_back_to_table"):
+                st.session_state["section_nav_view_mode"] = "table"
+                st.session_state[_FOCUS_KEY] = None
+                st.rerun()
 
     # 筛选栏（专注模式下隐藏）
     if not focus_id:
