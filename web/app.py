@@ -22,6 +22,7 @@ from renderer import run_render
 from config_display_io import load_display_levels, save_display_levels, REQUIRED_FIELDS
 from yaml_io import dump_yaml, list_yaml_files, load_yaml
 from section_nav import render_section_nav
+from section_table import render_section_table
 
 # ── 配置加载 ────────────────────────────────────────────────────────────────
 
@@ -191,12 +192,26 @@ def main():
         dataset_keys = list(st.session_state.datasets.keys())
         cfg_templates = load_config_templates()
 
-        edited_config, selected_idx = render_config_editor(
-            st.session_state.config_df,
-            dataset_keys,
-            cfg_templates,
-        )
-        st.session_state.selected_row = selected_idx
+        _view_mode = st.session_state.get("section_nav_view_mode", "card")
+        _table_sec = st.session_state.get("section_nav_table_section", "")
+
+        if _view_mode == "table" and _table_sec:
+            render_section_table(
+                st.session_state.get(_CFG_CARD_KEY, []),
+                _table_sec,
+                dataset_keys,
+                cfg_templates,
+            )
+            from config_editor import card_state_to_df
+            edited_config = card_state_to_df(st.session_state.get(_CFG_CARD_KEY, []))
+            selected_idx = st.session_state.selected_row
+        else:
+            edited_config, selected_idx = render_config_editor(
+                st.session_state.config_df,
+                dataset_keys,
+                cfg_templates,
+            )
+            st.session_state.selected_row = selected_idx
 
     # ── 校验 ─────────────────────────────────────────────────────────────────
     errors = validate(edited_config, st.session_state.datasets)
