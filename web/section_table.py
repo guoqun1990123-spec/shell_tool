@@ -5,6 +5,7 @@ import streamlit as st
 
 from config_editor import (
     _CARD_STATE_KEY,
+    _FOCUS_KEY,
     _update_card,
     _compute_table_nos,
     _delete_card,
@@ -246,12 +247,13 @@ def _render_row(
 
     with c3:
         cur_title = str(card.get("title") or "")
-        new_title = st.text_input("title", value=cur_title,
-                                  key=f"tbl_title_{card_id}_{ver}",
-                                  label_visibility="collapsed")
-        if new_title != cur_title:
-            state = st.session_state[_CARD_STATE_KEY]
-            st.session_state[_CARD_STATE_KEY] = _update_card(state, card_id, title=new_title)
+        btn_label = cur_title[:35] if cur_title else "（点击进入编辑）"
+        if st.button(btn_label, key=f"tbl_goto_{card_id}_{ver}", use_container_width=True):
+            st.session_state["section_nav_view_mode"] = "card"
+            st.session_state[_FOCUS_KEY] = card_id
+            st.session_state[_CARD_STATE_KEY] = _update_card(
+                st.session_state[_CARD_STATE_KEY], card_id, _level="level1"
+            )
             st.rerun()
 
     with c4:
