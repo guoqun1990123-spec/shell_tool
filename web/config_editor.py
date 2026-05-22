@@ -234,7 +234,7 @@ def _render_header(
         info_parts.append(tbl_display)
     info_str = " · ".join(info_parts)
 
-    # 6 列布局：收起 | 专注 | ▲ | ▼ | + | ⋮ | 信息/标题
+    # 7 列布局：收起 | 专注 | ▲ | ▼ | + | ⋮ | 信息/标题
     c_collapse, c_focus, c_up, c_dn, c_ins, c_more, c_info = st.columns(
         [0.55, 0.45, 0.28, 0.28, 0.28, 0.28, 4.5]
     )
