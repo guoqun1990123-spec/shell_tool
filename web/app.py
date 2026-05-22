@@ -187,8 +187,9 @@ def main():
     _tab_names = ["📋 Config章节", "🗂 Datasets", "📊 项目总览", "⚙️ 模板配置"]
     _tab_keys  = ["config",        "datasets",   "overview",   "templates"]
     _tab_index = _tab_keys.index(_active) if _active in _tab_keys else 0
+    _default_tab = _tab_names[_tab_index]
 
-    tab_config, tab_datasets, tab_overview, tab_templates = st.tabs(_tab_names)
+    tab_config, tab_datasets, tab_overview, tab_templates = st.tabs(_tab_names, default=_default_tab)
 
     # ── Tab: Config章节 ──────────────────────────────────────────────────────
     with tab_config:
