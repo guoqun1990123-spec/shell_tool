@@ -247,7 +247,7 @@ def _render_row(
 
     with c3:
         cur_title = str(card.get("title") or "")
-        btn_label = cur_title[:35] if cur_title else "（点击进入编辑）"
+        btn_label = (cur_title[:34] + "…") if len(cur_title) > 34 else (cur_title or "（点击进入编辑）")
         if st.button(btn_label, key=f"tbl_goto_{card_id}_{ver}", use_container_width=True):
             st.session_state["section_nav_view_mode"] = "card"
             st.session_state[_FOCUS_KEY] = card_id
