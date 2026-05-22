@@ -23,6 +23,7 @@ from config_display_io import load_display_levels, save_display_levels, REQUIRED
 from yaml_io import dump_yaml, list_yaml_files, load_yaml
 from section_nav import render_section_nav
 from section_table import render_section_table
+from overview import render_overview, _ACTIVE_TAB_KEY
 
 # ── 配置加载 ────────────────────────────────────────────────────────────────
 
@@ -93,6 +94,8 @@ def _init_state():
             "seq_hint": None,
             "elapsed": None,
         }
+    if "active_tab" not in st.session_state:
+        st.session_state["active_tab"] = "config"
 
 
 def _build_list_column_config() -> dict:
@@ -179,54 +182,63 @@ def main():
             st.session_state.selected_row = None
             st.session_state.editor_version += 1
 
-    # ── Config 主表（左右分栏）──────────────────────────────────────────────
-    st.subheader("Config 主表")
+    # ── 标签页 ──────────────────────────────────────────────────────────────
+    _active = st.session_state.get(_ACTIVE_TAB_KEY, "config")
+    _tab_names = ["📋 Config章节", "🗂 Datasets", "📊 项目总览", "⚙️ 模板配置"]
+    _tab_keys  = ["config",        "datasets",   "overview",   "templates"]
+    _tab_index = _tab_keys.index(_active) if _active in _tab_keys else 0
 
-    _nav_col, _edit_col = st.columns([1, 3], gap="small")
+    tab_config, tab_datasets, tab_overview, tab_templates = st.tabs(_tab_names)
 
-    with _nav_col:
-        _current_card_state = st.session_state.get(_CFG_CARD_KEY, [])
-        render_section_nav(_current_card_state)
+    # ── Tab: Config章节 ──────────────────────────────────────────────────────
+    with tab_config:
+        _nav_col, _edit_col = st.columns([1, 3], gap="small")
 
-    with _edit_col:
-        dataset_keys = list(st.session_state.datasets.keys())
-        cfg_templates = load_config_templates()
+        with _nav_col:
+            _current_card_state = st.session_state.get(_CFG_CARD_KEY, [])
+            render_section_nav(_current_card_state)
 
-        _view_mode = st.session_state.get("section_nav_view_mode", "card")
-        _table_sec = st.session_state.get("section_nav_table_section", "")
+        with _edit_col:
+            dataset_keys = list(st.session_state.datasets.keys())
+            cfg_templates = load_config_templates()
 
-        if _view_mode == "table" and _table_sec:
-            render_section_table(
-                st.session_state.get(_CFG_CARD_KEY, []),
-                _table_sec,
-                dataset_keys,
-                cfg_templates,
-            )
-            from config_editor import card_state_to_df
-            edited_config = card_state_to_df(st.session_state.get(_CFG_CARD_KEY, []))
-            selected_idx = st.session_state.selected_row
+            _view_mode = st.session_state.get("section_nav_view_mode", "card")
+            _table_sec = st.session_state.get("section_nav_table_section", "")
+
+            if _view_mode == "table" and _table_sec:
+                render_section_table(
+                    st.session_state.get(_CFG_CARD_KEY, []),
+                    _table_sec,
+                    dataset_keys,
+                    cfg_templates,
+                )
+                from config_editor import card_state_to_df
+                edited_config = card_state_to_df(st.session_state.get(_CFG_CARD_KEY, []))
+                selected_idx = st.session_state.selected_row
+            else:
+                edited_config, selected_idx = render_config_editor(
+                    st.session_state.config_df,
+                    dataset_keys,
+                    cfg_templates,
+                )
+                st.session_state.selected_row = selected_idx
+
+    # ── Tab: Datasets ────────────────────────────────────────────────────────
+    with tab_datasets:
+        _cs = st.session_state.get(_CFG_CARD_KEY, [])
+        from config_editor import card_state_to_df as _cs2df
+        edited_config_ds = _cs2df(_cs)
+        sel_idx_ds = st.session_state.get("selected_row")
+
+        if sel_idx_ds is not None and sel_idx_ds < len(edited_config_ds):
+            sel_row = edited_config_ds.iloc[sel_idx_ds]
+            ds_name = str(sel_row.get("Datasets", "") or "").strip()
+            macvar = str(sel_row.get("MacVar", "") or "").strip()
+            seq_no = sel_row.get("SeqNum", "?")
+            st.caption(f"当前选中：SeqNum={seq_no}，Datasets='{ds_name}'，MacVar='{macvar}'")
         else:
-            edited_config, selected_idx = render_config_editor(
-                st.session_state.config_df,
-                dataset_keys,
-                cfg_templates,
-            )
-            st.session_state.selected_row = selected_idx
-
-    # ── 校验 ─────────────────────────────────────────────────────────────────
-    errors = validate(edited_config, st.session_state.datasets)
-
-    # ── Datasets 子表 ───────────────────────────────────────────────────────
-    st.divider()
-    st.subheader("Datasets 子表")
-
-    sel_idx = selected_idx
-    if sel_idx is not None and sel_idx < len(edited_config):
-        sel_row = edited_config.iloc[sel_idx]
-        ds_name = str(sel_row.get("Datasets", "") or "").strip()
-        macvar = str(sel_row.get("MacVar", "") or "").strip()
-        seq_no = sel_row.get("SeqNum", "?")
-        st.caption(f"当前选中：SeqNum={seq_no}，Datasets='{ds_name}'，MacVar='{macvar}'")
+            ds_name = ""
+            st.info("请先在「Config章节」标签页中点击某行以选中，再切换此标签查看数据表。")
 
         col_dsname, col_dsadd = st.columns([3, 1])
         with col_dsname:
@@ -246,7 +258,6 @@ def main():
             ds_df = st.session_state.datasets[ds_name]
 
             if is_list:
-                # list 子表保持原 data_editor
                 ds_cc = _build_list_column_config()
                 edited_ds = st.data_editor(
                     ds_df,
@@ -257,7 +268,6 @@ def main():
                 )
                 st.session_state.datasets[ds_name] = edited_ds
             else:
-                # PStab 表格：卡片编辑器 + 结构预览
                 card_key = state_key(ds_name)
                 version_key = f"_ds_version_{ds_name}"
                 if st.session_state.get(version_key) != st.session_state.editor_version:
@@ -265,189 +275,193 @@ def main():
                     st.session_state[version_key] = st.session_state.editor_version
 
                 tab_edit, tab_preview = st.tabs(["✏️ 编辑", "👁️ 结构预览"])
-
                 with tab_edit:
                     templates = load_templates()
                     result_df = render_dataset_editor(ds_name, ds_df, templates)
                     st.session_state.datasets[ds_name] = result_df
-
                 with tab_preview:
                     render_preview(ds_name, st.session_state.get(card_key, []))
 
         elif ds_name:
             st.info(f"数据表 '{ds_name}' 尚未创建，请在上方新建。")
-        else:
-            st.info("当前行未填写 Datasets 字段，或 MacVar=mtext 不需要数据表。")
-    else:
-        st.info("在主表中点击某行以编辑其对应的数据表。")
 
-    # ── 模板管理 ────────────────────────────────────────────────────────────
-    with st.expander("变量类型模板配置"):
-        from templates_io import save_templates
-        templates_edit = load_templates()
+    # ── Tab: 项目总览 ────────────────────────────────────────────────────────
+    with tab_overview:
+        render_overview(
+            card_state=st.session_state.get(_CFG_CARD_KEY, []),
+            render_status=st.session_state.render_status,
+            protocol_name=st.session_state.protocol_name,
+        )
 
-        st.caption("连续变量子行（Label + Aval 模板）")
-        cont_tmpl = templates_edit.get("连续变量", {})
-        cont_children = cont_tmpl.get("children", [])
-        new_children = []
-        for j, child in enumerate(cont_children):
-            c1, c2, c3 = st.columns([3, 3, 0.5])
-            with c1:
-                lbl = st.text_input(
-                    "Label", value=child.get("Label", ""),
-                    label_visibility="collapsed",
-                    key=f"tmpl_label_{st.session_state.tmpl_version}_{j}"
-                )
-            with c2:
-                avl = st.text_input(
-                    "Aval", value=child.get("Aval", ""),
-                    label_visibility="collapsed",
-                    key=f"tmpl_aval_{st.session_state.tmpl_version}_{j}"
-                )
-            with c3:
-                if not st.button("🗑", key=f"tmpl_del_{st.session_state.tmpl_version}_{j}"):
-                    new_children.append({"Label": lbl, "Aval": avl})
-        if st.button("＋ 添加子行", key="tmpl_add"):
-            new_children.append({"Label": "", "Aval": ""})
-        templates_edit.setdefault("连续变量", {})["children"] = new_children
+    # ── Tab: 模板配置 ────────────────────────────────────────────────────────
+    with tab_templates:
+        cfg_tmpl_ver = st.session_state.get("cfg_tmpl_version", 0)
 
-        col_a, col_b = st.columns(2)
-        with col_a:
-            st.caption("分类变量-无子分类 Aval")
-            templates_edit.setdefault("分类变量-无子分类", {})["aval"] = st.text_input(
-                "Aval",
-                value=templates_edit.get("分类变量-无子分类", {}).get("aval", "xx (xx.x)"),
-                key="tmpl_cat_aval",
-                label_visibility="collapsed",
-            )
-        with col_b:
-            st.caption("日期变量 Aval")
-            templates_edit.setdefault("日期变量", {})["aval"] = st.text_input(
-                "Aval",
-                value=templates_edit.get("日期变量", {}).get("aval", "YYYY-MM-DD"),
-                key="tmpl_date_aval",
-                label_visibility="collapsed",
-            )
+        with st.expander("变量类型模板配置", expanded=True):
+            from templates_io import save_templates
+            templates_edit = load_templates()
 
-        if st.button("保存模板", key="btn_save_tmpl", type="secondary"):
-            try:
-                save_templates(templates_edit)
-                st.cache_data.clear()  # 清除 load_templates 缓存，使新模板即时生效
-                st.session_state.tmpl_version += 1
-                st.success("模板已保存")
-            except OSError as e:
-                st.error(f"保存失败：{e}")
-
-    # ── Config 模板管理 ──────────────────────────────────────────────────────
-    cfg_tmpl_ver = st.session_state.get("cfg_tmpl_version", 0)
-    with st.expander("⚙️ Config 模板配置"):
-        tab_sec, tab_pop, tab_levels = st.tabs(["Section 映射", "pop 选项", "显示级别"])
-
-        # ── Tab1: Section 映射 ────────────────────────────────────────────────
-        with tab_sec:
-            cfg_tmpl_edit = load_config_templates()
-            sec_map: dict = dict(cfg_tmpl_edit.get("section_map", {}))
-            sec_items = list(sec_map.items())
-            new_sec_map: dict = {}
-            for j, (k, v) in enumerate(sec_items):
-                sc1, sc2, sc3 = st.columns([2, 3, 0.5])
-                with sc1:
-                    new_k = st.text_input(
-                        "Section no", value=k, label_visibility="collapsed",
-                        key=f"cfgtmpl_secno_{cfg_tmpl_ver}_{j}",
+            st.caption("连续变量子行（Label + Aval 模板）")
+            cont_tmpl = templates_edit.get("连续变量", {})
+            cont_children = cont_tmpl.get("children", [])
+            new_children = []
+            for j, child in enumerate(cont_children):
+                c1, c2, c3 = st.columns([3, 3, 0.5])
+                with c1:
+                    lbl = st.text_input(
+                        "Label", value=child.get("Label", ""),
+                        label_visibility="collapsed",
+                        key=f"tmpl_label_{st.session_state.tmpl_version}_{j}"
                     )
-                with sc2:
-                    new_v = st.text_input(
-                        "Section title", value=v, label_visibility="collapsed",
-                        key=f"cfgtmpl_sectitle_{cfg_tmpl_ver}_{j}",
+                with c2:
+                    avl = st.text_input(
+                        "Aval", value=child.get("Aval", ""),
+                        label_visibility="collapsed",
+                        key=f"tmpl_aval_{st.session_state.tmpl_version}_{j}"
                     )
-                with sc3:
-                    if not st.button("🗑", key=f"cfgtmpl_secdel_{cfg_tmpl_ver}_{j}"):
-                        if new_k.strip():
-                            new_sec_map[new_k.strip()] = new_v
-            if st.button("＋ 添加 Section", key="cfgtmpl_secadd"):
-                new_sec_map[""] = ""
-            cfg_tmpl_edit["section_map"] = new_sec_map
+                with c3:
+                    if not st.button("🗑", key=f"tmpl_del_{st.session_state.tmpl_version}_{j}"):
+                        new_children.append({"Label": lbl, "Aval": avl})
+            if st.button("＋ 添加子行", key="tmpl_add"):
+                new_children.append({"Label": "", "Aval": ""})
+            templates_edit.setdefault("连续变量", {})["children"] = new_children
 
-            if st.button("保存 Section 映射", key="btn_save_secmap", type="secondary"):
+            col_a, col_b = st.columns(2)
+            with col_a:
+                st.caption("分类变量-无子分类 Aval")
+                templates_edit.setdefault("分类变量-无子分类", {})["aval"] = st.text_input(
+                    "Aval",
+                    value=templates_edit.get("分类变量-无子分类", {}).get("aval", "xx (xx.x)"),
+                    key="tmpl_cat_aval",
+                    label_visibility="collapsed",
+                )
+            with col_b:
+                st.caption("日期变量 Aval")
+                templates_edit.setdefault("日期变量", {})["aval"] = st.text_input(
+                    "Aval",
+                    value=templates_edit.get("日期变量", {}).get("aval", "YYYY-MM-DD"),
+                    key="tmpl_date_aval",
+                    label_visibility="collapsed",
+                )
+            if st.button("保存模板", key="btn_save_tmpl", type="secondary"):
                 try:
-                    save_config_templates(cfg_tmpl_edit)
+                    save_templates(templates_edit)
                     st.cache_data.clear()
-                    st.session_state["cfg_tmpl_version"] = cfg_tmpl_ver + 1
-                    st.success("已保存")
+                    st.session_state.tmpl_version += 1
+                    st.success("模板已保存")
                 except OSError as e:
                     st.error(f"保存失败：{e}")
 
-        # ── Tab2: pop 选项 ────────────────────────────────────────────────────
-        with tab_pop:
-            cfg_tmpl_pop = load_config_templates()
-            pop_opts: list = list(cfg_tmpl_pop.get("pop_options", []))
-            new_pop_opts: list = []
-            for j, opt in enumerate(pop_opts):
-                pc1, pc2 = st.columns([4, 0.5])
-                with pc1:
-                    new_opt = st.text_input(
-                        "pop", value=opt, label_visibility="collapsed",
-                        key=f"cfgtmpl_pop_{cfg_tmpl_ver}_{j}",
-                    )
-                with pc2:
-                    if not st.button("🗑", key=f"cfgtmpl_popdel_{cfg_tmpl_ver}_{j}"):
-                        if new_opt.strip():
-                            new_pop_opts.append(new_opt.strip())
-            if st.button("＋ 添加人群", key="cfgtmpl_popadd"):
-                new_pop_opts.append("")
-            cfg_tmpl_pop["pop_options"] = new_pop_opts
+        with st.expander("⚙️ Config 模板配置", expanded=True):
+            tab_sec, tab_pop, tab_levels = st.tabs(["Section 映射", "pop 选项", "显示级别"])
 
-            if st.button("保存 pop 选项", key="btn_save_pop", type="secondary"):
-                try:
-                    save_config_templates(cfg_tmpl_pop)
-                    st.cache_data.clear()
-                    st.session_state["cfg_tmpl_version"] = cfg_tmpl_ver + 1
-                    st.success("已保存")
-                except OSError as e:
-                    st.error(f"保存失败：{e}")
-
-        # ── Tab3: 显示级别 ────────────────────────────────────────────────────
-        with tab_levels:
-            from schema import CONFIG_COLS as _ALL_COLS
-            disp_cfg = load_display_levels()
-            field_levels: dict = disp_cfg.get("field_levels", {})
-            level_options = ["一级", "二级", "不显示"]
-            level_map = {"level1": "一级", "level2": "二级", "hidden": "不显示"}
-            level_rev = {"一级": "level1", "二级": "level2", "不显示": "hidden"}
-
-            new_field_levels: dict = {}
-            st.caption("字段  →  显示级别（必显示字段锁定不可修改）")
-            for field in _ALL_COLS:
-                cur_level = field_levels.get(field, "level2")
-                if field in REQUIRED_FIELDS:
-                    st.text(f"  {field:<28} 必显示 🔒")
-                    new_field_levels[field] = "required"
-                else:
-                    cur_label = level_map.get(cur_level, "二级")
-                    lc1, lc2 = st.columns([3, 1.5])
-                    with lc1:
-                        st.caption(field)
-                    with lc2:
-                        new_label = st.selectbox(
-                            field, options=level_options,
-                            index=level_options.index(cur_label),
-                            key=f"disp_level_{cfg_tmpl_ver}_{field}",
-                            label_visibility="collapsed",
+            with tab_sec:
+                cfg_tmpl_edit = load_config_templates()
+                sec_map: dict = dict(cfg_tmpl_edit.get("section_map", {}))
+                sec_items = list(sec_map.items())
+                new_sec_map: dict = {}
+                for j, (k, v) in enumerate(sec_items):
+                    sc1, sc2, sc3 = st.columns([2, 3, 0.5])
+                    with sc1:
+                        new_k = st.text_input(
+                            "Section no", value=k, label_visibility="collapsed",
+                            key=f"cfgtmpl_secno_{cfg_tmpl_ver}_{j}",
                         )
-                    new_field_levels[field] = level_rev[new_label]
+                    with sc2:
+                        new_v = st.text_input(
+                            "Section title", value=v, label_visibility="collapsed",
+                            key=f"cfgtmpl_sectitle_{cfg_tmpl_ver}_{j}",
+                        )
+                    with sc3:
+                        if not st.button("🗑", key=f"cfgtmpl_secdel_{cfg_tmpl_ver}_{j}"):
+                            if new_k.strip():
+                                new_sec_map[new_k.strip()] = new_v
+                if st.button("＋ 添加 Section", key="cfgtmpl_secadd"):
+                    new_sec_map[""] = ""
+                cfg_tmpl_edit["section_map"] = new_sec_map
+                if st.button("保存 Section 映射", key="btn_save_secmap", type="secondary"):
+                    try:
+                        save_config_templates(cfg_tmpl_edit)
+                        st.cache_data.clear()
+                        st.session_state["cfg_tmpl_version"] = cfg_tmpl_ver + 1
+                        st.success("已保存")
+                    except OSError as e:
+                        st.error(f"保存失败：{e}")
 
-            if st.button("保存显示设置", key="btn_save_disp", type="secondary"):
-                try:
-                    save_display_levels({
-                        "default_collapse": disp_cfg.get("default_collapse", True),
-                        "field_levels": new_field_levels,
-                    })
-                    st.cache_data.clear()
-                    st.session_state["cfg_tmpl_version"] = cfg_tmpl_ver + 1
-                    st.success("显示设置已保存")
-                except OSError as e:
-                    st.error(f"保存失败：{e}")
+            with tab_pop:
+                cfg_tmpl_pop = load_config_templates()
+                pop_opts: list = list(cfg_tmpl_pop.get("pop_options", []))
+                new_pop_opts: list = []
+                for j, opt in enumerate(pop_opts):
+                    pc1, pc2 = st.columns([4, 0.5])
+                    with pc1:
+                        new_opt = st.text_input(
+                            "pop", value=opt, label_visibility="collapsed",
+                            key=f"cfgtmpl_pop_{cfg_tmpl_ver}_{j}",
+                        )
+                    with pc2:
+                        if not st.button("🗑", key=f"cfgtmpl_popdel_{cfg_tmpl_ver}_{j}"):
+                            if new_opt.strip():
+                                new_pop_opts.append(new_opt.strip())
+                if st.button("＋ 添加人群", key="cfgtmpl_popadd"):
+                    new_pop_opts.append("")
+                cfg_tmpl_pop["pop_options"] = new_pop_opts
+                if st.button("保存 pop 选项", key="btn_save_pop", type="secondary"):
+                    try:
+                        save_config_templates(cfg_tmpl_pop)
+                        st.cache_data.clear()
+                        st.session_state["cfg_tmpl_version"] = cfg_tmpl_ver + 1
+                        st.success("已保存")
+                    except OSError as e:
+                        st.error(f"保存失败：{e}")
+
+            with tab_levels:
+                from schema import CONFIG_COLS as _ALL_COLS
+                disp_cfg = load_display_levels()
+                field_levels: dict = disp_cfg.get("field_levels", {})
+                level_options = ["一级", "二级", "不显示"]
+                level_map = {"level1": "一级", "level2": "二级", "hidden": "不显示"}
+                level_rev = {"一级": "level1", "二级": "level2", "不显示": "hidden"}
+                new_field_levels: dict = {}
+                st.caption("字段  →  显示级别（必显示字段锁定不可修改）")
+                for field in _ALL_COLS:
+                    cur_level = field_levels.get(field, "level2")
+                    if field in REQUIRED_FIELDS:
+                        st.text(f"  {field:<28} 必显示 🔒")
+                        new_field_levels[field] = "required"
+                    else:
+                        cur_label = level_map.get(cur_level, "二级")
+                        lc1, lc2 = st.columns([3, 1.5])
+                        with lc1:
+                            st.caption(field)
+                        with lc2:
+                            new_label = st.selectbox(
+                                field, options=level_options,
+                                index=level_options.index(cur_label),
+                                key=f"disp_level_{cfg_tmpl_ver}_{field}",
+                                label_visibility="collapsed",
+                            )
+                        new_field_levels[field] = level_rev[new_label]
+                if st.button("保存显示设置", key="btn_save_disp", type="secondary"):
+                    try:
+                        save_display_levels({
+                            "default_collapse": disp_cfg.get("default_collapse", True),
+                            "field_levels": new_field_levels,
+                        })
+                        st.cache_data.clear()
+                        st.session_state["cfg_tmpl_version"] = cfg_tmpl_ver + 1
+                        st.success("显示设置已保存")
+                    except OSError as e:
+                        st.error(f"保存失败：{e}")
+
+    # ── 校验（需要 edited_config，从 Config 标签获取） ─────────────────────────
+    try:
+        _ = edited_config
+    except NameError:
+        from config_editor import card_state_to_df as _cs2df2
+        edited_config = _cs2df2(st.session_state.get(_CFG_CARD_KEY, []))
+
+    errors = validate(edited_config, st.session_state.datasets)
 
     # ── 状态栏 + 保存按钮 ───────────────────────────────────────────────────
     st.divider()
