@@ -6,6 +6,8 @@ import streamlit as st
 
 _NAV_STATE_KEY = "section_nav_state"   # { sec_no: collapsed:bool }
 _NAV_FILTER_KEY = "section_nav_filter" # { "section": str, "scroll_to": str|None }
+_VIEW_MODE_KEY = "section_nav_view_mode"      # "card" | "table"
+_TABLE_SECTION_KEY = "section_nav_table_section"  # 当前表格视图的 section_no
 
 
 def _nav_state() -> dict:
@@ -83,6 +85,7 @@ def render_section_nav(card_state: list[dict]) -> None:
         filt["section"] = ""
         filt["scroll_to"] = None
         st.session_state[_NAV_FILTER_KEY] = filt
+        st.session_state[_VIEW_MODE_KEY] = "card"
         st.rerun()
 
     st.divider()
@@ -111,6 +114,8 @@ def render_section_nav(card_state: list[dict]) -> None:
                 nav[sec_no] = False
                 st.session_state[_NAV_FILTER_KEY] = filt
                 st.session_state[_NAV_STATE_KEY] = nav
+                st.session_state[_VIEW_MODE_KEY] = "table"
+                st.session_state[_TABLE_SECTION_KEY] = sec_no
                 st.rerun()
 
         with col_toggle:
@@ -140,4 +145,5 @@ def render_section_nav(card_state: list[dict]) -> None:
                     nav[sec_no] = False
                     st.session_state[_NAV_FILTER_KEY] = filt
                     st.session_state[_NAV_STATE_KEY] = nav
+                    st.session_state[_VIEW_MODE_KEY] = "card"
                     st.rerun()
