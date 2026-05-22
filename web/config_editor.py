@@ -16,6 +16,21 @@ _SELECTED_ID_KEY = "_cfg_selected_id"
 _SYNC_VER_KEY = "_cfg_editor_sync_ver"
 _FOCUS_KEY = "_cfg_focus_id"
 _FILTER_KEY = "_cfg_filter"
+_MENU_OPEN_KEY = "cfg_menu_open"    # set[card_id]，⋮ 菜单展开状态
+_DS_OPEN_KEY = "cfg_ds_panel_open"  # set[card_id]，Datasets 面板展开状态
+
+
+def _menu_open() -> set:
+    if _MENU_OPEN_KEY not in st.session_state:
+        st.session_state[_MENU_OPEN_KEY] = set()
+    return st.session_state[_MENU_OPEN_KEY]
+
+
+def _ds_open() -> set:
+    if _DS_OPEN_KEY not in st.session_state:
+        st.session_state[_DS_OPEN_KEY] = set()
+    return st.session_state[_DS_OPEN_KEY]
+
 
 # ── 纯函数 ───────────────────────────────────────────────────────────────────
 
@@ -201,54 +216,55 @@ def _render_header(
 
     seq = idx + 1
     sec = str(card.get("Section no", "") or "")
-    sec_title = str(card.get("Section title", "") or "")
     cat = str(card.get("cat", "") or "")
     tableno = str(card.get("table no", "") or "")
     title = str(card.get("title", "") or "")
     tbl_overridden = bool(card.get("_tableno_overridden"))
+    menu = _menu_open()
+    is_menu_open = card_id in menu
 
-    sec_display = f"{sec} {sec_title}".strip() if sec_title else sec
+    # 摘要信息字符串（展开状态时显示在 c_info）
+    info_parts = [f"**{seq}**"]
+    if sec:
+        info_parts.append(sec)
+    if cat:
+        info_parts.append(cat)
+    tbl_display = (tableno + " ⚠️") if tbl_overridden else tableno
+    if tbl_display:
+        info_parts.append(tbl_display)
+    info_str = " · ".join(info_parts)
 
-    # 操作按钮列 + 信息列
-    btn_cols = st.columns([0.7, 0.7, 0.4, 0.4, 0.4, 0.5, 0.4, 0.4,
-                            0.6, 0.9, 0.6, 1.4, 2.8])
-    (c_expand, c_more, c_up, c_dn, c_ins, c_copy, c_del, c_focus,
-     c_seq, c_sec, c_cat, c_tbl, c_title) = btn_cols
+    # 6 列布局：收起 | 专注 | ▲ | ▼ | + | ⋮ | 信息/标题
+    c_collapse, c_focus, c_up, c_dn, c_ins, c_more, c_info = st.columns(
+        [0.55, 0.45, 0.28, 0.28, 0.28, 0.28, 4.5]
+    )
 
-    # 展开/收起/退出专注
-    with c_expand:
-        if is_focus:
-            if st.button("退出🔍", key=f"cfg_unfocus_{card_id}_{version}"):
-                st.session_state[_FOCUS_KEY] = None
-                st.session_state[_CARD_STATE_KEY] = _update_card(
-                    card_state, card_id, _level="level2"
-                )
-                st.rerun()
-        elif is_collapsed:
-            if st.button("展开▼", key=f"cfg_expand_{card_id}_{version}"):
-                st.session_state[_CARD_STATE_KEY] = _update_card(
-                    card_state, card_id, _level="level1"
-                )
-                st.rerun()
-        else:
+    # 收起按钮（仅展开时显示）
+    with c_collapse:
+        if not is_collapsed:
             if st.button("收起▲", key=f"cfg_collapse_{card_id}_{version}"):
+                menu.discard(card_id)
+                st.session_state[_MENU_OPEN_KEY] = menu
                 st.session_state[_CARD_STATE_KEY] = _update_card(
                     card_state, card_id, _level="collapsed"
                 )
                 st.rerun()
 
-    # 更多/收杂（level1 → level2，level2 → level1）
-    with c_more:
-        if level == "level1":
-            if st.button("更多▼", key=f"cfg_more_{card_id}_{version}"):
-                st.session_state[_CARD_STATE_KEY] = _update_card(
-                    card_state, card_id, _level="level2"
-                )
-                st.rerun()
-        elif level == "level2":
-            if st.button("收杂▲", key=f"cfg_less_{card_id}_{version}"):
+    # 专注 / 退出专注
+    with c_focus:
+        if is_focus:
+            if st.button("退出🔍", key=f"cfg_unfocus_{card_id}_{version}"):
+                st.session_state[_FOCUS_KEY] = None
                 st.session_state[_CARD_STATE_KEY] = _update_card(
                     card_state, card_id, _level="level1"
+                )
+                st.rerun()
+        else:
+            if st.button("🔍", key=f"cfg_focus_{card_id}_{version}"):
+                st.session_state[_FOCUS_KEY] = card_id
+                st.session_state[_SELECTED_ID_KEY] = card_id
+                st.session_state[_CARD_STATE_KEY] = _update_card(
+                    card_state, card_id, _level="focus"
                 )
                 st.rerun()
 
@@ -267,51 +283,50 @@ def _render_header(
             st.session_state[_CARD_STATE_KEY] = _insert_after(card_state, card_id)
             st.rerun()
 
-    with c_copy:
-        if st.button("复制", key=f"cfg_copy_{card_id}_{version}"):
-            st.session_state[_CARD_STATE_KEY] = _copy_card(card_state, card_id)
+    # ⋮ 菜单开关
+    with c_more:
+        if st.button("⋮", key=f"cfg_more_{card_id}_{version}"):
+            if is_menu_open:
+                menu.discard(card_id)
+            else:
+                menu.add(card_id)
+            st.session_state[_MENU_OPEN_KEY] = menu
             st.rerun()
 
-    with c_del:
-        if st.button("🗑", key=f"cfg_del_{card_id}_{version}"):
-            if st.session_state.get(_SELECTED_ID_KEY) == card_id:
-                st.session_state[_SELECTED_ID_KEY] = None
-            if st.session_state.get(_FOCUS_KEY) == card_id:
-                st.session_state[_FOCUS_KEY] = None
-            st.session_state[_CARD_STATE_KEY] = _delete_card(card_state, card_id)
-            st.rerun()
-
-    with c_focus:
-        if st.button("🔍", key=f"cfg_focus_{card_id}_{version}"):
-            st.session_state[_FOCUS_KEY] = card_id
-            st.session_state[_SELECTED_ID_KEY] = card_id
-            st.session_state[_CARD_STATE_KEY] = _update_card(
-                card_state, card_id, _level="focus"
-            )
-            st.rerun()
-
-    with c_seq:
-        st.caption(f"**{seq}**")
-
-    with c_sec:
-        st.caption(sec_display or "—")
-
-    with c_cat:
-        st.caption(cat or "—")
-
-    with c_tbl:
-        tbl_display = (tableno + " ⚠️") if tbl_overridden else tableno
-        st.caption(tbl_display or "—")
-
-    with c_title:
-        btn_label = (title[:34] + "…") if len(title) > 34 else (title or "（点击选中）")
-        if st.button(btn_label, key=f"cfg_sel_{card_id}_{version}", use_container_width=True):
-            st.session_state[_SELECTED_ID_KEY] = card_id
-            if is_collapsed:
+    # 信息区 / 标题展开入口
+    with c_info:
+        if is_collapsed:
+            btn_label = f"▶ {title[:45]}" if title else "▶ （点击展开）"
+            if st.button(btn_label, key=f"cfg_sel_{card_id}_{version}",
+                         use_container_width=True):
+                st.session_state[_SELECTED_ID_KEY] = card_id
                 st.session_state[_CARD_STATE_KEY] = _update_card(
                     card_state, card_id, _level="level1"
                 )
-            st.rerun()
+                st.rerun()
+        else:
+            title_short = (title[:50] + "…") if len(title) > 50 else title
+            st.caption(f"{info_str} · {title_short}")
+
+    # ⋮ 菜单展开行（复制 / 删除）
+    if is_menu_open:
+        m1, m2, _ = st.columns([0.8, 0.9, 5.0])
+        with m1:
+            if st.button("复制", key=f"cfg_copy_{card_id}_{version}"):
+                menu.discard(card_id)
+                st.session_state[_MENU_OPEN_KEY] = menu
+                st.session_state[_CARD_STATE_KEY] = _copy_card(card_state, card_id)
+                st.rerun()
+        with m2:
+            if st.button("🗑 删除", key=f"cfg_del_{card_id}_{version}"):
+                menu.discard(card_id)
+                st.session_state[_MENU_OPEN_KEY] = menu
+                if st.session_state.get(_SELECTED_ID_KEY) == card_id:
+                    st.session_state[_SELECTED_ID_KEY] = None
+                if st.session_state.get(_FOCUS_KEY) == card_id:
+                    st.session_state[_FOCUS_KEY] = None
+                st.session_state[_CARD_STATE_KEY] = _delete_card(card_state, card_id)
+                st.rerun()
 
 
 # ── Level1 字段 ───────────────────────────────────────────────────────────────
