@@ -92,6 +92,10 @@ def render_section_nav(card_state: list[dict]) -> None:
 
     for group in groups:
         sec_no = group["section_no"]
+        # 筛选模式下只显示当前 section
+        if cur_section and sec_no != cur_section:
+            continue
+        sec_no = group["section_no"]
         sec_title = group["section_title"]
         items = group["items"]
         count = len(items)
@@ -141,9 +145,10 @@ def render_section_nav(card_state: list[dict]) -> None:
 
                 if st.button(item_label, key=f"nav_item_{card_id}", use_container_width=True):
                     filt["section"] = sec_no
-                    filt["scroll_to"] = card_id
+                    filt["scroll_to"] = None
                     nav[sec_no] = False
                     st.session_state[_NAV_FILTER_KEY] = filt
                     st.session_state[_NAV_STATE_KEY] = nav
-                    st.session_state[_VIEW_MODE_KEY] = "card"
+                    st.session_state[_VIEW_MODE_KEY] = "table"
+                    st.session_state[_TABLE_SECTION_KEY] = sec_no
                     st.rerun()
