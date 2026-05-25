@@ -50,9 +50,11 @@ def df_to_card_state(df: pd.DataFrame) -> list[dict]:
             order = 0
         data = {col: rec.get(col, "") for col in DATASET_TABLE_COLS}
         data["Order"] = order
-        data["exclude"] = int(rec.get("exclude") or 0)
+        _excl = rec.get("exclude")
+        data["exclude"] = int(_excl) if _excl is not None and str(_excl) not in ("", "nan") else 0
         try:
-            data["Class"] = int(rec.get("Class") or 0)
+            _cls = rec.get("Class")
+            data["Class"] = int(_cls) if _cls is not None and str(_cls) not in ("", "nan") else 0
         except (ValueError, TypeError):
             data["Class"] = 0
 
