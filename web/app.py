@@ -203,8 +203,20 @@ def main():
             dataset_keys = list(st.session_state.datasets.keys())
             cfg_templates = load_config_templates()
 
-            _view_mode = st.session_state.get("section_nav_view_mode", "card")
+            _view_mode = st.session_state.get("section_nav_view_mode", "table")
             _table_sec = st.session_state.get("section_nav_table_section", "")
+
+            # 默认表格视图：若无选中 section，自动选第一个
+            if _view_mode == "table" and not _table_sec:
+                _card_state_now = st.session_state.get(_CFG_CARD_KEY, [])
+                _first_sec = next(
+                    (str(c.get("Section no", "") or "") for c in _card_state_now if c.get("Section no")),
+                    "",
+                )
+                if _first_sec:
+                    st.session_state["section_nav_table_section"] = _first_sec
+                    st.session_state["section_nav_view_mode"] = "table"
+                    _table_sec = _first_sec
 
             if _view_mode == "table" and _table_sec:
                 render_section_table(
