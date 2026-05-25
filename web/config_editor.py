@@ -635,6 +635,16 @@ def render_config_editor(
     # 处理章节导航树的 scroll_to 定位请求
     _NAV_FILTER_KEY = "section_nav_filter"
     nav_filt = st.session_state.get(_NAV_FILTER_KEY, {})
+
+    # 若无选中 section，自动选中第一个，避免渲染全部卡片
+    if not focus_id and not nav_filt.get("section"):
+        first_sec = next(
+            (str(c.get("Section no", "") or "") for c in card_state if c.get("Section no")),
+            "",
+        )
+        if first_sec:
+            st.session_state[_NAV_FILTER_KEY] = {**nav_filt, "section": first_sec}
+            st.rerun()
     scroll_to_id = nav_filt.get("scroll_to")
     if scroll_to_id:
         card_state_now = st.session_state[_CARD_STATE_KEY]
