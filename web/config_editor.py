@@ -662,6 +662,7 @@ def render_config_editor(
         st.session_state[_NAV_SELECTED_KEY] = scroll_to_id
         nav_filt["scroll_to"] = None
         st.session_state[_NAV_FILTER_KEY] = nav_filt
+        st.rerun()
 
     # 专注模式横幅
     if focus_id:
