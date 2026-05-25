@@ -120,6 +120,7 @@ def render_section_nav(card_state: list[dict]) -> None:
                 st.session_state[_NAV_STATE_KEY] = nav
                 st.session_state[_VIEW_MODE_KEY] = "table"
                 st.session_state[_TABLE_SECTION_KEY] = sec_no
+                st.session_state["section_nav_selected_id"] = None
                 st.rerun()
 
         with col_toggle:

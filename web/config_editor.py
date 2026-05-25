@@ -634,6 +634,7 @@ def render_config_editor(
 
     # 处理章节导航树的 scroll_to 定位请求
     _NAV_FILTER_KEY = "section_nav_filter"
+    _NAV_SELECTED_KEY = "section_nav_selected_id"  # 持久记录当前选中条目
     nav_filt = st.session_state.get(_NAV_FILTER_KEY, {})
 
     # 若无选中 section，自动选中第一个，避免渲染全部卡片
@@ -648,12 +649,17 @@ def render_config_editor(
     scroll_to_id = nav_filt.get("scroll_to")
     if scroll_to_id:
         card_state_now = st.session_state[_CARD_STATE_KEY]
+        # 把目标卡片展开为 level1，同 section 其他卡片全部收起
+        new_state = []
         for c in card_state_now:
-            if c["_id"] == scroll_to_id and c.get("_level") == "collapsed":
-                st.session_state[_CARD_STATE_KEY] = _update_card(
-                    card_state_now, scroll_to_id, _level="level1"
-                )
-                break
+            if c["_id"] == scroll_to_id:
+                new_state.append({**c, "_level": "level1"})
+            elif str(c.get("Section no") or "") == nav_filt.get("section", ""):
+                new_state.append({**c, "_level": "collapsed"})
+            else:
+                new_state.append(c)
+        st.session_state[_CARD_STATE_KEY] = new_state
+        st.session_state[_NAV_SELECTED_KEY] = scroll_to_id
         nav_filt["scroll_to"] = None
         st.session_state[_NAV_FILTER_KEY] = nav_filt
 
@@ -681,7 +687,7 @@ def render_config_editor(
 
     # 章节导航树筛选（提升到循环外，避免重复赋值）
     nav_section = st.session_state.get("section_nav_filter", {}).get("section", "")
-    nav_scroll_to = st.session_state.get("section_nav_filter", {}).get("scroll_to")
+    nav_selected_id = st.session_state.get("section_nav_selected_id")
     # nav_section 激活时，跳过筛选栏的 section 过滤（避免双重 section 取交集）
     if nav_section and not focus_id:
         filt = {**filt, "section": ""}
@@ -693,7 +699,7 @@ def render_config_editor(
         if not focus_id and nav_section and str(card.get("Section no") or "") != nav_section:
             continue
         # 导航树选中具体条目时，只渲染该卡片
-        if not focus_id and nav_scroll_to and card.get("_id") != nav_scroll_to:
+        if not focus_id and nav_selected_id and card.get("_id") != nav_selected_id:
             continue
         _render_card(card, i, total, card_state, dataset_keys, templates, version, focus_id)
 
