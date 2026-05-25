@@ -681,6 +681,7 @@ def render_config_editor(
 
     # 章节导航树筛选（提升到循环外，避免重复赋值）
     nav_section = st.session_state.get("section_nav_filter", {}).get("section", "")
+    nav_scroll_to = st.session_state.get("section_nav_filter", {}).get("scroll_to")
     # nav_section 激活时，跳过筛选栏的 section 过滤（避免双重 section 取交集）
     if nav_section and not focus_id:
         filt = {**filt, "section": ""}
@@ -690,6 +691,9 @@ def render_config_editor(
         if not focus_id and not _card_visible(card, filt):
             continue
         if not focus_id and nav_section and str(card.get("Section no") or "") != nav_section:
+            continue
+        # 导航树选中具体条目时，只渲染该卡片
+        if not focus_id and nav_scroll_to and card.get("_id") != nav_scroll_to:
             continue
         _render_card(card, i, total, card_state, dataset_keys, templates, version, focus_id)
 
