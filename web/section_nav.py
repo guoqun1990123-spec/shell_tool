@@ -145,10 +145,10 @@ def render_section_nav(card_state: list[dict]) -> None:
 
                 if st.button(item_label, key=f"nav_item_{card_id}", use_container_width=True):
                     filt["section"] = sec_no
-                    filt["scroll_to"] = None
+                    filt["scroll_to"] = card_id
                     nav[sec_no] = False
                     st.session_state[_NAV_FILTER_KEY] = filt
                     st.session_state[_NAV_STATE_KEY] = nav
-                    st.session_state[_VIEW_MODE_KEY] = "table"
-                    st.session_state[_TABLE_SECTION_KEY] = sec_no
+                    st.session_state[_VIEW_MODE_KEY] = "card"
+                    st.session_state["_cfg_focus_id"] = None
                     st.rerun()
