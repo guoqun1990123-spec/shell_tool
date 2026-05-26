@@ -244,9 +244,9 @@ def _render_header(
         info_parts.append(tbl_display)
     info_str = " · ".join(info_parts)
 
-    # 7 列布局：收起 | 专注 | ▲ | ▼ | + | ⋮ | 信息/标题
-    c_collapse, c_focus, c_up, c_dn, c_ins, c_more, c_info = st.columns(
-        [0.55, 0.45, 0.28, 0.28, 0.28, 0.28, 4.5]
+    # 8 列布局：收起 | 专注 | ▲ | ▼ | + | ⋮ | 🗂 | 信息/标题
+    c_collapse, c_focus, c_up, c_dn, c_ins, c_more, c_ds, c_info = st.columns(
+        [0.55, 0.45, 0.28, 0.28, 0.28, 0.28, 0.45, 4.5]
     )
 
     # 收起按钮（仅展开时显示）
@@ -308,6 +308,16 @@ def _render_header(
             else:
                 menu.add(card_id)
             st.session_state[_MENU_OPEN_KEY] = menu
+            st.rerun()
+
+    with c_ds:
+        cur_ds_hdr = str(card.get("Datasets", "") or "")
+        if st.button("🗂", key=f"cfg_ds_jump_{card_id}_{version}",
+                     help=f"编辑 Datasets: {cur_ds_hdr}" if cur_ds_hdr else "编辑 Datasets",
+                     disabled=not cur_ds_hdr):
+            st.session_state[_SELECTED_ID_KEY] = card_id
+            st.session_state["selected_row"] = _card_idx_in_state(card_id)
+            st.session_state["active_tab"] = "datasets"
             st.rerun()
 
     # 信息区 / 标题展开入口
