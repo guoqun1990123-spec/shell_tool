@@ -33,6 +33,15 @@ def _ds_open() -> set:
     return st.session_state[_DS_OPEN_KEY]
 
 
+def _card_idx_in_state(card_id: str) -> int | None:
+    """返回卡片在当前 card_state 中的下标，找不到返回 None。"""
+    state = st.session_state.get(_CARD_STATE_KEY, [])
+    for i, c in enumerate(state):
+        if c["_id"] == card_id:
+            return i
+    return None
+
+
 # ── 纯函数 ───────────────────────────────────────────────────────────────────
 
 
@@ -499,9 +508,10 @@ def _render_level1(
             if cur_ds and cur_ds in datasets:
                 ds_df = datasets[cur_ds]
                 st.dataframe(ds_df.head(20), height=150, use_container_width=True)
-                if st.button("编辑完整 Datasets ▶", key=f"cfg_ds_edit_{card_id}_{version}"):
+                if st.button("🗂 编辑 Datasets", key=f"cfg_ds_edit_{card_id}_{version}"):
                     st.session_state[_SELECTED_ID_KEY] = card_id
-                    st.toast("已关联到下方 Datasets 编辑器 ↓")
+                    st.session_state["selected_row"] = _card_idx_in_state(card_id)
+                    st.session_state["active_tab"] = "datasets"
                     st.rerun()
             else:
                 st.caption("未关联 Datasets 或数据表尚未创建")
