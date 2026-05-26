@@ -451,7 +451,7 @@ def _render_level1(
         _field(st, card, "title", card_id, version)
 
         # 行C: pop / MacVar / Datasets
-        rC1, rC2, rC3 = st.columns([2.5, 1.5, 1.5])
+        rC1, rC2, rC3, rC4 = st.columns([2.5, 1.5, 1.5, 0.5])
 
         with rC1:
             cur_pop = str(card.get("pop", "") or "")
@@ -493,6 +493,16 @@ def _render_level1(
                 st.session_state[_CARD_STATE_KEY] = _update_card(
                     card_state, card_id, Datasets=new_ds
                 )
+                st.rerun()
+
+        with rC4:
+            st.write("")
+            if st.button("🗂", key=f"cfg_ds_jump_l1_{card_id}_{version}",
+                         help=f"编辑 Datasets: {cur_ds}" if cur_ds else "编辑 Datasets",
+                         disabled=not cur_ds):
+                st.session_state[_SELECTED_ID_KEY] = card_id
+                st.session_state["selected_row"] = _card_idx_in_state(card_id)
+                st.session_state["active_tab"] = "datasets"
                 st.rerun()
 
         # 行D: Trtlab
