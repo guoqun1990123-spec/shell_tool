@@ -10,6 +10,7 @@ from config_editor import (
     _update_card,
     _compute_table_nos,
     _delete_card,
+    _copy_card,
     _render_level1,
     _empty_card,
     _insert_after,
@@ -74,20 +75,25 @@ def _render_header(
     with col_add:
         if st.button("＋ 添加TFL", key=f"tbl_add_{sec_no}"):
             card_state = st.session_state[_CARD_STATE_KEY]
+            default_trtlab = st.session_state.get("default_trtlab", "").strip()
             if sec_cards:
                 last_id = sec_cards[-1]["_id"]
                 new_state = _insert_after(card_state, last_id)
                 for c in new_state:
                     if c["_id"] not in {x["_id"] for x in card_state}:
-                        new_state = _update_card(new_state, c["_id"],
-                                                 **{"Section no": sec_no})
+                        kw: dict = {"Section no": sec_no}
+                        if default_trtlab:
+                            kw["Trtlab"] = default_trtlab
+                        new_state = _update_card(new_state, c["_id"], **kw)
                         break
             else:
                 new_state = _add_card(card_state)
                 for c in new_state:
                     if c["_id"] not in {x["_id"] for x in card_state}:
-                        new_state = _update_card(new_state, c["_id"],
-                                                 **{"Section no": sec_no})
+                        kw = {"Section no": sec_no}
+                        if default_trtlab:
+                            kw["Trtlab"] = default_trtlab
+                        new_state = _update_card(new_state, c["_id"], **kw)
                         break
             st.session_state[_CARD_STATE_KEY] = new_state
             st.session_state[_VERSION_KEY] = _version() + 1
@@ -106,7 +112,7 @@ def _render_bulk_bar(
 
     pop_options: list[str] = cfg_templates.get("pop_options", [])
 
-    col_all, col_del, col_pop, col_ds, col_spacer = st.columns([0.8, 1.2, 1.5, 1.5, 3])
+    col_all, col_del, col_pop, col_ds, col_trtlab, col_spacer = st.columns([0.8, 1.2, 1.5, 1.5, 2.0, 1.0])
 
     with col_all:
         new_all = st.checkbox("全选", value=all_checked, key=f"tbl_chk_all_{len(sec_cards)}")
@@ -171,11 +177,28 @@ def _render_bulk_bar(
         else:
             st.caption("修改Datasets▼")
 
+    with col_trtlab:
+        sel_in_sec = checked & sec_ids
+        if sel_in_sec:
+            new_trtlab = st.text_input(
+                "批量设Trtlab", placeholder="如 A组|B组|合计",
+                key="tbl_bulk_trtlab", label_visibility="collapsed"
+            )
+            if st.button("填充Trtlab", key="tbl_bulk_trtlab_btn",
+                         disabled=not new_trtlab.strip()):
+                state = st.session_state[_CARD_STATE_KEY]
+                for cid in sel_in_sec:
+                    state = _update_card(state, cid, Trtlab=new_trtlab.strip())
+                st.session_state[_CARD_STATE_KEY] = state
+                st.rerun()
+        else:
+            st.caption("批量填Trtlab▼")
+
 
 def _render_column_header() -> None:
     """列标题行（纯文本标签）。"""
     st.divider()
-    h0, h1, h2, h3, h4, h5, h6 = st.columns([0.5, 1.5, 0.8, 3.0, 1.5, 1.5, 0.5])
+    h0, h1, h2, h3, h4, h5, h6, h7, h8 = st.columns([0.5, 1.5, 0.8, 3.0, 1.5, 1.5, 0.5, 0.5, 0.5])
     with h0: st.caption("☑")
     with h1: st.caption("table no")
     with h2: st.caption("cat")
@@ -183,6 +206,8 @@ def _render_column_header() -> None:
     with h4: st.caption("pop")
     with h5: st.caption("Datasets")
     with h6: st.caption("⊞")
+    with h7: st.caption("⎘")
+    with h8: st.caption("👁")
     st.divider()
 
 
@@ -201,7 +226,7 @@ def _render_row(
     is_checked = card_id in checked
     is_expanded = card_id in expanded
 
-    c0, c1, c2, c3, c4, c5, c6 = st.columns([0.5, 1.5, 0.8, 3.0, 1.5, 1.5, 0.5])
+    c0, c1, c2, c3, c4, c5, c6, c7, c8 = st.columns([0.5, 1.5, 0.8, 3.0, 1.5, 1.5, 0.5, 0.5, 0.5])
 
     with c0:
         new_chk = st.checkbox("", value=is_checked, key=f"tbl_chk_{card_id}_{ver}",
@@ -290,6 +315,25 @@ def _render_row(
             else:
                 expanded.add(card_id)
             st.session_state[_EXPANDED_KEY] = expanded
+            st.rerun()
+
+    with c7:
+        if st.button("⎘", key=f"tbl_copy_{card_id}_{ver}", help="复制此TFL"):
+            state = st.session_state[_CARD_STATE_KEY]
+            st.session_state[_CARD_STATE_KEY] = _copy_card(state, card_id)
+            st.session_state[_VERSION_KEY] = _version() + 1
+            st.rerun()
+
+    with c8:
+        if st.button("👁", key=f"tbl_preview_{card_id}_{ver}", help="预览此TFL（生成单表Word）"):
+            from renderer import run_preview
+            card_state_now = st.session_state[_CARD_STATE_KEY]
+            cur_card = next((c for c in card_state_now if c["_id"] == card_id), card)
+            datasets = st.session_state.get("datasets", {})
+            with st.spinner("渲染中..."):
+                result = run_preview(cur_card, datasets)
+            st.session_state["preview_result"] = result
+            st.session_state["preview_card_title"] = str(cur_card.get("title") or cur_card.get("table no") or "TFL")
             st.rerun()
 
     if is_expanded:

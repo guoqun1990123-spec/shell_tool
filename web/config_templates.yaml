@@ -1,0 +1,20 @@
+section_map:
+  "14.1": "参与者特征"
+  "14.2": "疗效分析"
+  "14.3": "安全性分析"
+  "14.4": "药代动力学"
+  "16.2": "列表"
+pop_options:
+  - 所有筛选参与者
+  - ITT
+  - mITT
+  - FAS
+  - SS
+  - EAS
+  - IS
+  - PKS
+  - PDS
+footnote_snippets:
+  - "数据截止日期：YYYY年MM月DD日"
+  - "FAS=全分析集；SS=安全性分析集；PPS=符合方案集"
+  - "AE=不良事件；TEAE=治疗期间出现的不良事件；SAE=严重不良事件"

@@ -280,7 +280,14 @@ def _render_header(
 
     with c_ins:
         if st.button("+", key=f"cfg_ins_{card_id}_{version}"):
-            st.session_state[_CARD_STATE_KEY] = _insert_after(card_state, card_id)
+            new_state = _insert_after(card_state, card_id)
+            default_trtlab = st.session_state.get("default_trtlab", "").strip()
+            if default_trtlab:
+                for c in new_state:
+                    if c["_id"] not in {x["_id"] for x in card_state}:
+                        new_state = _update_card(new_state, c["_id"], Trtlab=default_trtlab)
+                        break
+            st.session_state[_CARD_STATE_KEY] = new_state
             st.rerun()
 
     # ⋮ 菜单开关
@@ -500,9 +507,32 @@ def _render_level1(
 
         # 展开更多：footnote + level2 字段
         with st.expander("展开更多 ▼"):
+            fn_snippets: list = templates.get("footnote_snippets", [])
             for fn in ["footnote1", "footnote2", "footnote3", "footnote4",
                        "footnote5", "footnote6", "footnote7"]:
-                _field(st, card, fn, card_id, version)
+                if fn_snippets:
+                    fn_col, fn_ins_col = st.columns([5, 1])
+                    val = str(card.get(fn, "") or "")
+                    new_val = fn_col.text_input(fn, value=val, key=f"cfg_{fn}_{card_id}_{version}")
+                    if new_val != val:
+                        st.session_state[_CARD_STATE_KEY] = _update_card(
+                            st.session_state[_CARD_STATE_KEY], card_id, **{fn: new_val}
+                        )
+                        st.rerun()
+                    chosen = fn_ins_col.selectbox(
+                        "插入", ["＋"] + fn_snippets,
+                        key=f"cfg_{fn}_ins_{card_id}_{version}",
+                        label_visibility="collapsed",
+                    )
+                    if chosen != "＋":
+                        cur = str(card.get(fn, "") or "")
+                        merged = (cur + "；" + chosen).lstrip("；")
+                        st.session_state[_CARD_STATE_KEY] = _update_card(
+                            st.session_state[_CARD_STATE_KEY], card_id, **{fn: merged}
+                        )
+                        st.rerun()
+                else:
+                    _field(st, card, fn, card_id, version)
             _render_level2(card, card_state, version)
 
 

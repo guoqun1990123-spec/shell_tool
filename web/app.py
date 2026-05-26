@@ -96,6 +96,8 @@ def _init_state():
         }
     if "active_tab" not in st.session_state:
         st.session_state["active_tab"] = "config"
+    if "default_trtlab" not in st.session_state:
+        st.session_state.default_trtlab = ""
 
 
 def _build_list_column_config() -> dict:
@@ -181,6 +183,14 @@ def main():
             st.session_state.datasets = {}
             st.session_state.selected_row = None
             st.session_state.editor_version += 1
+
+    # 工具栏第二行：默认 Trtlab
+    st.session_state.default_trtlab = st.text_input(
+        "默认 Trtlab（新增TFL时自动填入）",
+        value=st.session_state.default_trtlab,
+        placeholder="如 A组|B组|合计",
+        key="input_default_trtlab",
+    )
 
     # ── 标签页 ──────────────────────────────────────────────────────────────
     _active = st.session_state.get(_ACTIVE_TAB_KEY, "config")
@@ -307,17 +317,27 @@ def main():
             ds_name = ""
             st.info("请先在「Config章节」标签页中点击某行以选中，再切换此标签查看数据表。")
 
-        col_dsname, col_dsadd = st.columns([3, 1])
+        col_dsname, col_dscopy, col_dsadd = st.columns([2, 2, 1])
         with col_dsname:
             new_ds_name = st.text_input("新建数据表名", placeholder="如 t_demo", key="new_ds_name")
+        with col_dscopy:
+            existing_keys = list(st.session_state.datasets.keys())
+            copy_from = st.selectbox(
+                "复制自（可选）", ["— 空白 —"] + existing_keys,
+                key="new_ds_copy_from",
+            )
         with col_dsadd:
+            st.write("")
             st.write("")
             if st.button("新建数据表", key="btn_add_ds"):
                 if new_ds_name and new_ds_name not in st.session_state.datasets:
-                    is_list = new_ds_name == "list"
-                    st.session_state.datasets[new_ds_name] = (
-                        _empty_dataset_list() if is_list else _empty_dataset_table()
-                    )
+                    if copy_from != "— 空白 —" and copy_from in st.session_state.datasets:
+                        st.session_state.datasets[new_ds_name] = st.session_state.datasets[copy_from].copy()
+                    else:
+                        is_list = new_ds_name == "list"
+                        st.session_state.datasets[new_ds_name] = (
+                            _empty_dataset_list() if is_list else _empty_dataset_table()
+                        )
                     st.rerun()
 
         if ds_name and ds_name in st.session_state.datasets:
@@ -420,7 +440,7 @@ def main():
                     st.error(f"保存失败：{e}")
 
         with st.expander("⚙️ Config 模板配置", expanded=True):
-            tab_sec, tab_pop, tab_levels = st.tabs(["Section 映射", "pop 选项", "显示级别"])
+            tab_sec, tab_pop, tab_fn, tab_levels = st.tabs(["Section 映射", "pop 选项", "脚注片段", "显示级别"])
 
             with tab_sec:
                 cfg_tmpl_edit = load_config_templates()
@@ -476,6 +496,33 @@ def main():
                 if st.button("保存 pop 选项", key="btn_save_pop", type="secondary"):
                     try:
                         save_config_templates(cfg_tmpl_pop)
+                        st.cache_data.clear()
+                        st.session_state["cfg_tmpl_version"] = cfg_tmpl_ver + 1
+                        st.success("已保存")
+                    except OSError as e:
+                        st.error(f"保存失败：{e}")
+
+            with tab_fn:
+                cfg_tmpl_fn = load_config_templates()
+                fn_snippets: list = list(cfg_tmpl_fn.get("footnote_snippets", []))
+                new_fn_snippets: list = []
+                for j, snippet in enumerate(fn_snippets):
+                    fc1, fc2 = st.columns([5, 0.5])
+                    with fc1:
+                        new_s = st.text_input(
+                            "脚注片段", value=snippet, label_visibility="collapsed",
+                            key=f"cfgtmpl_fn_{cfg_tmpl_ver}_{j}",
+                        )
+                    with fc2:
+                        if not st.button("🗑", key=f"cfgtmpl_fndel_{cfg_tmpl_ver}_{j}"):
+                            if new_s.strip():
+                                new_fn_snippets.append(new_s.strip())
+                if st.button("＋ 添加片段", key="cfgtmpl_fnadd"):
+                    new_fn_snippets.append("")
+                cfg_tmpl_fn["footnote_snippets"] = new_fn_snippets
+                if st.button("保存脚注片段", key="btn_save_fn", type="secondary"):
+                    try:
+                        save_config_templates(cfg_tmpl_fn)
                         st.cache_data.clear()
                         st.session_state["cfg_tmpl_version"] = cfg_tmpl_ver + 1
                         st.success("已保存")
@@ -638,6 +685,31 @@ def main():
         if rs.get("error_log"):
             with st.expander("查看 R 完整日志"):
                 st.code(rs["error_log"], language=None)
+
+    # ── 单TFL预览结果区 ──────────────────────────────────────────────────────
+    pr = st.session_state.get("preview_result")
+    if pr:
+        pr_title = st.session_state.get("preview_card_title", "TFL")
+        if pr["status"] == "success":
+            elapsed = pr.get("elapsed") or 0
+            size_kb = len(pr["output_bytes"]) // 1024 if pr["output_bytes"] else 0
+            st.success(f"👁 预览就绪：{pr_title}（{elapsed:.1f}s，{size_kb} KB）")
+            st.download_button(
+                label=f"📥 下载预览 {pr_title}.docx",
+                data=pr["output_bytes"],
+                file_name=f"preview_{pr_title}.docx",
+                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                key="btn_preview_download",
+            )
+            if st.button("清除预览", key="btn_preview_clear"):
+                del st.session_state["preview_result"]
+                st.rerun()
+        else:
+            summary = pr.get("error_summary") or "未知错误"
+            st.error(f"👁 预览失败：{summary}")
+            if pr.get("error_log"):
+                with st.expander("查看 R 日志"):
+                    st.code(pr["error_log"], language=None)
 
     # ── YAML 预览（只读，不写 session_state）────────────────────────────────
     with st.expander("YAML 预览"):
