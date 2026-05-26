@@ -10,5 +10,10 @@ output/
 *.tmp
 *~
 
+# Python 缓存
+__pycache__/
+*.pyc
+*.pyo
+
 # Claude Code 内存/配置（本地专用）
 .claude/
