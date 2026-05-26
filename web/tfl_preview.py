@@ -1,6 +1,7 @@
 # web/tfl_preview.py
 """TFL 快速预览 — 纯 HTML/CSS 生成，无 Streamlit 依赖。"""
 from __future__ import annotations
+from html import escape
 import pandas as pd
 
 _BASE_CSS = """
@@ -51,9 +52,9 @@ def _wrap(body: str) -> str:
 
 
 def _header_html(card: dict) -> str:
-    tableno = card.get("table no") or ""
-    title   = card.get("title") or ""
-    pop     = card.get("pop") or ""
+    tableno = escape(str(card.get("table no") or ""))
+    title   = escape(str(card.get("title") or ""))
+    pop     = escape(str(card.get("pop") or ""))
     return (
         f"<div class='tfl-caption'>表 {tableno}</div>"
         f"<div class='tfl-title'><b>{title}</b></div>"
@@ -66,7 +67,7 @@ def _footnotes_html(card: dict) -> str:
     for i in range(1, 8):
         fn = str(card.get(f"footnote{i}") or "").strip()
         if fn:
-            lines.append(f"<div class='tfl-footnote'>{fn}</div>")
+            lines.append(f"<div class='tfl-footnote'>{escape(fn)}</div>")
     return "".join(lines)
 
 
@@ -76,10 +77,10 @@ def _render_pstab(card: dict, datasets: dict) -> str:
 
     trtlab = str(card.get("Trtlab") or "").strip()
     subgrp = str(card.get("Subgrp") or "").strip()
-    varlab = str(card.get("Varlab") or "指标").strip() or "指标"
+    varlab = escape(str(card.get("Varlab") or "指标").strip() or "指标")
 
-    trt_cols = [t.strip() for t in trtlab.split("|")] if trtlab else ["数据列"]
-    sub_cols = [s.strip() for s in subgrp.split("|")] if subgrp else []
+    trt_cols = [escape(t.strip()) for t in trtlab.split("|")] if trtlab else ["数据列"]
+    sub_cols = [escape(s.strip()) for s in subgrp.split("|")] if subgrp else []
 
     # ── 表头 HTML ──
     if sub_cols:
@@ -111,7 +112,11 @@ def _render_pstab(card: dict, datasets: dict) -> str:
     else:
         prev_class = None
         for _, row in df.iterrows():
-            if int(row.get("exclude") or 0) == 1:
+            try:
+                excluded = int(float(row.get("exclude") or 0)) == 1
+            except (ValueError, TypeError):
+                excluded = False
+            if excluded:
                 continue
             cur_class = row.get("Class")
             if prev_class is not None and cur_class != prev_class:
@@ -119,16 +124,21 @@ def _render_pstab(card: dict, datasets: dict) -> str:
                 body_html += f"<tr><td colspan='{n_cols}' style='height:6px'></td></tr>"
             prev_class = cur_class
 
-            order = int(row.get("Order") or 0)
-            label = str(row.get("Label") or "")
-            aval  = str(row.get("Aval") or "")
+            try:
+                order = int(float(row.get("Order") or 0))
+            except (ValueError, TypeError):
+                order = 0
+            label = escape(str(row.get("Label") or ""))
+            aval  = escape(str(row.get("Aval") or ""))
 
             if order == 0:
                 label_cell = f"<td class='tfl-bold tfl-shaded'>{label}</td>"
                 aval_class = "tfl-bold tfl-shaded"
+            elif order == 1:
+                label_cell = f"<td class='tfl-indent1'>{label}</td>"
+                aval_class = "tfl-aval"
             else:
-                indent_cls = "tfl-indent1" if order == 1 else "tfl-indent2"
-                label_cell = f"<td class='{indent_cls}'>{label}</td>"
+                label_cell = f"<td class='tfl-indent2'>{label}</td>"
                 aval_class = "tfl-aval"
 
             body_html += f"<tr>{label_cell}"
@@ -145,12 +155,82 @@ def _render_pstab(card: dict, datasets: dict) -> str:
 
 
 def _render_rptlist(card: dict, datasets: dict) -> str:
-    return _wrap(_header_html(card) + "<p style='color:#888'>（RptList 预览占位）</p>")
+    ds_name = str(card.get("Datasets") or "").strip()
+    list_df = datasets.get("list")
+    badge = "<div class='tfl-badge'>📋 清单视图（横向A4模拟）</div>"
+
+    if list_df is None or list_df.empty:
+        content = _header_html(card) + badge + "<p style='color:#aaa;font-size:9pt'>（无 list 数据集）</p>"
+        return _wrap(content)
+
+    # 筛选对应 ListName 的行，排除 exclude=1
+    if "ListName" in list_df.columns:
+        mask = list_df["ListName"] == ds_name
+        rows = list_df[mask]
+        if rows.empty:
+            rows = list_df
+    else:
+        rows = list_df
+
+    if "exclude" in rows.columns:
+        try:
+            rows = rows[rows["exclude"].fillna(0).astype(float).astype(int) != 1]
+        except (ValueError, TypeError):
+            pass
+
+    cols = [escape(str(r)) for r in rows.get("Lvalable", pd.Series()).tolist() if str(r).strip()]
+
+    if not cols:
+        content = _header_html(card) + badge + "<p style='color:#aaa;font-size:9pt'>（无列定义）</p>"
+        return _wrap(content)
+
+    cols = cols[:10]
+    header_row = "".join(f"<th style='background:#eee;font-size:9pt'>{c}</th>" for c in cols)
+    data_row = "".join("<td style='font-size:9pt;color:#ccc'>────</td>" for _ in cols)
+    rows_html = "".join(f"<tr>{data_row}</tr>" for _ in range(3))
+
+    table_html = (
+        f"<table class='tfl-table' style='font-size:9pt'>"
+        f"<thead><tr>{header_row}</tr></thead>"
+        f"<tbody>{rows_html}</tbody></table>"
+    )
+    content = _header_html(card) + badge + table_html + _footnotes_html(card)
+    return _wrap(content)
 
 
-def _render_mtext(card: dict) -> str:
-    return _wrap(_header_html(card) + "<p style='color:#888'>（mtext 预览占位）</p>")
+_FIGURE_ICONS = {
+    "KMplot": "📈", "Swimplot": "🏊", "WaterfallPlot": "📊",
+    "Spiderplot": "🕷️", "Seriesplot": "📉", "Forestplot": "🌲",
+}
 
 
 def _render_figure(card: dict) -> str:
-    return _wrap(_header_html(card) + "<p style='color:#888'>（图形预览占位）</p>")
+    macvar = str(card.get("MacVar") or "")
+    trtlab = str(card.get("Trtlab") or "").strip()
+    icon = _FIGURE_ICONS.get(macvar, "📊")
+    placeholder = (
+        f"<div class='tfl-placeholder'>"
+        f"{icon}&nbsp;&nbsp;{escape(macvar)}（图形将在 R 端渲染）"
+        f"</div>"
+    )
+    if trtlab:
+        groups = " / ".join(escape(t.strip()) for t in trtlab.split("|"))
+        placeholder += f"<div class='tfl-caption' style='margin-top:4px'>治疗组：{groups}</div>"
+    badge = "<div class='tfl-badge'>📊 图形占位</div>"
+    content = _header_html(card) + badge + placeholder + _footnotes_html(card)
+    return _wrap(content)
+
+
+def _render_mtext(card: dict) -> str:
+    reftfl = escape(str(card.get("RefTFL") or "").strip())
+    if reftfl:
+        ref_html = (
+            f"<p style='font-size:11pt'>格式同表 "
+            f"<span style='color:#1a6091;font-weight:bold'>{reftfl}</span></p>"
+            f"<p style='font-size:9pt;color:#888'>（在左侧导航树中找到该表查看结构）</p>"
+        )
+    else:
+        ref_html = "<p style='color:#aaa'>（未设置 RefTFL）</p>"
+    badge = "<div class='tfl-badge'>🔗 引用已有表格</div>"
+    content = _header_html(card) + badge + ref_html + _footnotes_html(card)
+    return _wrap(content)
