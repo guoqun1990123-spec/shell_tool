@@ -35,6 +35,7 @@ def df_to_card_state(df: pd.DataFrame) -> list[dict]:
     """
     DataFrame → card state。
     推断规则：Order=0 行为父行；其后紧随的 Order=1 行为子行（_linked=True）。
+    导入后自动推断变量类型、修复 Class 编号。
     """
     if df is None or df.empty:
         return []
@@ -42,11 +43,11 @@ def df_to_card_state(df: pd.DataFrame) -> list[dict]:
     records = df.to_dict(orient="records")
     result: list[dict] = []
     current_parent_id: str | None = None
+    current_parent_class: int = 0
 
     for rec in records:
         order = int(rec.get("Order") or 0)
         if order != 0 and current_parent_id is None:
-            # Leading child row with no parent yet — treat as independent parent
             order = 0
         data = {col: rec.get(col, "") for col in DATASET_TABLE_COLS}
         data["Order"] = order
@@ -61,10 +62,19 @@ def df_to_card_state(df: pd.DataFrame) -> list[dict]:
         if order == 0:
             meta = _new_meta(var_type=VAR_TYPE_DEFAULT, parent_id=None, linked=False)
             current_parent_id = meta["_id"]
+            current_parent_class = data["Class"]
         else:
             meta = _new_meta(var_type=VAR_TYPE_DEFAULT, parent_id=current_parent_id, linked=True)
+            if data["Class"] == 0 and current_parent_class:
+                data["Class"] = current_parent_class
 
         result.append({**data, **meta})
+
+    # 修复 Class 编号：按父行出现顺序重编（1, 2, 3...）
+    result = _reindex_class(result)
+
+    # 自动推断变量类型
+    result = _infer_var_types(result)
 
     return result
 
@@ -202,6 +212,152 @@ def sync_children_class(state: list[dict], parent_id: str, new_class: int) -> li
     ]
 
 
+_CONTINUOUS_AVAL_PATTERNS = {
+    "xx", "xx.x", "xx.x (xx.xx)", "xx.x (xx.x)", "xx – xx", "xx - xx",
+    "xx.x – xx.x", "xx.x - xx.x",
+}
+_CATEGORICAL_AVAL_PATTERNS = {"xx (xx.x)", "xx (xx.x)%", "xx（xx.x%）"}
+
+
+def _aval_is_categorical(aval: str) -> bool:
+    """单个 Aval 值是否符合分类模式（支持 | 分隔的多治疗组格式）。"""
+    parts = [p.strip() for p in aval.split("|")]
+    return all(p in _CATEGORICAL_AVAL_PATTERNS or p == "" for p in parts) and any(p for p in parts)
+
+
+def _aval_is_continuous(aval: str) -> bool:
+    """单个 Aval 值是否符合连续变量模式（支持 | 分隔）。"""
+    parts = [p.strip() for p in aval.split("|")]
+    return all(p in _CONTINUOUS_AVAL_PATTERNS or p == "" for p in parts) and any(p for p in parts)
+
+
+def _infer_var_types(state: list[dict]) -> list[dict]:
+    """
+    根据子行数量和 Aval 模式推断父行的 _var_type。
+    仅对 _var_type == '手动输入' 的父行生效，有明确类型的不覆盖。
+    """
+    result = []
+    for row in state:
+        if row.get("_parent_id") is not None:
+            result.append(row)
+            continue
+        if row.get("_var_type", VAR_TYPE_DEFAULT) != VAR_TYPE_DEFAULT:
+            result.append(row)
+            continue
+
+        parent_id = row["_id"]
+        children = [r for r in state if r.get("_parent_id") == parent_id and r.get("_linked")]
+        n_children = len(children)
+
+        if n_children == 0:
+            aval = str(row.get("Aval") or "").strip()
+            if aval and _aval_is_categorical(aval):
+                inferred = "分类变量-无子分类"
+            else:
+                inferred = VAR_TYPE_DEFAULT
+        else:
+            child_avals = [str(c.get("Aval") or "").strip() for c in children]
+            non_empty = [a for a in child_avals if a]
+            if non_empty and all(_aval_is_continuous(a) for a in non_empty):
+                inferred = "连续变量"
+            elif non_empty and all(_aval_is_categorical(a) for a in non_empty):
+                inferred = "分类变量-有子分类"
+            else:
+                inferred = VAR_TYPE_DEFAULT
+
+        result.append({**row, "_var_type": inferred})
+    return result
+
+
+def normalize_dataset_state(state: list[dict], templates: dict) -> tuple[list[dict], list[dict]]:
+    """
+    检查 state 中各父行的 Aval 是否与模板一致。
+    返回 (already_ok_state, conflicts)。
+    conflicts 是需要用户确认的条目列表，每条为：
+      {
+        "parent_id": str,
+        "parent_label": str,
+        "var_type": str,
+        "child_id": str | None,   # None 表示父行自身
+        "child_label": str,
+        "current_aval": str,
+        "template_aval": str,
+        "apply": bool,            # 用户可勾选
+      }
+    """
+    conflicts = []
+    for row in state:
+        if row.get("_parent_id") is not None:
+            continue
+        vtype = row.get("_var_type", VAR_TYPE_DEFAULT)
+        if vtype == VAR_TYPE_DEFAULT:
+            continue
+        tmpl = templates.get(vtype, {})
+        parent_id = row["_id"]
+        parent_label = str(row.get("Label") or "")
+
+        # 父行自身 Aval（无子分类 / 日期变量）
+        tmpl_parent_aval = tmpl.get("aval", "")
+        if tmpl_parent_aval:
+            cur = str(row.get("Aval") or "").strip()
+            if cur != tmpl_parent_aval:
+                conflicts.append({
+                    "parent_id": parent_id,
+                    "parent_label": parent_label,
+                    "var_type": vtype,
+                    "child_id": None,
+                    "child_label": f"[父行] {parent_label}",
+                    "current_aval": cur,
+                    "template_aval": tmpl_parent_aval,
+                    "apply": True,
+                })
+
+        # 子行 Aval（连续变量 / 分类变量-有子分类 的模板子行）
+        tmpl_children = tmpl.get("children", [])
+        linked_children = [r for r in state if r.get("_parent_id") == parent_id and r.get("_linked")]
+
+        for i, child in enumerate(linked_children):
+            cur = str(child.get("Aval") or "").strip()
+
+            if vtype == "分类变量-有子分类":
+                tmpl_aval = "xx (xx.x)"
+                if cur == tmpl_aval:
+                    continue
+            elif i < len(tmpl_children):
+                tmpl_aval = str(tmpl_children[i].get("Aval") or "").strip()
+                if not tmpl_aval or cur == tmpl_aval:
+                    continue
+            else:
+                continue
+
+            conflicts.append({
+                "parent_id": parent_id,
+                "parent_label": parent_label,
+                "var_type": vtype,
+                "child_id": child["_id"],
+                "child_label": str(child.get("Label") or f"子行 {i+1}"),
+                "current_aval": cur,
+                "template_aval": tmpl_aval,
+                "apply": True,
+            })
+
+    return state, conflicts
+
+
+def apply_normalize(state: list[dict], conflicts: list[dict], selected_ids: set[str]) -> list[dict]:
+    """将用户选中的 conflict 条目写回 state。"""
+    updates: dict[str, str] = {}
+    for c in conflicts:
+        key = c["child_id"] or c["parent_id"]
+        if key in selected_ids:
+            updates[key] = c["template_aval"]
+
+    return [
+        {**r, "Aval": updates[r["_id"]]} if r["_id"] in updates else r
+        for r in state
+    ]
+
+
 def _parent_order(state: list[dict]) -> list[dict]:
     """返回所有 Order=0 父行，按当前在 state 中的出现顺序。"""
     return [r for r in state if r.get("_parent_id") is None and int(r.get("Order") or 0) == 0]
@@ -319,7 +475,7 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
     key = state_key(ds_name)
 
     # ── 全局控制栏 ────────────────────────────────────────────────────────
-    col_exp, col_col, col_add = st.columns([1, 1, 3])
+    col_exp, col_col, col_norm, col_add = st.columns([1, 1, 1.2, 3])
     with col_exp:
         if st.button("展开全部", key=f"{ds_name}_expand_all"):
             st.session_state[key] = [{**r, "_expanded": True} for r in st.session_state[key]]
@@ -331,6 +487,30 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                 for r in st.session_state[key]
             ]
             st.rerun()
+    with col_norm:
+        if st.button("🔧 自动矫正", key=f"{ds_name}_normalize",
+                     help="补全 Class 编号、推断变量类型、自动修正 Aval 为模板标准值"):
+            cur = st.session_state[key]
+            cur = _reindex_class(cur)
+            cur = _infer_var_types(cur)
+            _, conflicts = normalize_dataset_state(cur, templates)
+            if conflicts:
+                selected = {c["child_id"] or c["parent_id"] for c in conflicts}
+                cur = apply_normalize(cur, conflicts, selected)
+                st.session_state[key] = cur
+                # Clear widget state keys so Streamlit doesn't overwrite normalized Aval
+                for c in conflicts:
+                    rid = c["child_id"] or c["parent_id"]
+                    for wkey in (f"child_aval_{rid}", f"parent_aval_{rid}", f"unlinked_aval_{rid}"):
+                        if wkey in st.session_state:
+                            del st.session_state[wkey]
+                labels = list(dict.fromkeys(c["parent_label"] for c in conflicts))
+                summary = "、".join(labels[:3]) + ("…" if len(labels) > 3 else "")
+                st.toast(f"✅ 已矫正 {len(conflicts)} 处 Aval（{summary}）")
+            else:
+                st.session_state[key] = cur
+                st.toast("✅ 已自动矫正 Class 编号和变量类型，Aval 均已符合模板")
+            st.rerun()
     with col_add:
         if st.button("＋ 添加变量行", key=f"{ds_name}_add_row", type="secondary"):
             st.session_state[key] = add_parent_row(st.session_state[key])
@@ -338,7 +518,6 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
 
     state = st.session_state[key]
 
-    # ── 行渲染 ────────────────────────────────────────────────────────────
     # 计算父行列表（用于边界判断）
     parent_ids = [r["_id"] for r in state if r.get("_parent_id") is None and int(r.get("Order") or 0) == 0]
 

@@ -76,7 +76,6 @@ def run_render(yaml_content: str) -> dict:
         }
 
     elapsed = time.time() - t0
-    combined = result.stdout + "\n" + result.stderr
 
     if result.returncode != 0 or not _TEMP_DOCX.exists():
         summary, seq_hint = _parse_r_error(result.stderr or result.stdout)

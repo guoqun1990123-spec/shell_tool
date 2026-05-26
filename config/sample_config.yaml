@@ -1,0 +1,6849 @@
+version: 1
+config:
+- SeqNum: 1
+  Section no: ''
+  Section title: ''
+  cat: 表
+  table no: ''
+  title: ''
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_1
+  Trtlab: NA|宜明昂科生物医药技术（上海）股份有限公司
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 2
+  Section no: 14.1.1.1
+  Section title: 表 14.1.1.1 受试者分布 (意向性治疗分析集（ITT）)
+  cat: 表
+  table no: 14.1.1.1
+  title: 受试者分布 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: PStab
+  Datasets: ds_2
+  Trtlab: |-
+    IMM01联合替雷利珠单抗试验组
+    (N=xx)|苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)|合计
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 3
+  Section no: 14.1.1.1
+  Section title: 表 14.1.1.1 受试者分布 (意向性治疗分析集（ITT）)
+  cat: 表
+  table no: ''
+  title: ''
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_3
+  Trtlab: |-
+    IMM01联合替雷利珠单抗试验组
+    (N=xx)|苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)|合计
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 4
+  Section no: 14.1.1.2
+  Section title: 表 14.1.1.2 筛选失败汇总表 (全体筛选受试者)
+  cat: 表
+  table no: 14.1.1.2
+  title: 筛选失败汇总表 (全体筛选受试者)
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_4
+  Trtlab: NA|例数 (%)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 5
+  Section no: 14.1.2
+  Section title: 表 14.1.2 分析集 (随机受试者)
+  cat: 表
+  table no: 14.1.2
+  title: 分析集 (随机受试者)
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_5
+  Trtlab: |-
+    IMM01联合替雷利珠单抗试验组
+    (N=xx)|苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)|合计
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 6
+  Section no: 14.1.3
+  Section title: 表 14.1.3 重要方案偏离 (意向性治疗分析集（ITT）)
+  cat: 表
+  table no: 14.1.3
+  title: 重要方案偏离 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: PStab
+  Datasets: ds_6
+  Trtlab: |-
+    IMM01联合替雷利珠单抗试验组
+    (N=xx)|苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)|合计
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 7
+  Section no: 14.1.4
+  Section title: 表 14.1.4 人口学与基线特征 (意向性治疗分析集（ITT）)
+  cat: 表
+  table no: 14.1.4
+  title: 人口学与基线特征 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: PStab
+  Datasets: ds_7
+  Trtlab: |-
+    苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)|合计
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 8
+  Section no: 14.1.4
+  Section title: 表 14.1.4 人口学与基线特征 (意向性治疗分析集（ITT）)
+  cat: 表
+  table no: ''
+  title: ''
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_8
+  Trtlab: |-
+    苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)|合计
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 9
+  Section no: 14.1.4
+  Section title: 表 14.1.4 人口学与基线特征 (意向性治疗分析集（ITT）)
+  cat: 表
+  table no: ''
+  title: ''
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_9
+  Trtlab: |-
+    苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)|合计
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 10
+  Section no: 14.1.4
+  Section title: 表 14.1.4 人口学与基线特征 (意向性治疗分析集（ITT）)
+  cat: 表
+  table no: ''
+  title: ''
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_10
+  Trtlab: |-
+    苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)|合计
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 11
+  Section no: 14.1.5.1
+  Section title: 表 14.1.5.1 经典型霍奇金淋巴瘤(cHL)史 (意向性治疗分析集（ITT）)
+  cat: 表
+  table no: 14.1.5.1
+  title: 经典型霍奇金淋巴瘤(cHL)史 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: PStab
+  Datasets: ds_11
+  Trtlab: |-
+    苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)|合计
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 12
+  Section no: 14.1.5.1
+  Section title: 表 14.1.5.1 经典型霍奇金淋巴瘤(cHL)史 (意向性治疗分析集（ITT）)
+  cat: 表
+  table no: ''
+  title: ''
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_12
+  Trtlab: |-
+    苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)|合计
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 13
+  Section no: 14.1.5.2
+  Section title: 表 14.1.5.2 既往及现患非cHL病史按SOC和PT汇总 (意向性治疗分析集（ITT）)
+  cat: 表
+  table no: 14.1.5.2
+  title: 既往及现患非cHL病史按SOC和PT汇总 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: PStab
+  Datasets: ds_13
+  Trtlab: |-
+    首选术语（PT），例数 (%)|IMM01联合替雷利珠单抗试验组
+    (N=xx)|苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)|合计
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 14
+  Section no: 14.1.6.1
+  Section title: 表 14.1.6.1 既往cHL治疗史-药物治疗史 (意向性治疗分析集（ITT）)
+  cat: 表
+  table no: 14.1.6.1
+  title: 既往cHL治疗史-药物治疗史 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: PStab
+  Datasets: ds_14
+  Trtlab: |-
+    苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)|合计
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 15
+  Section no: 14.1.6.1
+  Section title: 表 14.1.6.1 既往cHL治疗史-药物治疗史 (意向性治疗分析集（ITT）)
+  cat: 表
+  table no: ''
+  title: ''
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_15
+  Trtlab: |-
+    苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)|合计
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 16
+  Section no: 14.1.6.2
+  Section title: 表 14.1.6.2 既往cHL治疗史-既往放疗史、手术史、既往造血干细胞移植及细胞治疗史 (意向性治疗分析集（ITT）)
+  cat: 表
+  table no: 14.1.6.2
+  title: 既往cHL治疗史-既往放疗史、手术史、既往造血干细胞移植及细胞治疗史 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: PStab
+  Datasets: ds_16
+  Trtlab: |-
+    苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)|合计
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 17
+  Section no: 14.1.6.2
+  Section title: 表 14.1.6.2 既往cHL治疗史-既往放疗史、手术史、既往造血干细胞移植及细胞治疗史 (意向性治疗分析集（ITT）)
+  cat: 表
+  table no: ''
+  title: ''
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_17
+  Trtlab: |-
+    苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)|合计
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 18
+  Section no: 14.1.6.6
+  Section title: 表 14.1.6.6 合并用药按ATC 3级和PN汇总 (意向性治疗分析集（ITT）)
+  cat: 表
+  table no: 14.1.6.6
+  title: 合并用药按ATC 3级和PN汇总 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: PStab
+  Datasets: ds_18
+  Trtlab: |-
+    药物标准名称，例数 (%)|IMM01联合替雷利珠单抗试验组
+    (N=xx)|苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)|合计
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 19
+  Section no: 14.1.7
+  Section title: 表 14.1.7 药物暴露与依从性汇总 (安全性分析集（SS）)
+  cat: 表
+  table no: 14.1.7
+  title: 药物暴露与依从性汇总 (安全性分析集（SS）)
+  pop: SAF
+  MacVar: PStab
+  Datasets: ds_19
+  Trtlab: |-
+    苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)
+  Subgrp: 替雷利珠单抗|苯达莫司汀|吉西他滨
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 20
+  Section no: 14.1.7
+  Section title: 表 14.1.7 药物暴露与依从性汇总 (安全性分析集（SS）)
+  cat: 表
+  table no: ''
+  title: ''
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_20
+  Trtlab: |-
+    苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)
+  Subgrp: 替雷利珠单抗|苯达莫司汀|吉西他滨
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 21
+  Section no: 14.1.7
+  Section title: 表 14.1.7 药物暴露与依从性汇总 (安全性分析集（SS）)
+  cat: 表
+  table no: ''
+  title: ''
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_21
+  Trtlab: |-
+    苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)
+  Subgrp: 替雷利珠单抗|苯达莫司汀|吉西他滨
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 22
+  Section no: 14.1.7
+  Section title: 表 14.1.7 药物暴露与依从性汇总 (安全性分析集（SS）)
+  cat: 表
+  table no: ''
+  title: ''
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_22
+  Trtlab: |-
+    苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)
+  Subgrp: 替雷利珠单抗|苯达莫司汀|吉西他滨
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 23
+  Section no: 14.1.7
+  Section title: 表 14.1.7 药物暴露与依从性汇总 (安全性分析集（SS）)
+  cat: 表
+  table no: ''
+  title: ''
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_23
+  Trtlab: |-
+    苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)
+  Subgrp: 替雷利珠单抗|苯达莫司汀|吉西他滨
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 24
+  Section no: 14.1.7
+  Section title: 表 14.1.7 药物暴露与依从性汇总 (安全性分析集（SS）)
+  cat: 表
+  table no: ''
+  title: ''
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_24
+  Trtlab: |-
+    苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)
+  Subgrp: 替雷利珠单抗|苯达莫司汀|吉西他滨
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 25
+  Section no: 14.1.7
+  Section title: 表 14.1.7 药物暴露与依从性汇总 (安全性分析集（SS）)
+  cat: 表
+  table no: ''
+  title: ''
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_25
+  Trtlab: |-
+    苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)
+  Subgrp: 替雷利珠单抗|苯达莫司汀|吉西他滨
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 26
+  Section no: 14.2.1.1
+  Section title: 表 14.2.1.1 IRC评估的基线影像学检查结果汇总 (意向性治疗分析集（ITT）)
+  cat: 表
+  table no: 14.2.1.1
+  title: IRC评估的基线影像学检查结果汇总 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: PStab
+  Datasets: ds_26
+  Trtlab: |-
+    苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)
+  Subgrp: NA|靶病灶
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 27
+  Section no: 14.2.1.1
+  Section title: 表 14.2.1.1 IRC评估的基线影像学检查结果汇总 (意向性治疗分析集（ITT）)
+  cat: 表
+  table no: ''
+  title: ''
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_27
+  Trtlab: |-
+    苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)
+  Subgrp: NA|脾脏垂直径（cm）
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 28
+  Section no: 14.2.2.1.1.1
+  Section title: 表 14.2.2.1.1.1 IRC基于2014 Lugano淋巴瘤疗效评价标准评估的无进展生存期（PFS）总结表 (意向性治疗分析集（ITT）)
+  cat: 表
+  table no: 14.2.2.1.1.1
+  title: IRC基于2014 Lugano淋巴瘤疗效评价标准评估的无进展生存期（PFS）总结表 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: PStab
+  Datasets: ds_28
+  Trtlab: |-
+    苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 29
+  Section no: 14.2.2.1.1.1
+  Section title: 表 14.2.2.1.1.1 IRC基于2014 Lugano淋巴瘤疗效评价标准评估的无进展生存期（PFS）总结表 (意向性治疗分析集（ITT）)
+  cat: 表
+  table no: ''
+  title: ''
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_29
+  Trtlab: |-
+    苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 30
+  Section no: 14.2.3.4
+  Section title: 表 14.2.3.4 随访时间总结表 (意向性治疗分析集（ITT）)
+  cat: 表
+  table no: 14.2.3.4
+  title: 随访时间总结表 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: PStab
+  Datasets: ds_30
+  Trtlab: |-
+    IMM01联合替雷利珠单抗试验组
+    (N=xx)|苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: tc "The SGPlot Procedure " \f C \l 1
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 31
+  Section no: 14.2.4.1.1
+  Section title: 表 14.2.4.1.1 IRC基于2014 Lugano淋巴瘤疗效评价标准评估的最佳总体疗效、客观缓解率和完全缓解率汇总 (意向性治疗分析集（ITT）)
+  cat: 表
+  table no: 14.2.4.1.1
+  title: IRC基于2014 Lugano淋巴瘤疗效评价标准评估的最佳总体疗效、客观缓解率和完全缓解率汇总 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: PStab
+  Datasets: ds_31
+  Trtlab: |-
+    苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)
+  Subgrp: NA|最佳总体疗效，例数（%）
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 32
+  Section no: 14.2.4.3
+  Section title: 表 14.2.4.3 研究者与IRC评估结果一致比对情况 (意向性治疗分析集（ITT）)
+  cat: 表
+  table no: 14.2.4.3
+  title: 研究者与IRC评估结果一致比对情况 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: PStab
+  Datasets: ds_32
+  Trtlab: |-
+    苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)
+  Subgrp: NA|PD评估
+  Adcols: ''
+  Varlab: ''
+  Labparm: tc "The SGRender Procedure " \f C \l 1
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 33
+  Section no: 14.2.4.4
+  Section title: 表 14.2.4.4 后续抗cHL治疗汇总 (意向性治疗分析集（ITT）)
+  cat: 表
+  table no: 14.2.4.4
+  title: 后续抗cHL治疗汇总 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: PStab
+  Datasets: ds_33
+  Trtlab: |-
+    苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)|合计
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 34
+  Section no: 14.2.5.1
+  Section title: 表 14.2.5.1 血清中IMM01药物浓度按计划时间点汇总 (药代动力学浓度分析集 (PKCS))
+  cat: 表
+  table no: 14.2.5.1
+  title: 血清中IMM01药物浓度按计划时间点汇总 (药代动力学浓度分析集 (PKCS))
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_34
+  Trtlab: NA|计划采集时间点
+  Subgrp: |-
+    C1D1
+    (pre-dose)|C1D1(EOI)|C1D1(4h)|C1D2|C1D3
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 35
+  Section no: 14.2.5.3
+  Section title: 表 14.2.5.3 首次给药后血清中IMM01药代动力学参数汇总 (药代动力学浓度分析集 (PKCS))
+  cat: 表
+  table no: 14.2.5.3
+  title: 首次给药后血清中IMM01药代动力学参数汇总 (药代动力学浓度分析集 (PKCS))
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_35
+  Trtlab: |-
+    AUC0-t
+    (Unit)|AUC0-168
+    (Unit)|AUC0-inf
+    (Unit)|Cmax
+    (Unit)|Tmax
+    (Unit)|t1/2
+    (Unit)|Vz
+    (Unit)|Vss
+    (Unit)|CL
+    (Unit)|MRT0-t
+    (Unit)|MRT0-inf
+    (Unit)|λz
+    (Unit)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: tc "The SGRender Procedure " \f C \l 1
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 36
+  Section no: 14.2.5.4
+  Section title: 表 14.2.5.4 多次给药后血清中IMM01药代动力学参数汇总 (药代动力学浓度分析集 (PKCS))
+  cat: 表
+  table no: 14.2.5.4
+  title: 多次给药后血清中IMM01药代动力学参数汇总 (药代动力学浓度分析集 (PKCS))
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_36
+  Trtlab: |-
+    AUC0-tau
+    (Unit)|Cmax,ss
+    (Unit)|Cavg,ss
+    (Unit)|Tmax,ss
+    (Unit)|t1/2
+    (Unit)|Vz,ss
+    (Unit)|Vss
+    (Unit)|CLss
+    (Unit)|MRTss
+    (Unit)|Rac AUC0-tau
+    (Unit)|Rac Cmax
+    (Unit)|λz,ss
+    (Unit)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 37
+  Section no: 14.3.1.1
+  Section title: 表 14.3.1.1 不良事件AE总结 (安全性分析集（SS）)
+  cat: 表
+  table no: 14.3.1.1
+  title: 不良事件AE总结 (安全性分析集（SS）)
+  pop: SAF
+  MacVar: PStab
+  Datasets: ds_37
+  Trtlab: |-
+    IMM01联合替雷利珠单抗试验组
+    (N=xx)
+    n(%), E*|苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)
+    n(%), E*|合计
+    (N=xx)
+    n(%), E*
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 38
+  Section no: 14.3.1.1
+  Section title: 表 14.3.1.1 不良事件AE总结 (安全性分析集（SS）)
+  cat: 表
+  table no: ''
+  title: ''
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_38
+  Trtlab: |-
+    IMM01联合替雷利珠单抗试验组
+    (N=xx)
+    n(%), E*|苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)
+    n(%), E*|合计
+    (N=xx)
+    n(%), E*
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 39
+  Section no: 14.3.1.2.1
+  Section title: 表 14.3.1.2.1 TEAE按SOC、PT和最严重CTCAE等级降序汇总 (安全性分析集（SS）)
+  cat: 表
+  table no: 14.3.1.2.1
+  title: TEAE按SOC、PT和最严重CTCAE等级降序汇总 (安全性分析集（SS）)
+  pop: SAF
+  MacVar: PStab
+  Datasets: ds_39
+  Trtlab: |-
+    苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)|合计
+    (N=xx)
+  Subgrp: 首选术语（PT）|CTCAE分级，例数 (%)|任意等级|>=3级
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 40
+  Section no: 14.3.1.2.1
+  Section title: 表 14.3.1.2.1 TEAE按SOC、PT和最严重CTCAE等级降序汇总 (安全性分析集（SS）)
+  cat: 表
+  table no: ''
+  title: ''
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_40
+  Trtlab: |-
+    苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)|合计
+    (N=xx)
+  Subgrp: 首选术语（PT）|CTCAE分级，例数 (%)|任意等级|>=3级
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 41
+  Section no: 14.3.1.3.1
+  Section title: 表 14.3.1.3.1 严重不良事件SAE按SOC和PT降序汇总 (安全性分析集（SS）)
+  cat: 表
+  table no: 14.3.1.3.1
+  title: 严重不良事件SAE按SOC和PT降序汇总 (安全性分析集（SS）)
+  pop: SAF
+  MacVar: PStab
+  Datasets: ds_41
+  Trtlab: |-
+    首选术语（PT），例数 (%)|IMM01联合替雷利珠单抗试验组
+    (N=xx)|苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)|合计
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 42
+  Section no: 14.3.1.8
+  Section title: 表 14.3.1.8 死亡受试者汇总 (安全性分析集（SS）)
+  cat: 表
+  table no: 14.3.1.8
+  title: 死亡受试者汇总 (安全性分析集（SS）)
+  pop: SAF
+  MacVar: PStab
+  Datasets: ds_42
+  Trtlab: |-
+    IMM01联合替雷利珠单抗试验组
+    (N=xx)|苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)|合计
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 43
+  Section no: 14.3.4.1.1
+  Section title: 表 14.3.4.1.1 血常规各指标检查结果和相对基线变化情况 - 按访视汇总 (安全性分析集（SS）)
+  cat: 表
+  table no: 14.3.4.1.1
+  title: 血常规各指标检查结果和相对基线变化情况
+  pop: 按访视汇总 (安全性分析集（SS）)
+  MacVar: PStab
+  Datasets: ds_43
+  Trtlab: |-
+    苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)|合计
+    (N=xx)
+  Subgrp: 测量值|变化值|测量值
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 44
+  Section no: 14.3.4.1.2
+  Section title: 表 14.3.4.1.2 血常规各指标检查结果 - 基线与基线后最高CTCAE分级的交叉表 (安全性分析集（SS）)
+  cat: 表
+  table no: 14.3.4.1.2
+  title: 血常规各指标检查结果
+  pop: 基线与基线后最高CTCAE分级的交叉表 (安全性分析集（SS）)
+  MacVar: PStab
+  Datasets: ds_44
+  Trtlab: NA|基线后最差结果
+  Subgrp: 0级|1级|2级
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 45
+  Section no: 14.3.4.4.1
+  Section title: 表 14.3.4.4.1 尿常规各指标检查结果情况 - 按访视汇总 (安全性分析集（SS）)
+  cat: 表
+  table no: 14.3.4.4.1
+  title: 尿常规各指标检查结果情况
+  pop: 按访视汇总 (安全性分析集（SS）)
+  MacVar: PStab
+  Datasets: ds_45
+  Trtlab: |-
+    分析访视，例数 (%)|IMM01联合替雷利珠单抗试验组
+    (N=xx)|苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)|合计
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 46
+  Section no: 14.3.4.4.1
+  Section title: 表 14.3.4.4.1 尿常规各指标检查结果情况 - 按访视汇总 (安全性分析集（SS）)
+  cat: 表
+  table no: ''
+  title: ''
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_46
+  Trtlab: |-
+    分析访视，例数 (%)|IMM01联合替雷利珠单抗试验组
+    (N=xx)|苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)|合计
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 47
+  Section no: 14.3.4.4.2
+  Section title: 表 14.3.4.4.2 尿常规各指标检查结果情况 - 基线与基线后最差临床意义结果的交叉表 (安全性分析集（SS）)
+  cat: 表
+  table no: 14.3.4.4.2
+  title: 尿常规各指标检查结果情况
+  pop: 基线与基线后最差临床意义结果的交叉表 (安全性分析集（SS）)
+  MacVar: PStab
+  Datasets: ds_47
+  Trtlab: NA|基线后最差结果
+  Subgrp: 正常|异常，无临床意义
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 48
+  Section no: 14.3.4.7
+  Section title: 表 14.3.4.7 ECOG评分结果 - 按访视汇总 (安全性分析集（SS）)
+  cat: 表
+  table no: 14.3.4.7
+  title: ECOG评分结果
+  pop: 按访视汇总 (安全性分析集（SS）)
+  MacVar: PStab
+  Datasets: ds_48
+  Trtlab: |-
+    IMM01联合替雷利珠单抗试验组
+    (N=xx)|苯达莫司汀或吉西他滨化疗对照组
+    (N=xx)|合计
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 49
+  Section no: 14.3.4.8.1
+  Section title: 表 14.3.4.8.1 免疫原性结果按计划访视汇总 (免疫原性分析集（ADAS）)
+  cat: 表
+  table no: 14.3.4.8.1
+  title: 免疫原性结果按计划访视汇总 (免疫原性分析集（ADAS）)
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_49
+  Trtlab: |-
+    分析访视，例数 (%)|IMM01联合替雷利珠单抗试验组
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 50
+  Section no: 14.3.4.8.2
+  Section title: 表 14.3.4.8.2 免疫原性结果汇总（受试者层面） (免疫原性分析集（ADAS）)
+  cat: 表
+  table no: 14.3.4.8.2
+  title: 免疫原性结果汇总（受试者层面） (免疫原性分析集（ADAS）)
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_50
+  Trtlab: |-
+    分析访视，例数 (%)|IMM01联合替雷利珠单抗试验组
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 51
+  Section no: 14.3.4.8.3
+  Section title: 表 14.3.4.8.3 ADA（阴性/阳性）与疗效（IRC评估的PFS）的探索分析 (免疫原性分析集（ADAS）)
+  cat: 表
+  table no: 14.3.4.8.3
+  title: ADA（阴性/阳性）与疗效（IRC评估的PFS）的探索分析 (免疫原性分析集（ADAS）)
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_51
+  Trtlab: |-
+    ADA阴性
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 52
+  Section no: 14.3.4.8.5
+  Section title: 表 14.3.4.8.5 ADA（阴性/阳性）与疗效（IRC评估的最佳总体疗效、客观缓解率和完全缓解率）的探索分析 (免疫原性分析集（ADAS）)
+  cat: 表
+  table no: 14.3.4.8.5
+  title: ADA（阴性/阳性）与疗效（IRC评估的最佳总体疗效、客观缓解率和完全缓解率）的探索分析 (免疫原性分析集（ADAS）)
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_52
+  Trtlab: |-
+    ADA阴性
+    (N=xx)
+  Subgrp: NA|最佳总体疗效，例数（%）
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 53
+  Section no: 14.3.4.8.6
+  Section title: 表 14.3.4.8.6 ADA（阴性/阳性）与安全性（TEAE）的探索分析按SOC和PT降序汇总 (免疫原性分析集（ADAS）)
+  cat: 表
+  table no: 14.3.4.8.6
+  title: ADA（阴性/阳性）与安全性（TEAE）的探索分析按SOC和PT降序汇总 (免疫原性分析集（ADAS）)
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_53
+  Trtlab: |-
+    首选术语（PT），例数 (%)|ADA阳性
+    (N=xx)|ADA阴性
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 54
+  Section no: 14.3.4.8.10
+  Section title: 表 14.3.4.8.10 ADA（阴性/阳性）与安全性（血小板减少、淋巴细胞降低和贫血）的探索分析 (免疫原性分析集（ADAS）)
+  cat: 表
+  table no: 14.3.4.8.10
+  title: ADA（阴性/阳性）与安全性（血小板减少、淋巴细胞降低和贫血）的探索分析 (免疫原性分析集（ADAS）)
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_54
+  Trtlab: |-
+    首选术语（PT），例数 (%)|ADA阳性
+    (N=xx)|ADA阴性
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 55
+  Section no: 14.3.4.8.12
+  Section title: 表 14.3.4.8.12 CD47表达与疗效（IRC评估的PFS）的探索性分析 (安全性分析集（SS）)
+  cat: 表
+  table no: 14.3.4.8.12
+  title: CD47表达与疗效（IRC评估的PFS）的探索性分析 (安全性分析集（SS）)
+  pop: SAF
+  MacVar: PStab
+  Datasets: ds_55
+  Trtlab: |-
+    CD47分组2
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: tc "The SGRender Procedure " \f C \l 1
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 56
+  Section no: 14.3.4.8.13
+  Section title: 表 14.3.4.8.13 CD47表达与疗效（IRC评估的ORR）的探索性分析 (安全性分析集（SS）)
+  cat: 表
+  table no: 14.3.4.8.13
+  title: CD47表达与疗效（IRC评估的ORR）的探索性分析 (安全性分析集（SS）)
+  pop: SAF
+  MacVar: PStab
+  Datasets: ds_56
+  Trtlab: |-
+    CD47分组2
+    (N=xx)
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 57
+  Section no: 16.2.1.1
+  Section title: 列表 16.2.1.1 筛选情况列表 (全体筛选受试者)
+  cat: 列表
+  table no: 16.2.1.1
+  title: 筛选情况列表 (全体筛选受试者)
+  pop: ''
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    知情同意日期|筛选失败原因|不满足的入选
+    标准编号|满足的排除
+    标准编号|随机日期|试验组别|若为化疗对照组，
+    化疗方案|首次用药日期|IMM01/苯达莫司汀/
+    吉西他滨治疗
+    结束日期（研究日）|IMM01/苯达莫司汀/
+    吉西他滨治疗
+    结束原因|替雷利珠单抗
+    治疗结束日期（研究日）|替雷利珠单抗
+    治疗结束原因
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 58
+  Section no: 16.2.1.2
+  Section title: 列表 16.2.1.2 提前退出研究治疗的受试者列表 (随机受试者)
+  cat: 列表
+  table no: 16.2.1.2
+  title: 提前退出研究治疗的受试者列表 (随机受试者)
+  pop: ''
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    性别/|年龄（岁）|治疗结束药物|随机日期|治疗结束日期
+    （研究日）|治疗结束主要原因|若重大方案违背
+    或其他，请详述
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 59
+  Section no: 16.2.1.3
+  Section title: 列表 16.2.1.3 提前退出研究的受试者列表 (随机受试者)
+  cat: 列表
+  table no: 16.2.1.3
+  title: 提前退出研究的受试者列表 (随机受试者)
+  pop: ''
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    性别/|年龄（岁）|试验组别|若为化疗对照组，
+    化疗方案|随机日期|首次给药日期
+    （研究日）|末次给药日期
+    （研究日）|提前退出研究日期
+    （研究日）|提前退出原因|若其他原因，请详述
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 60
+  Section no: 16.2.2
+  Section title: 列表 16.2.2 所有方案偏离列表 (意向性治疗分析集（ITT）)
+  cat: 列表
+  table no: 16.2.2
+  title: 所有方案偏离列表 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: RptList
+  Datasets: list
+  Trtlab: 性别|年龄（岁）|方案偏离日期（研究日）|方案偏离的类别|详述|方案偏离程度
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 61
+  Section no: 16.2.3
+  Section title: 列表 16.2.3 剔除分析集的受试者列表 (随机受试者)
+  cat: 列表
+  table no: 16.2.3
+  title: 剔除分析集的受试者列表 (随机受试者)
+  pop: ''
+  MacVar: RptList
+  Datasets: list
+  Trtlab: 性别|年龄（岁）|分析集|是否进入|未进入原因
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 62
+  Section no: 16.2.4.1
+  Section title: 列表 16.2.4.1 人口学与基线特征列表 (意向性治疗分析集（ITT）)
+  cat: 列表
+  table no: 16.2.4.1
+  title: 人口学与基线特征列表 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: RptList
+  Datasets: list
+  Trtlab: 性别/|年龄（岁）|民族|身高（m）|体重（kg）|体重指数（kg/m2）|饮酒史|吸烟史|药物滥用史|ECOG
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 63
+  Section no: 16.2.4.2
+  Section title: 列表 16.2.4.2 经典型霍奇金淋巴瘤(cHL)史列表 (意向性治疗分析集（ITT）)
+  cat: 列表
+  table no: 16.2.4.2
+  title: 经典型霍奇金淋巴瘤(cHL)史列表 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    性别/|年龄（岁）|首次诊断
+    日期
+    （研究日）|首次诊断
+    Lugano分期|进入研究时
+    诊断日期
+    （研究日）|进入研究时
+    Lugano分期|病理诊断分型|有无大包块
+    （如有，最大直径（厘米））|有无B症状|B症状描述|最近一次
+    疾病进展日期
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 64
+  Section no: 16.2.4.3
+  Section title: 列表 16.2.4.3 既往及现患非cHL病史列表 (意向性治疗分析集（ITT）)
+  cat: 列表
+  table no: 16.2.4.3
+  title: 既往及现患非cHL病史列表 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    性别/|年龄（岁）|疾病名称/
+    系统器官分类（SOC）/
+    首选术语（PT）|开始日期（研究日）|是否持续|结束日期（研究日）
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 65
+  Section no: 16.2.4.4.1
+  Section title: 列表 16.2.4.4.1 既往cHL治疗史-药物治疗史列表 (意向性治疗分析集（ITT）)
+  cat: 列表
+  table no: 16.2.4.4.1
+  title: 既往cHL治疗史-药物治疗史列表 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    性别/|年龄（岁）|治疗线数|方案名称|最佳疗效|治疗结束原因|疾病进展日期|药物名称/
+    ATC3级/
+    药物标准名称|药物类型|治疗周期|开始日期（研究日）/
+    结束日期（研究日）|剂量（单位）|给药途径
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 66
+  Section no: 16.2.4.4.2
+  Section title: 列表 16.2.4.4.2 既往cHL治疗史-放疗史 (意向性治疗分析集（ITT）)
+  cat: 列表
+  table no: 16.2.4.4.2
+  title: 既往cHL治疗史-放疗史 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    性别/|年龄（岁）|放射部位|治疗类型|总剂量（单位）|开始日期（研究日）/
+    结束日期（研究日）|放疗野内病灶
+    在本项目筛选期
+    相较于放疗结束后
+    是否明确进展|结束治疗原因|疾病进展日期|最佳疗效
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 67
+  Section no: 16.2.4.4.3
+  Section title: 列表 16.2.4.4.3 既往cHL治疗史-手术史 (意向性治疗分析集（ITT）)
+  cat: 列表
+  table no: 16.2.4.4.3
+  title: 既往cHL治疗史-手术史 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    性别/|年龄（岁）|系统器官分类（SOC）/
+    首选术语（PT）/
+    手术名称|手术日期（研究日）|手术目的
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 68
+  Section no: 16.2.4.4.4
+  Section title: 列表 16.2.4.4.4 既往cHL治疗史-既往造血干细胞移植 (意向性治疗分析集（ITT）)
+  cat: 列表
+  table no: 16.2.4.4.4
+  title: 既往cHL治疗史-既往造血干细胞移植 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: RptList
+  Datasets: list
+  Trtlab: 性别/|年龄（岁）|治疗日期（研究日）|疗效结果|其他，请描述
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 69
+  Section no: 16.2.4.4.5
+  Section title: 列表 16.2.4.4.5 既往cHL治疗史-既往细胞治疗史 (意向性治疗分析集（ITT）)
+  cat: 列表
+  table no: 16.2.4.4.5
+  title: 既往cHL治疗史-既往细胞治疗史 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: RptList
+  Datasets: list
+  Trtlab: 性别/|年龄（岁）|治疗线数|治疗方案名称|细胞治疗靶点|治疗日期（研究日）|最佳疗效|是否发生疾病进展|疾病进展日期
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 70
+  Section no: 16.2.4.5.1
+  Section title: 列表 16.2.4.5.1 既往与合并用药列表 (意向性治疗分析集（ITT）)
+  cat: 列表
+  table no: 16.2.4.5.1
+  title: 既往与合并用药列表 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: RptList
+  Datasets: list
+  Trtlab: 性别/|年龄（岁）|ATC3级/|药物标准名称/|药物名称|开始日期（研究日）/|结束日期（研究日）/|是否持续|用药目的|若为不良事件，具体为|给药途径|剂量（单位）|给药频率
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 71
+  Section no: 16.2.4.5.2
+  Section title: 列表 16.2.4.5.2 既往与合并非药物治疗列表 (意向性治疗分析集（ITT）)
+  cat: 列表
+  table no: 16.2.4.5.2
+  title: 既往与合并非药物治疗列表 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    性别/|年龄（岁）|系统器官分类（SOC）/
+    首选术语（PT）/
+    治疗名称|治疗目的|若为不良事件，具体为|开始日期（研究日）/
+    结束日期（研究日）/
+    是否持续
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 72
+  Section no: 16.2.4.5.3
+  Section title: 列表 16.2.4.5.3 既往手术史列表 (意向性治疗分析集（ITT）)
+  cat: 列表
+  table no: 16.2.4.5.3
+  title: 既往手术史列表 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: RptList
+  Datasets: list
+  Trtlab: 性别/|年龄（岁）|系统器官分类（SOC）/首选术语（PT）/手术名称|手术日期（研究日）
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 73
+  Section no: 16.2.5.1
+  Section title: 列表 16.2.5.1 IMM01药物暴露情况列表 (安全性分析集（SS）)
+  cat: 列表
+  table no: 16.2.5.1
+  title: IMM01药物暴露情况列表 (安全性分析集（SS）)
+  pop: SAF
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    性别/|年龄（岁）|未使用原因|药物编号|是否延迟给药/原因|计划给药剂量（mg）/
+    实际给药剂量（mg）|给药开始日期（研究日）/
+    给药结束日期（研究日）|是否出现输液反应|是否中断给药/原因|中断开始日期/
+    中断结束日期|是否调整剂量/原因
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 74
+  Section no: 16.2.5.2
+  Section title: 列表 16.2.5.2 替雷利珠单抗药物暴露情况列表 (安全性分析集（SS）)
+  cat: 列表
+  table no: 16.2.5.2
+  title: 替雷利珠单抗药物暴露情况列表 (安全性分析集（SS）)
+  pop: SAF
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    性别/|年龄（岁）|未使用原因|药物编号|是否延迟给药/原因|实际给药剂量（mg）|给药开始日期（研究日）/
+    给药结束日期（研究日）|是否出现输液反应|是否中断给药/原因|中断开始日期/
+    中断结束日期|是否调整剂量/原因
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 75
+  Section no: 16.2.5.3
+  Section title: 列表 16.2.5.3 苯达莫司汀药物暴露情况列表 (安全性分析集（SS）)
+  cat: 列表
+  table no: 16.2.5.3
+  title: 苯达莫司汀药物暴露情况列表 (安全性分析集（SS）)
+  pop: SAF
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    性别/|年龄（岁）|未使用原因|给药时间点|药物编号|是否延迟
+    给药/原因|剂量组|计划给药剂量（mg）/
+    实际给药剂量（mg）|给药开始日期（研究日）/
+    给药结束日期（研究日）|是否出现
+    输液反应|是否中断
+    给药/原因|中断开始日期/
+    中断结束日期|是否调整
+    剂量/原因
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 76
+  Section no: 16.2.5.4
+  Section title: 列表 16.2.5.4 吉西他滨药物暴露情况列表 (安全性分析集（SS）)
+  cat: 列表
+  table no: 16.2.5.4
+  title: 吉西他滨药物暴露情况列表 (安全性分析集（SS）)
+  pop: SAF
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    性别/|年龄（岁）|未使用原因|药物编号|是否延迟
+    给药/原因|剂量组|计划给药剂量（mg）/
+    实际给药剂量（mg）|给药开始日期（研究日）/
+    给药结束日期（研究日）|是否出现
+    输液反应|是否中断
+    给药/原因|中断开始日期/
+    中断结束日期|是否调整剂量/原因
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 77
+  Section no: 16.2.5.5.1
+  Section title: 列表 16.2.5.5.1 血清中IMM01个体浓度列表 (药代动力学浓度分析集 (PKCS))
+  cat: 列表
+  table no: 16.2.5.5.1
+  title: 血清中IMM01个体浓度列表 (药代动力学浓度分析集 (PKCS))
+  pop: ''
+  MacVar: RptList
+  Datasets: list
+  Trtlab: 性别/|年龄（岁）|样本编号|访视|给药时间|计划采集时间点|采样日期（研究日）|实际采集时间点|实际偏差时间|分析物名称|检查结果（单位）|检出下限|备注
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 78
+  Section no: 16.2.5.5.2
+  Section title: 列表 16.2.5.5.2 首次给药后血清中IMM01药代动力学参数（含诊断参数）列表 (药代动力学浓度分析集 (PKCS))
+  cat: 列表
+  table no: 16.2.5.5.2
+  title: 首次给药后血清中IMM01药代动力学参数（含诊断参数）列表 (药代动力学浓度分析集 (PKCS))
+  pop: ''
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    AUC0-t
+    （单位）|AUC0-168
+    （单位）|AUC0-inf
+    （单位）|Cmax
+    （单位）|Tmax
+    （单位）|t1/2
+    （单位）|Vz
+    （单位）|Vss
+    （单位）|CL
+    （单位）|MRT0-t
+    （单位）|MRT0-inf
+    （单位）|λz
+    （单位）
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 79
+  Section no: 16.2.5.5.2
+  Section title: 列表 16.2.5.5.2 首次给药后血清中IMM01药代动力学参数（含诊断参数）列表 (药代动力学浓度分析集 (PKCS))
+  cat: 表
+  table no: ''
+  title: ''
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_79
+  Trtlab: |-
+    Npt
+    （单位）|λz lower
+    （单位）|λz upper
+    （单位）|Rsq,adj
+    （单位）|%AUCex
+    （单位）
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 80
+  Section no: 16.2.5.5.3
+  Section title: 列表 16.2.5.5.3 多次给药后血清中IMM01药代动力学参数（含诊断参数）列表 (药代动力学浓度分析集 (PKCS))
+  cat: 列表
+  table no: 16.2.5.5.3
+  title: 多次给药后血清中IMM01药代动力学参数（含诊断参数）列表 (药代动力学浓度分析集 (PKCS))
+  pop: ''
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    AUC0-tau
+    （单位）|Cmax,ss
+    （单位）|Cavg,ss
+    （单位）|Tmax,ss
+    （单位）|t1/2
+    （单位）|Vz,ss
+    （单位）|Vss（单位）|CLss
+    （单位）|MRTss
+    （单位）|Rac AUC0-tau
+    （单位）|Rac Cmax
+    （单位）|λz,ss
+    （单位）
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 81
+  Section no: 16.2.5.5.3
+  Section title: 列表 16.2.5.5.3 多次给药后血清中IMM01药代动力学参数（含诊断参数）列表 (药代动力学浓度分析集 (PKCS))
+  cat: 表
+  table no: ''
+  title: ''
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_81
+  Trtlab: |-
+    Npt
+    （单位）|λz lower
+    （单位）|λz upper
+    （单位）|Rsq,adj
+    （单位）|%AUCex
+    （单位）
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 82
+  Section no: 16.2.6.1.1
+  Section title: 列表 16.2.6.1.1 受试者靶病灶（IRC）评估结果列表 (意向性治疗分析集（ITT）)
+  cat: 列表
+  table no: 16.2.6.1.1
+  title: 受试者靶病灶（IRC）评估结果列表 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    访视|未做状态|未做原因|检测日期
+    （研究日）|病灶编号|部位|检查方法|最长横径（mm）|最长横径的
+    垂直径（mm）|直径乘积（mm2）|直径乘积合计（mm2）|靶病灶评价结果|记录接受标识
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 83
+  Section no: 16.2.6.2.1
+  Section title: 列表 16.2.6.2.1 受试者非靶病灶（IRC）评估结果列表 (意向性治疗分析集（ITT）)
+  cat: 列表
+  table no: 16.2.6.2.1
+  title: 受试者非靶病灶（IRC）评估结果列表 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    访视|未做状态|未做原因|检测日期
+    （研究日）|病灶编号|部位|检查方法|病灶状态|非靶病灶评价结果|记录接受标识
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 84
+  Section no: 16.2.6.3.1
+  Section title: 列表 16.2.6.3.1 受试者新病灶（IRC）评估结果列表 (意向性治疗分析集（ITT）)
+  cat: 列表
+  table no: 16.2.6.3.1
+  title: 受试者新病灶（IRC）评估结果列表 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    访视|检测日期
+    （研究日）|病灶编号|部位|检查方法|病灶状态|记录接受标识
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 85
+  Section no: 16.2.6.4.1
+  Section title: 列表 16.2.6.4.1 受试者脾脏（IRC）评估结果列表 (意向性治疗分析集（ITT）)
+  cat: 列表
+  table no: 16.2.6.4.1
+  title: 受试者脾脏（IRC）评估结果列表 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    访视|评估日期
+    （研究日）|评估方法|脾脏垂直径（cm）|脾脏评估结果
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 86
+  Section no: 16.2.6.5
+  Section title: 列表 16.2.6.5 受试者肿瘤评估-骨髓检查结果列表 (意向性治疗分析集（ITT）)
+  cat: 列表
+  table no: 16.2.6.5
+  title: 受试者肿瘤评估-骨髓检查结果列表 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    访视|采样日期
+    （研究日）|未做骨髓
+    穿刺活检？|未做原因|组织病理学结果|免疫组化检查结果|流式细胞学检查结果|骨髓浸润
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 87
+  Section no: 16.2.6.6
+  Section title: 列表 16.2.6.6 受试者细胞学/病理学检查结果列表 (意向性治疗分析集（ITT）)
+  cat: 列表
+  table no: 16.2.6.6
+  title: 受试者细胞学/病理学检查结果列表 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    访视|采样日期
+    （研究日）|未做细胞学/
+    病理学检查？|未做原因|检查方法|样本类型|检查结果
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 88
+  Section no: 16.2.6.7.1
+  Section title: 列表 16.2.6.7.1 受试者肿瘤评估-PET/CT（IRC）评估结果列表 (意向性治疗分析集（ITT）)
+  cat: 列表
+  table no: 16.2.6.7.1
+  title: 受试者肿瘤评估-PET/CT（IRC）评估结果列表 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    访视|检测日期
+    （研究日）|纵隔血池（单位）|肝脏血池（单位）|最强摄取病灶部位|最强摄取病灶摄取值（单位）|5PS评分|当评分为4或5时，
+    与基线相比，
+    摄取状态|骨髓是否FDG高摄取，
+    累及骨髓|SUVmax值
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 89
+  Section no: 16.2.6.8.1
+  Section title: 列表 16.2.6.8.1 受试者总体疗效基于2014 Lugano淋巴瘤疗效评价标准（IRC）评估结果列表 (意向性治疗分析集（ITT）)
+  cat: 列表
+  table no: 16.2.6.8.1
+  title: 受试者总体疗效基于2014 Lugano淋巴瘤疗效评价标准（IRC）评估结果列表 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    访视|检测日期
+    （研究日）|评估项名称|评估结果|记录接受标识
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 90
+  Section no: 16.2.6.9.1
+  Section title: 列表 16.2.6.9.1 IRC评估的无进展生存期列表 (意向性治疗分析集（ITT）)
+  cat: 列表
+  table no: 16.2.6.9.1
+  title: IRC评估的无进展生存期列表 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    随机化日期|首次CR/PR日期
+    （研究日）|死亡日期
+    （研究日）|PD日期
+    （研究日）|时间-事件终点|事件/删失|事件类型/删失原因|事件/删失日期|时间（月）
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 91
+  Section no: 16.2.6.10
+  Section title: 列表 16.2.6.10 总生存期 (意向性治疗分析集（ITT）)
+  cat: 列表
+  table no: 16.2.6.10
+  title: 总生存期 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    随机化日期|死亡日期
+    （研究日）|时间-事件终点|事件/删失|事件/删失情况|事件/删失日期|时间（月）
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 92
+  Section no: 16.2.6.11
+  Section title: 列表 16.2.6.11 随访时间列表 (意向性治疗分析集（ITT）)
+  cat: 列表
+  table no: 16.2.6.11
+  title: 随访时间列表 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    首次给药日期|死亡日期
+    （研究日）|最后已知存活日期
+    （研究日）|随访时间（月）
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 93
+  Section no: 16.2.6.12
+  Section title: 列表 16.2.6.12 后续抗cHL治疗列表 (意向性治疗分析集（ITT）)
+  cat: 列表
+  table no: 16.2.6.12
+  title: 后续抗cHL治疗列表 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    性别/|年龄（岁）|开始日期（研究日）|治疗方法|药物名称|药物开始日期（研究日）/
+    药物结束日期（研究日）|备注
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 94
+  Section no: 16.2.7.1
+  Section title: 列表 16.2.7.1 不良事件列表 (安全性分析集（SS）)
+  cat: 列表
+  table no: 16.2.7.1
+  title: 不良事件列表 (安全性分析集（SS）)
+  pop: SAF
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    性别/|年龄（岁）|系统器官分类（SOC）/
+    首选术语（PT）/
+    不良事件名称|开始时间（研究日）/
+    结束时间（研究日）/
+    持续时间（天）|不良事件发生在|转归|CTCAE开始级别/
+    最重级别|与IMM01的相关性|与替雷利珠相关性/
+    与苯达莫司汀或
+    吉西他滨的相关性
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 95
+  Section no: 16.2.7.1
+  Section title: 列表 16.2.7.1 不良事件列表 (安全性分析集（SS）)
+  cat: 表
+  table no: ''
+  title: ''
+  pop: ''
+  MacVar: PStab
+  Datasets: ds_95
+  Trtlab: |-
+    性别/|年龄（岁）|对IMM01的措施|对替雷利珠的措施/
+    对苯达莫司汀或
+    吉西他滨的措施|合并用药/合并非药物治疗/其他：描述|退出试验？/输液反应？/irAE？|SAE?/升级为
+    SAE的日期|SAE标准
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 96
+  Section no: 16.2.7.6
+  Section title: 列表 16.2.7.6 死亡列表 (安全性分析集（SS）)
+  cat: 列表
+  table no: 16.2.7.6
+  title: 死亡列表 (安全性分析集（SS）)
+  pop: SAF
+  MacVar: RptList
+  Datasets: list
+  Trtlab: 死亡日期（研究日）|死亡原因|详细说明
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 97
+  Section no: 16.2.8.1
+  Section title: 列表 16.2.8.1 实验室检查列表 (安全性分析集（SS）)
+  cat: 列表
+  table no: 16.2.8.1
+  title: 实验室检查列表 (安全性分析集（SS）)
+  pop: SAF
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    性别/|年龄（岁）|检查项目（单位）|访视|未做状态/原因|检查日期
+    （研究日）|检查结果|基线标识|相对基线变化值|正常值
+    下限/上限|临床意义|CTCAE分级
+    升高名称/分级|CTCAE分级
+    降低名称/分级
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 98
+  Section no: 16.2.8.3
+  Section title: 列表 16.2.8.3 生命体征各指标列表 (安全性分析集（SS）)
+  cat: 列表
+  table no: 16.2.8.3
+  title: 生命体征各指标列表 (安全性分析集（SS）)
+  pop: SAF
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    检查项目（单位）|访视|未做状态/原因|检查日期
+    （研究日）|计划时间点|检查结果|基线标识|相对基线变化值|体温检查部位
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 99
+  Section no: 16.2.8.4
+  Section title: 列表 16.2.8.4 体格检查各指标列表 (安全性分析集（SS）)
+  cat: 列表
+  table no: 16.2.8.4
+  title: 体格检查各指标列表 (安全性分析集（SS）)
+  pop: SAF
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    性别/|年龄（岁）|检查项目|访视|未做状态/原因|检查日期
+    （研究日）|检查结果|异常有临床意义描述
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 100
+  Section no: 16.2.8.5
+  Section title: 列表 16.2.8.5 12导联心电图及心脏彩超列表 (安全性分析集（SS）)
+  cat: 列表
+  table no: 16.2.8.5
+  title: 12导联心电图及心脏彩超列表 (安全性分析集（SS）)
+  pop: SAF
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    性别/|年龄（岁）|检查项目（单位）|访视|未做状态/原因|检查日期
+    （研究日）|检查结果|基线标识|相对基线变化值|如异常有临床意义
+    或无法评估，请描述
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 101
+  Section no: 16.2.8.6
+  Section title: 列表 16.2.8.6 ECOG评分列表 (安全性分析集（SS）)
+  cat: 列表
+  table no: 16.2.8.6
+  title: ECOG评分列表 (安全性分析集（SS）)
+  pop: SAF
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    访视|未做状态/原因|评分日期
+    （研究日）|ECOG评分|基线标识
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 102
+  Section no: 16.2.8.7
+  Section title: 列表 16.2.8.7 生物标志物检测结果列表 (意向性治疗分析集（ITT）)
+  cat: 列表
+  table no: 16.2.8.7
+  title: 生物标志物检测结果列表 (意向性治疗分析集（ITT）)
+  pop: FAS
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    性别/|年龄（岁）|生物标志物|检查项目（单位）|访视|检查日期
+    （研究日）|样本编码|样本类型|检查结果
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+- SeqNum: 103
+  Section no: 16.2.8.8
+  Section title: 列表 16.2.8.8 抗药抗体（ADA）和/或中和抗体（NAb）检测结果列表 (免疫原性分析集（ADAS）)
+  cat: 列表
+  table no: 16.2.8.8
+  title: 抗药抗体（ADA）和/或中和抗体（NAb）检测结果列表 (免疫原性分析集（ADAS）)
+  pop: ''
+  MacVar: RptList
+  Datasets: list
+  Trtlab: |-
+    性别/|年龄（岁）|访视|未做状态/原因|检查日期
+    （研究日）|时间点|样本编码|样本类型|ADA检查结果|滴度|Nab检查结果|基线标识
+  Subgrp: ''
+  Adcols: ''
+  Varlab: ''
+  Labparm: ''
+  footnote1: ''
+  footnote2: ''
+  footnote3: ''
+  footnote4: ''
+  footnote5: ''
+  footnote6: ''
+  footnote7: ''
+  PgmNotes: ''
+  ByseqL: ~
+  RefTFL: ''
+datasets:
+  ds_1:
+  - Class: IMM01-008
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: 数据提取日期：YYYY-MM-DD
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: 目 录
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  ds_2:
+  - Class: ''
+    Label: 随机的受试者
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 至少接受一次研究治疗的受试者
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 至少接受一次IMM01的受试者
+    Order: 2
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 至少接受一次替雷利珠单抗的受试者
+    Order: 2
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 数据截止日仍然接受研究治疗的受试者
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 终止研究治疗的受试者
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 终止IMM01或苯达莫司汀/吉西他滨的受试者
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 达到研究方案规定的最长治疗时限
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 疾病进展
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 无法耐受的不良事件
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 经研究者评估永久停药
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 接受其他系统性抗肿瘤治疗
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 受试者或受试者的法定代理人要求终止治疗
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 重大方案违背
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 死亡
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 申办方终止研究
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 妊娠
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 失访
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 其他
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 终止替雷利珠单抗的受试者
+    Order: 2
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 达到研究方案规定的最长治疗时限
+    Order: 4
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 疾病进展
+    Order: 4
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 无法耐受的不良事件
+    Order: 4
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_3:
+  - Class: ''
+    Label: 经研究者评估永久停药
+    Order: 4
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 接受其他系统性抗肿瘤治疗
+    Order: 4
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 受试者或受试者的法定代理人要求终止治疗
+    Order: 4
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 重大方案违背
+    Order: 4
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 死亡
+    Order: 4
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 申办方终止研究
+    Order: 4
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 妊娠
+    Order: 4
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 失访
+    Order: 4
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 其他
+    Order: 4
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 数据截止日仍在研究进行中的受试者
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 退出研究的受试者
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 受试者或其法定代理人撤回知情同意
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 死亡
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 失访
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 本研究终止
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 完成规定时限的研究
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 其他
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_4:
+  - Class: ''
+    Label: 筛选受试者
+    Order: 0
+    Aval: xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 随机前退出研究的受试者
+    Order: 0
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 不满足入选/满足排除标准
+    Order: 2
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: Ix
+    Order: 4
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: Ex
+    Order: 4
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 撤回知情同意
+    Order: 2
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 死亡
+    Order: 2
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 其他
+    Order: 2
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_5:
+  - Class: ''
+    Label: 意向性治疗分析集（ITT）
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 全分析集（FAS）
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 安全性分析集（SS）
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 药代动力学浓度分析集（PKCS）
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 免疫原性分析集（ADAS）
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_6:
+  - Class: ''
+    Label: 至少一次重要方案偏离
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 方案偏离条目1
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 方案偏离条目2
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 方案偏离条目3
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: '......'
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_7:
+  - Class: 性别，例数（%）
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 男
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 女
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: 年龄（岁）
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 均值（标准差）
+    Order: 2
+    Aval: xx.xx (xx.xxx)|xx.xx (xx.xxx)|xx.xx (xx.xxx)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 中位数
+    Order: 2
+    Aval: xx.xx|xx.xx|xx.xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 最小值 - 最大值
+    Order: 2
+    Aval: xx.x - xx.x|xx.x - xx.x|xx.x - xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: 民族，例数（%）
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 汉族
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 其他
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_8:
+  - Class: 身高（m）
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 均值（标准差）
+    Order: 2
+    Aval: xx.xx (xx.xxx)|xx.xx (xx.xxx)|xx.xx (xx.xxx)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 中位数
+    Order: 2
+    Aval: xx.xx|xx.xx|xx.xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 最小值 - 最大值
+    Order: 2
+    Aval: xx.x - xx.x|xx.x - xx.x|xx.x - xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: 体重（kg）
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 均值（标准差）
+    Order: 2
+    Aval: xx.xx (xx.xxx)|xx.xx (xx.xxx)|xx.xx (xx.xxx)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 中位数
+    Order: 2
+    Aval: xx.xx|xx.xx|xx.xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 最小值 - 最大值
+    Order: 2
+    Aval: xx.x - xx.x|xx.x - xx.x|xx.x - xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: BMI（kg/m2）
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 均值（标准差）
+    Order: 2
+    Aval: xx.xx (xx.xxx)|xx.xx (xx.xxx)|xx.xx (xx.xxx)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 中位数
+    Order: 2
+    Aval: xx.xx|xx.xx|xx.xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 最小值 - 最大值
+    Order: 2
+    Aval: xx.x - xx.x|xx.x - xx.x|xx.x - xx.x
+    exclude: 0
+    BlankCol: ''
+  ds_9:
+  - Class: 吸烟史，例数（%）
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 从不吸烟
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 现在吸烟
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 曾经吸烟
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: 饮酒史，例数（%）
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 从不饮酒
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 偶尔饮酒
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 几乎每日饮用
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 已戒酒
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: 药物滥用史，例数（%）
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 有
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 无
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ECOG，例数（%）
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: '0'
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: '1'
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: '2'
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_10:
+  - Class: 既往是否接受维布妥昔治疗，例数（%）
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 是
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 否
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: 既往是否接受自体干细胞移植，例数（%）
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 是
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 否
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_11:
+  - Class: 首次诊断2014版淋巴瘤Lugano分期
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: I
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: II
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: III
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: IV
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 未知
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: 进入研究时2014版淋巴瘤Lugano分期
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: I
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: II
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: III
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: IV
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 未知
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: 病理诊断分型
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 结节硬化型
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 混合细胞型
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 淋巴细胞消减型
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 富淋巴细胞型
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 未知
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_12:
+  - Class: 入组诊断时有无大包块（>=10cm病灶）
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 有
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 无
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 未知
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: 入组诊断时有B症状
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 有
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 无
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 未知
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_13:
+  - Class: ''
+    Label: 至少有一项既往及现患非cHL病史
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 系统器官分类1
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 首选术语1
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 首选术语2
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: '......'
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 系统器官分类2
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: '......'
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  ds_14:
+  - Class: 全身系统性治疗线数*
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 均值
+    Order: 2
+    Aval: xx.x|xx.x|xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 标准差
+    Order: 2
+    Aval: xx.xx|xx.xx|xx.xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 中位数
+    Order: 2
+    Aval: xx.x|xx.x|xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 最小值
+    Order: 2
+    Aval: xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 最大值
+    Order: 2
+    Aval: xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: 既往治疗线数*
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 一线
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 二线
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: '...'
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 九线
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: '>=10线'
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 一线
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: 最佳疗效评估
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 完全缓解（CR）
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 部分缓解（PR）
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 疾病稳定（SD）
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 疾病进展（PD）
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 未评估（NA）
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 无法评估（NE）
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 不详
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_15:
+  - Class: 药物类型
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 化疗药物
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 靶向治疗药物
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 内分泌类药物
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 免疫治疗药物
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 细胞治疗药物
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 其他
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: 治疗结束原因
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 疾病进展
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 不能耐受
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 完成计划治疗
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 其他
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 二线
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: '...'
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: '...'
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: '...'
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  ds_16:
+  - Class: ''
+    Label: 接受手术治疗的受试者
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: 手术目的
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 根治性手术
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 姑息性手术
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 活检
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 其他
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 接受放射治疗的受试者
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: 治疗类型
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 根治性
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 局部病灶姑息治疗
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 其他
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 接受自体干细胞移植治疗的受试者
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: 疗效结果
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 完全缓解（CR）
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 部分缓解（PR）
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 疾病稳定（SD）
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 疾病进展（PD）
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 未评估（NA）
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 无法评估（NE）
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 未知
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 其他
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_17:
+  - Class: ''
+    Label: 接受细胞治疗的受试者
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: 最佳疗效
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 完全缓解（CR）
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 部分缓解（PR）
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 疾病稳定（SD）
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 疾病进展（PD）
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 未评估（NA）
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 无法评估（NE）
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 不详
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_18:
+  - Class: ''
+    Label: 至少发生一次合并用药
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: ATC1
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 药物标准名称1
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 药物标准名称2
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: '......'
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: ATC2
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: '......'
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  ds_19:
+  - Class: ''
+    Label: IMM01
+    Order: 0
+    Aval: 替雷利珠单抗|苯达莫司汀|吉西他滨
+    exclude: 0
+    BlankCol: ''
+  - Class: 暴露持续时间（月）
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 均值（标准差）
+    Order: 2
+    Aval: xx.xx (xx.xxx)|xx.xx (xx.xxx)|xx.xx (xx.xxx)|xx.xx (xx.xxx)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 中位数
+    Order: 2
+    Aval: xx.xx|xx.xx|xx.xx|xx.xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 最小值 - 最大值
+    Order: 2
+    Aval: xx.x - xx.x|xx.x - xx.x|xx.x - xx.x|xx.x - xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: 暴露持续时间，例数（%）
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: <3个月
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 3-6个月
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 6-12个月
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 12个月以上
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_20:
+  - Class: ''
+    Label: IMM01
+    Order: 0
+    Aval: 替雷利珠单抗|苯达莫司汀|吉西他滨
+    exclude: 0
+    BlankCol: ''
+  - Class: 暴露持续周期（周期）
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 均值（标准差）
+    Order: 2
+    Aval: xx.xx (xx.xxx)|xx.xx (xx.xxx)|xx.xx (xx.xxx)|xx.xx (xx.xxx)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 中位数
+    Order: 2
+    Aval: xx.xx|xx.xx|xx.xx|xx.xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 最小值 - 最大值
+    Order: 2
+    Aval: xx.x - xx.x|xx.x - xx.x|xx.x - xx.x|xx.x - xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: 暴露持续周期，例数（%）
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: <3个周期
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 3-6个周期
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 6个周期以上
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_21:
+  - Class: ''
+    Label: IMM01
+    Order: 0
+    Aval: 替雷利珠单抗|苯达莫司汀|吉西他滨
+    exclude: 0
+    BlankCol: ''
+  - Class: 总累积剂量（mg）
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 均值（标准差）
+    Order: 2
+    Aval: xx.xx (xx.xxx)|xx.xx (xx.xxx)|xx.xx (xx.xxx)|xx.xx (xx.xxx)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 中位数
+    Order: 2
+    Aval: xx.xx|xx.xx|xx.xx|xx.xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 最小值 - 最大值
+    Order: 2
+    Aval: xx.x - xx.x|xx.x - xx.x|xx.x - xx.x|xx.x - xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: 总校准累积剂量
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 均值（标准差）
+    Order: 2
+    Aval: xx.xx (xx.xxx)|xx.xx (xx.xxx)|xx.xx (xx.xxx)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 中位数
+    Order: 2
+    Aval: xx.xx|xx.xx|xx.xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 最小值 - 最大值
+    Order: 2
+    Aval: xx.x - xx.x|xx.x - xx.x|xx.x - xx.x
+    exclude: 0
+    BlankCol: ''
+  ds_22:
+  - Class: ''
+    Label: IMM01
+    Order: 0
+    Aval: 替雷利珠单抗|苯达莫司汀|吉西他滨
+    exclude: 0
+    BlankCol: ''
+  - Class: 实际剂量强度
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 均值（标准差）
+    Order: 2
+    Aval: xx.xx (xx.xxx)|xx.xx (xx.xxx)|xx.xx (xx.xxx)|xx.xx (xx.xxx)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 中位数
+    Order: 2
+    Aval: xx.xx|xx.xx|xx.xx|xx.xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 最小值 - 最大值
+    Order: 2
+    Aval: xx.x - xx.x|xx.x - xx.x|xx.x - xx.x|xx.x - xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: 相对剂量强度（%）
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 均值（标准差）
+    Order: 2
+    Aval: xx.xx (xx.xxx)|xx.xx (xx.xxx)|xx.xx (xx.xxx)|xx.xx (xx.xxx)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 中位数
+    Order: 2
+    Aval: xx.xx|xx.xx|xx.xx|xx.xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 最小值 - 最大值
+    Order: 2
+    Aval: xx.x - xx.x|xx.x - xx.x|xx.x - xx.x|xx.x - xx.x
+    exclude: 0
+    BlankCol: ''
+  ds_23:
+  - Class: ''
+    Label: IMM01
+    Order: 0
+    Aval: 替雷利珠单抗|苯达莫司汀|吉西他滨
+    exclude: 0
+    BlankCol: ''
+  - Class: 相对剂量强度，例数（%）
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: <75%
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 75%-125%
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 125%以上
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: 依从性（%）
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 均值（标准差）
+    Order: 2
+    Aval: xx.xx (xx.xxx)|xx.xx (xx.xxx)|xx.xx (xx.xxx)|xx.xx (xx.xxx)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 中位数
+    Order: 2
+    Aval: xx.xx|xx.xx|xx.xx|xx.xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 最小值 - 最大值
+    Order: 2
+    Aval: xx.x - xx.x|xx.x - xx.x|xx.x - xx.x|xx.x - xx.x
+    exclude: 0
+    BlankCol: ''
+  ds_24:
+  - Class: ''
+    Label: IMM01
+    Order: 0
+    Aval: 替雷利珠单抗|苯达莫司汀|吉西他滨
+    exclude: 0
+    BlankCol: ''
+  - Class: 依从性，例数（%）
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: <75%
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 75%-125%
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 125%以上
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 中断给药的受试者，例数（%）
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 原因1
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 原因2
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_25:
+  - Class: ''
+    Label: IMM01
+    Order: 0
+    Aval: 替雷利珠单抗|苯达莫司汀|吉西他滨
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 调整剂量的受试者，例数（%）
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 原因1
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 原因2
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_26:
+  - Class: 靶病灶
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: 靶病灶状态，例数（%）
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 4
+    Aval: xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 存在
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 不存在
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: 所有靶病灶直径乘积合计（mm2）
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 4
+    Aval: xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 均值（标准差）
+    Order: 4
+    Aval: xx.xx (xx.xxx)|xx.xx (xx.xxx)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 中位数
+    Order: 4
+    Aval: xx.xx|xx.xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 最小值 - 最大值
+    Order: 4
+    Aval: xx.x - xx.x|xx.x - xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: 非靶病灶
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: 非靶病灶状态，例数（%）
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 4
+    Aval: xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 存在
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 不存在
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: 脾脏
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: 脾脏评估结果，例数（%）
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 4
+    Aval: xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 正常
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 肿大
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 无法评价
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_27:
+  - Class: 脾脏垂直径（cm）
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 4
+    Aval: xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 均值（标准差）
+    Order: 4
+    Aval: xx.xx (xx.xxx)|xx.xx (xx.xxx)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 中位数
+    Order: 4
+    Aval: xx.xx|xx.xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 最小值 - 最大值
+    Order: 4
+    Aval: xx.x - xx.x|xx.x - xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: PET/CT评估
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: 5PS评分，例数（%）
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 4
+    Aval: xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 1分
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 2分
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 3分
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 4分
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 5分
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: X
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 不可评估
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: 骨髓是否FDG高摄取，累及骨髓
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 4
+    Aval: xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 是
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 否
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_28:
+  - Class: ''
+    Label: 事件，例数（%）
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 疾病进展
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: PD后接受新抗
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 死亡
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 删失，例数（%）
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: ​无PD和死亡；未使用新的抗肿瘤治疗（包括SCT）；未终止或已完成研究药物治疗
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: ​无PD和死亡；未使用新的抗肿瘤治疗（包括SCT）；由于完全缓解或不可抗力因素以外的原因导致研究药物治疗终止
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: ​受试者在终止研究药物治疗后立即接受SCT
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 无PD和死亡；未接受SCT且开始（除SCT以外的）新的抗肿瘤治疗
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 在≥2次连续缺失肿瘤评估后或除SCT以外的新的抗肿瘤治疗后立即记录到PD或死亡
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: Kaplan-Meier 统计量
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 中位PFS时间 (95%CI)
+    Order: 2
+    Aval: xx.xx (xx.xx, xx.xx)|xx.xx (xx.xx, xx.xx)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 3个月PFS率(95%CI)
+    Order: 2
+    Aval: xx.x (xx.x, xx.x)|xx.x (xx.x, xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 6个月PFS率(95%CI)
+    Order: 2
+    Aval: xx.x (xx.x, xx.x)|xx.x (xx.x, xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 9个月PFS率(95%CI)
+    Order: 2
+    Aval: xx.x (xx.x, xx.x)|xx.x (xx.x, xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 12个月PFS率(95%CI)
+    Order: 2
+    Aval: xx.x (xx.x, xx.x)|xx.x (xx.x, xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 18个月PFS率(95%CI)
+    Order: 2
+    Aval: xx.x (xx.x, xx.x)|xx.x (xx.x, xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_29:
+  - Class: ''
+    Label: 24个月PFS率(95%CI)
+    Order: 2
+    Aval: xx.x (xx.x, xx.x)|xx.x (xx.x, xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: 组间比较
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 风险比（95% CI）
+    Order: 2
+    Aval: x.xxx (x.xxx, x.xxx)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: p值（分层Log-Rank检验）
+    Order: 2
+    Aval: x.xxx
+    exclude: 0
+    BlankCol: ''
+  ds_30:
+  - Class: 随访时间 （月）
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 均值（标准差）
+    Order: 1
+    Aval: xx.xx（xx.xxx）|xx.xx（xx.xxx）
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 中位数（Q1 - Q3）
+    Order: 1
+    Aval: xx.xx（xx.xx - xx.xx）|xx.xx（xx.xx - xx.xx）
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 最小值 - 最大值
+    Order: 1
+    Aval: xx.x - xx.x|xx.x - xx.x
+    exclude: 0
+    BlankCol: ''
+  ds_31:
+  - Class: 最佳总体疗效，例数（%）
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 完全缓解（CR）
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 部分缓解（PR）
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 疾病稳定（SD）
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 疾病进展（PD）
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 不可评估（NE）
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 缺失
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 客观缓解率ORR（CR + PR），例数（%）
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 95%置信区间
+    Order: 2
+    Aval: xx.x, xx.x|xx.x, xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 差异 (95%CI)
+    Order: 2
+    Aval: xx (xx.x, xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: p值
+    Order: 2
+    Aval: x.xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 完全缓解率CRR（CR），例数（%）
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 95%置信区间
+    Order: 2
+    Aval: xx.x, xx.x|xx.x, xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 差异 (95%CI)
+    Order: 2
+    Aval: xx (xx.x, xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: p值
+    Order: 2
+    Aval: x.xxx
+    exclude: 0
+    BlankCol: ''
+  ds_32:
+  - Class: PD评估
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 一致
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 独立中心和研究者均评估为PD
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 独立中心和研究者均评估为non-PD
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 不一致
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 独立中心评估为PD，研究者评估为non-PD
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 独立中心评估为non-PD，研究者评估为PD
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_33:
+  - Class: ''
+    Label: 至少一次后续抗cHL治疗
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: 治疗方法，例数（%）
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 药物治疗
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 外科治疗
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 放射治疗
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 其他
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_34:
+  - Class: ''
+    Label: 统计量
+    Order: 0
+    Aval: |-
+      C1D1
+      (pre-dose)|C1D1(EOI)|C1D1(4h)|C1D2|C1D3|C1D8
+      (pre-dose)|C1D8(EOI)|C1D15
+      (pre-dose)|C1D15(EOI)|CxDxx
+      (pre-dose)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 0
+    Aval: xx|xx|xx|xx|xx|xx|xx|xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 算数平均数
+    Order: 0
+    Aval: xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 标准差
+    Order: 0
+    Aval: xx.xx|xx.xx|xx.xx|xx.xx|xx.xx|xx.xx|xx.xx|xx.xx|xx.xx|xx.xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 变异系数
+    Order: 0
+    Aval: xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 中位数
+    Order: 0
+    Aval: xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 最小值
+    Order: 0
+    Aval: xx|xx|xx|xx|xx|xx|xx|xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 最大值
+    Order: 0
+    Aval: xx|xx|xx|xx|xx|xx|xx|xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 几何平均数
+    Order: 0
+    Aval: xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 几何变异系数
+    Order: 0
+    Aval: xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x
+    exclude: 0
+    BlankCol: ''
+  ds_35:
+  - Class: ''
+    Label: 例数
+    Order: 0
+    Aval: xx|xx|xx|xx|xx|xx|xx|xx|xx|xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 算数平均数
+    Order: 0
+    Aval: xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 标准差
+    Order: 0
+    Aval: xx.xx|xx.xx|xx.xx|xx.xx|xx.xx|xx.xx|xx.xx|xx.xx|xx.xx|xx.xx|xx.xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 变异系数
+    Order: 0
+    Aval: xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 中位数
+    Order: 0
+    Aval: xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 最小值
+    Order: 0
+    Aval: xx|xx|xx|xx|xx|xx|xx|xx|xx|xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 最大值
+    Order: 0
+    Aval: xx|xx|xx|xx|xx|xx|xx|xx|xx|xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 几何平均数
+    Order: 0
+    Aval: xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 几何变异系数
+    Order: 0
+    Aval: xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x
+    exclude: 0
+    BlankCol: ''
+  ds_36:
+  - Class: ''
+    Label: 例数
+    Order: 0
+    Aval: xx|xx|xx|xx|xx|xx|xx|xx|xx|xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 算数平均数
+    Order: 0
+    Aval: xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 标准差
+    Order: 0
+    Aval: xx.xx|xx.xx|xx.xx|xx.xx|xx.xx|xx.xx|xx.xx|xx.xx|xx.xx|xx.xx|xx.xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 变异系数
+    Order: 0
+    Aval: xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 中位数
+    Order: 0
+    Aval: xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 最小值
+    Order: 0
+    Aval: xx|xx|xx|xx|xx|xx|xx|xx|xx|xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 最大值
+    Order: 0
+    Aval: xx|xx|xx|xx|xx|xx|xx|xx|xx|xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 几何平均数
+    Order: 0
+    Aval: xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 几何变异系数
+    Order: 0
+    Aval: xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x|xx.x
+    exclude: 0
+    BlankCol: ''
+  ds_37:
+  - Class: ''
+    Label: TEAE
+    Order: 0
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: CTCAE等级>=3
+    Order: 2
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 严重不良事件（SAE）
+    Order: 0
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 免疫相关的TEAE（irAE）
+    Order: 0
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: CTCAE等级>=3
+    Order: 2
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 输注相关的TEAE
+    Order: 0
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: CTCAE等级>=3
+    Order: 2
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 导致暂停用药的TEAE
+    Order: 0
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 导致IMM01暂停的TEAE
+    Order: 2
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 导致替雷利珠单抗暂停的TEAE
+    Order: 2
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 导致剂量降低的TEAE
+    Order: 0
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 导致IMM01剂量降低的TEAE
+    Order: 2
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 导致替雷利珠单抗剂量降低的TEAE
+    Order: 2
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 导致研究药物停用的TEAE
+    Order: 0
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 导致IMM01永久停药的TEAE
+    Order: 2
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 导致替雷利珠单抗永久停药的TEAE
+    Order: 2
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 导致退出研究的TEAE
+    Order: 0
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 导致死亡的TEAE
+    Order: 0
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  ds_38:
+  - Class: ''
+    Label: TRAE
+    Order: 0
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: CTCAE等级>=3
+    Order: 2
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 与研究药物相关的严重不良事件（SAE）
+    Order: 0
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 免疫相关的TRAE（irAE）
+    Order: 0
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: CTCAE等级>=3
+    Order: 2
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 输注相关的TRAE
+    Order: 0
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: CTCAE等级>=3
+    Order: 2
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 导致暂停用药的TRAE
+    Order: 0
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 导致IMM01暂停的TRAE
+    Order: 2
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 导致替雷利珠单抗暂停的TRAE
+    Order: 2
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 导致剂量降低的TRAE
+    Order: 0
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 导致IMM01剂量降低的TRAE
+    Order: 2
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 导致替雷利珠单抗剂量降低的TRAE
+    Order: 2
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 导致研究药物停用的TRAE
+    Order: 0
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 导致IMM01永久停药的TRAE
+    Order: 2
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 导致替雷利珠单抗永久停药的TRAE
+    Order: 2
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 导致退出研究的TRAE
+    Order: 0
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 导致死亡的TRAE
+    Order: 0
+    Aval: xx (xx.x), xxx|xx (xx.x), xxx|xx (xx.x), xxx
+    exclude: 0
+    BlankCol: ''
+  ds_39:
+  - Class: ''
+    Label: 系统器官分类（SOC）
+    Order: 0
+    Aval: 首选术语（PT）|CTCAE分级，例数 (%)|任意等级|>=3级|任意等级|>=3级|任意等级|>=3级
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 至少发生一次TEAE
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 　　　　1级
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 　　　　2级
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 　　　　3级
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 　　　　4级
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 　　　　5级
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 系统器官分类1
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 　　　　1级
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 　　　　2级
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 　　　　3级
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 　　　　4级
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 　　　　5级
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 　　首选术语1
+    Order: 1
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 　　　　1级
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 　　　　2级
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 　　　　3级
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 　　　　4级
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 　　　　5级
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_40:
+  - Class: ''
+    Label: 系统器官分类（SOC）
+    Order: 0
+    Aval: 首选术语（PT）|CTCAE分级，例数 (%)|任意等级|>=3级|任意等级|>=3级|任意等级|>=3级
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 　　首选术语2
+    Order: 1
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 　　　　1级
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 　　　　2级
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 　　　　3级
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 　　　　4级
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 　　　　5级
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_41:
+  - Class: ''
+    Label: 至少发生一次严重不良事件
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 系统器官分类1
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 首选术语1
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 首选术语2
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: '......'
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 系统器官分类2
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: '......'
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  ds_42:
+  - Class: ''
+    Label: 死亡
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 不良事件
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 疾病进展
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 不详
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 其他
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_43:
+  - Class: ''
+    Label: 分析访视
+    Order: 0
+    Aval: 测量值|变化值|测量值|变化值|测量值|变化值
+    exclude: 0
+    BlankCol: ''
+  - Class: 血常规检查1（单位）
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: 基线
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 4
+    Aval: xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 均值（标准差）
+    Order: 4
+    Aval: xx.xx (xx.xxx)|xx.xx (xx.xxx)|xx.xx (xx.xxx)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 中位数
+    Order: 4
+    Aval: xx.xx|xx.xx|xx.xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 最小值 - 最大值
+    Order: 4
+    Aval: xx.x - xx.x|xx.x - xx.x|xx.x - xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: <治疗期各计划访视至治疗结束>
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 4
+    Aval: xx|xx|xx|xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 均值（标准差）
+    Order: 4
+    Aval: xx.xx (xx.xxx)|xx.xx (xx.xxx)|xx.xx (xx.xxx)|xx.xx (xx.xxx)|xx.xx (xx.xxx)|xx.xx
+      (xx.xxx)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 中位数
+    Order: 4
+    Aval: xx.xx|xx.xx|xx.xx|xx.xx|xx.xx|xx.xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 最小值 - 最大值
+    Order: 4
+    Aval: xx.x - xx.x|xx.x - xx.x|xx.x - xx.x|xx.x - xx.x|xx.x - xx.x|xx.x - xx.x
+    exclude: 0
+    BlankCol: ''
+  ds_44:
+  - Class: ''
+    Label: 基线结果，例数 (%)
+    Order: 0
+    Aval: 0级|1级|2级|3级|4级|缺失|合计
+    exclude: 0
+    BlankCol: ''
+  - Class: 指标1
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: IMM01联合替雷利珠单抗试验组（N=xx）
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 0级
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 1级
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 2级
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 3级
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 4级
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 缺失
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 合计
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: 苯达莫司汀或吉西他滨化疗对照组（N=xx）
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: '...'
+    Label: ''
+    Order: 4
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: 合计（N=xx）
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: '...'
+    Label: ''
+    Order: 4
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  ds_45:
+  - Class: 指标1
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: 基线
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 4
+    Aval: xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 阴性
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 阳性
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 弱阳性
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 1+
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 2+
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 3+
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 4+
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: <治疗期各计划访视至治疗结束>
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 4
+    Aval: xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 阴性
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 阳性
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 弱阳性
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 1+
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 2+
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 3+
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 4+
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_46:
+  - Class: 指标1
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: 基线
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 4
+    Aval: xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 均值（标准差）
+    Order: 4
+    Aval: xx.xx (xx.xxx)|xx.xx (xx.xxx)|xx.xx (xx.xxx)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 中位数
+    Order: 4
+    Aval: xx.xx|xx.xx|xx.xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 最小值 - 最大值
+    Order: 4
+    Aval: xx.x - xx.x|xx.x - xx.x|xx.x - xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: <治疗期各计划访视至治疗结束>
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 4
+    Aval: xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 均值（标准差）
+    Order: 4
+    Aval: xx.xx (xx.xxx)|xx.xx (xx.xxx)|xx.xx (xx.xxx)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 中位数
+    Order: 4
+    Aval: xx.xx|xx.xx|xx.xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 最小值 - 最大值
+    Order: 4
+    Aval: xx.x - xx.x|xx.x - xx.x|xx.x - xx.x
+    exclude: 0
+    BlankCol: ''
+  ds_47:
+  - Class: ''
+    Label: 基线结果，例数 (%)
+    Order: 0
+    Aval: 正常|异常，无临床意义|异常，有临床意义|未做|合计
+    exclude: 0
+    BlankCol: ''
+  - Class: 指标1
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: IMM01联合替雷利珠单抗试验组（N=xx）
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 正常
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 异常，无临床意义
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 异常，有临床意义
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 未做
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 合计
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: 苯达莫司汀或吉西他滨化疗对照组（N=xx）
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: '...'
+    Label: ''
+    Order: 4
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: 合计（N=xx）
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: '...'
+    Label: ''
+    Order: 4
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  ds_48:
+  - Class: 基线
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx|xx|xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: '0'
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: '1'
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: '...'
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: '5'
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: <治疗期各计划访视至治疗结束>
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  ds_49:
+  - Class: 基线
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: ADA阴性
+    Order: 4
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: ADA阳性
+    Order: 4
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: Nab阴性
+    Order: 5
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: Nab阳性
+    Order: 5
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 缺失
+    Order: 4
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: 访视1
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: '....'
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  ds_50:
+  - Class: ADA，例数 (%)
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 阳性
+    Order: 2
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 治疗增强ADA阳性
+    Order: 4
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 治疗诱导ADA阳性
+    Order: 4
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 一过性ADA阳性
+    Order: 5
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 持续性ADA阳性
+    Order: 5
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 其他ADA阳性
+    Order: 5
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 阴性
+    Order: 2
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: Nab，例数 (%)
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 例数
+    Order: 2
+    Aval: xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 阳性
+    Order: 2
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 阴性
+    Order: 2
+    Aval: xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_51:
+  - Class: ''
+    Label: 事件，例数（%）
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 疾病进展
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: PD后接受新抗
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 死亡
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 删失，例数（%）
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: ​无PD和死亡；未使用新的抗肿瘤治疗（包括SCT）；未终止或已完成研究药物治疗
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: ​无PD和死亡；未使用新的抗肿瘤治疗（包括SCT）；由于完全缓解或不可抗力因素以外的原因导致研究药物治疗终止
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: ​受试者在终止研究药物治疗后立即接受SCT
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 无PD和死亡；未接受SCT且开始（除SCT以外的）新的抗肿瘤治疗
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 在≥2次连续缺失肿瘤评估后或除SCT以外的新的抗肿瘤治疗后立即记录到PD或死亡
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: Kaplan-Meier 统计量
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 中位PFS时间 (95%CI)
+    Order: 2
+    Aval: xx.xx (xx.xx, xx.xx)|xx.xx (xx.xx, xx.xx)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 3个月PFS率(95%CI)
+    Order: 2
+    Aval: xx.x (xx.x, xx.x)|xx.x (xx.x, xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 6个月PFS率(95%CI)
+    Order: 2
+    Aval: xx.x (xx.x, xx.x)|xx.x (xx.x, xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 9个月PFS率(95%CI)
+    Order: 2
+    Aval: xx.x (xx.x, xx.x)|xx.x (xx.x, xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 12个月PFS率(95%CI)
+    Order: 2
+    Aval: xx.x (xx.x, xx.x)|xx.x (xx.x, xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 18个月PFS率(95%CI)
+    Order: 2
+    Aval: xx.x (xx.x, xx.x)|xx.x (xx.x, xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 24个月PFS率(95%CI)
+    Order: 2
+    Aval: xx.x (xx.x, xx.x)|xx.x (xx.x, xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_52:
+  - Class: 最佳总体疗效，例数（%）
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 完全缓解（CR）
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 部分缓解（PR）
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 疾病稳定（SD）
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 疾病进展（PD）
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 不可评估（NE）
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 缺失
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 客观缓解率ORR（CR + PR），例数（%）
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 95%置信区间
+    Order: 2
+    Aval: xx.x, xx.x|xx.x, xx.x
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 完全缓解率CRR（CR），例数（%）
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 95%置信区间
+    Order: 2
+    Aval: xx.x, xx.x|xx.x, xx.x
+    exclude: 0
+    BlankCol: ''
+  ds_53:
+  - Class: ''
+    Label: 至少发生一次TEAE
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 系统器官分类1
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 首选术语1
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 首选术语2
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: '......'
+    Label: ''
+    Order: 2
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 系统器官分类2
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: '......'
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  ds_54:
+  - Class: ''
+    Label: 至少发生一次血小板减少
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 至少发生一次淋巴细胞降低
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 至少发生一次贫血
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_55:
+  - Class: ''
+    Label: 事件，例数（%）
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 疾病进展
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: PD后接受新抗
+    Order: 4
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 死亡
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 删失，例数（%）
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: ​无PD和死亡；未使用新的抗肿瘤治疗（包括SCT）；未终止或已完成研究药物治疗
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: ​无PD和死亡；未使用新的抗肿瘤治疗（包括SCT）；由于完全缓解或不可抗力因素以外的原因导致研究药物治疗终止
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: ​受试者在终止研究药物治疗后立即接受SCT
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 无PD和死亡；未接受SCT且开始（除SCT以外的）新的抗肿瘤治疗
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 在≥2次连续缺失肿瘤评估后或除SCT以外的新的抗肿瘤治疗后立即记录到PD或死亡
+    Order: 2
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: Kaplan-Meier 统计量
+    Label: ''
+    Order: 0
+    Aval: ''
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 中位PFS时间 (95%CI)
+    Order: 2
+    Aval: xx.xx (xx.xx, xx.xx)|xx.xx (xx.xx, xx.xx)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 3个月PFS率(95%CI)
+    Order: 2
+    Aval: xx.x (xx.x, xx.x)|xx.x (xx.x, xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 6个月PFS率(95%CI)
+    Order: 2
+    Aval: xx.x (xx.x, xx.x)|xx.x (xx.x, xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 9个月PFS率(95%CI)
+    Order: 2
+    Aval: xx.x (xx.x, xx.x)|xx.x (xx.x, xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 12个月PFS率(95%CI)
+    Order: 2
+    Aval: xx.x (xx.x, xx.x)|xx.x (xx.x, xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 18个月PFS率(95%CI)
+    Order: 2
+    Aval: xx.x (xx.x, xx.x)|xx.x (xx.x, xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 24个月PFS率(95%CI)
+    Order: 2
+    Aval: xx.x (xx.x, xx.x)|xx.x (xx.x, xx.x)
+    exclude: 0
+    BlankCol: ''
+  ds_56:
+  - Class: ''
+    Label: 客观缓解率ORR（CR + PR），例数（%）
+    Order: 0
+    Aval: xx (xx.x)|xx (xx.x)
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: 95%置信区间
+    Order: 2
+    Aval: xx.x, xx.x|xx.x, xx.x
+    exclude: 0
+    BlankCol: ''
+  list:
+  - Class: ''
+    Label: xxx
+    Order: 0
+    Aval: xxxx|xxxx|xx|xx|xxxx|xxxx|xxxx|xxxx|xxxx (xx)|xxxx|xxxx (xx)|xxxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: xxx
+    Order: 0
+    Aval: xxxx|xxxx|xx|xx|xxxx|xxxx|xxxx|xxxx|xxxx (xx)|xxxx|xxxx (xx)|xxxx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: xxx
+    Order: 0
+    Aval: xxxx|xxxx|xx|xx|xxxx|xxxx|xxxx|xxxx|xxxx (xx)|xxxx|xxxx (xx)|xxxx
+    exclude: 0
+    BlankCol: ''
+  ds_79:
+  - Class: ''
+    Label: xxx
+    Order: 0
+    Aval: xx.xx|xx.xx|xx.xx|xx.xx|xx.xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: xxx
+    Order: 0
+    Aval: xx.xx|xx.xx|xx.xx|xx.xx|xx.xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: xxx
+    Order: 0
+    Aval: xx.xx|xx.xx|xx.xx|xx.xx|xx.xx
+    exclude: 0
+    BlankCol: ''
+  ds_81:
+  - Class: ''
+    Label: xxx
+    Order: 0
+    Aval: xx.xx|xx.xx|xx.xx|xx.xx|xx.xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: xxx
+    Order: 0
+    Aval: xx.xx|xx.xx|xx.xx|xx.xx|xx.xx
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: xxx
+    Order: 0
+    Aval: xx.xx|xx.xx|xx.xx|xx.xx|xx.xx
+    exclude: 0
+    BlankCol: ''
+  ds_95:
+  - Class: ''
+    Label: xxx/xx/xx
+    Order: 0
+    Aval: xx|xx|x/x/其他：xxx|x/x/x|x/xxxx|ABC
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: xxx/xx/xx
+    Order: 0
+    Aval: xx|xx|x/x/其他：xxx|x/x/x|x/xxxx|ABC
+    exclude: 0
+    BlankCol: ''
+  - Class: ''
+    Label: xxx/xx/xx
+    Order: 0
+    Aval: xx|xx|x/x/其他：xxx|x/x/x|x/xxxx|ABC
+    exclude: 0
+    BlankCol: ''

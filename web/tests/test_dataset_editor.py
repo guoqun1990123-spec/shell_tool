@@ -311,3 +311,126 @@ def test_delete_parent_cascade_clears_unlinked_child_parent_ref():
     assert len(new_state) == 1
     assert new_state[0]["_id"] == "cu"
     assert new_state[0]["_parent_id"] is None
+
+
+def test_df_to_card_state_child_inherits_parent_class():
+    """子行 Class 为空时应自动继承父行 Class，且父行经 _reindex_class 重编后子行与之一致。"""
+    df = pd.DataFrame([
+        {"Class": 3, "Label": "年龄", "Order": 0, "Aval": "", "exclude": 0, "BlankCol": "", "Drug": "", "Visit": "", "Base": ""},
+        {"Class": "", "Label": "均值", "Order": 1, "Aval": "xx", "exclude": 0, "BlankCol": "", "Drug": "", "Visit": "", "Base": ""},
+        {"Class": None, "Label": "中位数", "Order": 1, "Aval": "xx", "exclude": 0, "BlankCol": "", "Drug": "", "Visit": "", "Base": ""},
+    ])
+    state = df_to_card_state(df)
+    assert len(state) == 3
+    parent_class = state[0]["Class"]
+    assert state[1]["Class"] == parent_class, "空 Class 子行应与父行 Class 一致"
+    assert state[2]["Class"] == parent_class, "None Class 子行应与父行 Class 一致"
+
+
+# ── _infer_var_types / normalize_dataset_state / apply_normalize ────────────
+from dataset_editor import _infer_var_types, normalize_dataset_state, apply_normalize
+
+
+def test_infer_var_type_continuous():
+    """子行 Aval 全为连续变量模式 → 推断为连续变量。"""
+    state = [
+        {"_id": "p1", "_parent_id": None, "_linked": False, "_expanded": True,
+         "_var_type": "手动输入", "Class": 1, "Order": 0, "Label": "年龄", "Aval": "", "exclude": 0, "BlankCol": ""},
+        {"_id": "c1", "_parent_id": "p1", "_linked": True, "_expanded": True,
+         "_var_type": "手动输入", "Class": 1, "Order": 1, "Label": "例数", "Aval": "xx", "exclude": 0, "BlankCol": ""},
+        {"_id": "c2", "_parent_id": "p1", "_linked": True, "_expanded": True,
+         "_var_type": "手动输入", "Class": 1, "Order": 1, "Label": "均值", "Aval": "xx.x (xx.xx)", "exclude": 0, "BlankCol": ""},
+    ]
+    result = _infer_var_types(state)
+    assert result[0]["_var_type"] == "连续变量"
+
+
+def test_infer_var_type_categorical_no_child():
+    """无子行且 Aval 匹配分类模式 → 分类变量-无子分类。"""
+    state = [
+        {"_id": "p1", "_parent_id": None, "_linked": False, "_expanded": True,
+         "_var_type": "手动输入", "Class": 1, "Order": 0, "Label": "性别", "Aval": "xx (xx.x)", "exclude": 0, "BlankCol": ""},
+    ]
+    result = _infer_var_types(state)
+    assert result[0]["_var_type"] == "分类变量-无子分类"
+
+
+def test_infer_var_type_does_not_overwrite_explicit():
+    """已有明确类型的行不被覆盖。"""
+    state = [
+        {"_id": "p1", "_parent_id": None, "_linked": False, "_expanded": True,
+         "_var_type": "日期变量", "Class": 1, "Order": 0, "Label": "日期", "Aval": "", "exclude": 0, "BlankCol": ""},
+    ]
+    result = _infer_var_types(state)
+    assert result[0]["_var_type"] == "日期变量"
+
+
+def test_normalize_detects_conflicts():
+    """Aval 与模板不符时 normalize_dataset_state 应返回 conflicts。"""
+    templates = {"连续变量": {"children": [{"Label": "例数", "Aval": "xx"}]}}
+    state = [
+        {"_id": "p1", "_parent_id": None, "_linked": False, "_expanded": True,
+         "_var_type": "连续变量", "Class": 1, "Order": 0, "Label": "年龄", "Aval": "", "exclude": 0, "BlankCol": ""},
+        {"_id": "c1", "_parent_id": "p1", "_linked": True, "_expanded": True,
+         "_var_type": "手动输入", "Class": 1, "Order": 1, "Label": "例数", "Aval": "N", "exclude": 0, "BlankCol": ""},
+    ]
+    _, conflicts = normalize_dataset_state(state, templates)
+    assert len(conflicts) == 1
+    assert conflicts[0]["child_id"] == "c1"
+    assert conflicts[0]["template_aval"] == "xx"
+
+
+def test_apply_normalize_updates_selected():
+    """apply_normalize 只更新 selected_ids 中的行。"""
+    state = [
+        {"_id": "c1", "_parent_id": "p1", "_linked": True, "Aval": "N"},
+        {"_id": "c2", "_parent_id": "p1", "_linked": True, "Aval": "old"},
+    ]
+    conflicts = [
+        {"child_id": "c1", "parent_id": "p1", "template_aval": "xx"},
+        {"child_id": "c2", "parent_id": "p1", "template_aval": "xx.x"},
+    ]
+    result = apply_normalize(state, conflicts, selected_ids={"c1"})
+    assert result[0]["Aval"] == "xx"
+    assert result[1]["Aval"] == "old"
+
+
+def test_infer_var_type_categorical_pipe_separated():
+    """子行 Aval 为 'xx (xx.x)|xx (xx.x)|xx (xx.x)' 格式时应识别为分类变量-有子分类。"""
+    state = [
+        {"_id": "p1", "_parent_id": None, "_linked": False, "_expanded": True,
+         "_var_type": "手动输入", "Class": 1, "Order": 0, "Label": "缓解持续时间，例数(%)", "Aval": "", "exclude": 0, "BlankCol": ""},
+        {"_id": "c1", "_parent_id": "p1", "_linked": True, "_expanded": True,
+         "_var_type": "手动输入", "Class": 1, "Order": 1, "Label": "<3个月", "Aval": "xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)", "exclude": 0, "BlankCol": ""},
+        {"_id": "c2", "_parent_id": "p1", "_linked": True, "_expanded": True,
+         "_var_type": "手动输入", "Class": 1, "Order": 1, "Label": "3-6个月", "Aval": "xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)", "exclude": 0, "BlankCol": ""},
+    ]
+    result = _infer_var_types(state)
+    assert result[0]["_var_type"] == "分类变量-有子分类"
+
+
+def test_normalize_categorical_pipe_flagged_as_wrong():
+    """分类变量-有子分类子行 Aval 为 | 拼接格式时，应提示矫正为单个 xx (xx.x)。"""
+    templates = {"分类变量-有子分类": {"children": []}}
+    state = [
+        {"_id": "p1", "_parent_id": None, "_linked": False, "_expanded": True,
+         "_var_type": "分类变量-有子分类", "Class": 1, "Order": 0, "Label": "缓解", "Aval": "", "exclude": 0, "BlankCol": ""},
+        {"_id": "c1", "_parent_id": "p1", "_linked": True, "_expanded": True,
+         "_var_type": "手动输入", "Class": 1, "Order": 1, "Label": "<3月", "Aval": "xx (xx.x)|xx (xx.x)|xx (xx.x)", "exclude": 0, "BlankCol": ""},
+    ]
+    _, conflicts = normalize_dataset_state(state, templates)
+    assert len(conflicts) == 1
+    assert conflicts[0]["template_aval"] == "xx (xx.x)"
+
+
+def test_normalize_categorical_already_single_correct():
+    """分类变量-有子分类子行已是单个 xx (xx.x) 时，不应产生 conflict。"""
+    templates = {"分类变量-有子分类": {"children": []}}
+    state = [
+        {"_id": "p1", "_parent_id": None, "_linked": False, "_expanded": True,
+         "_var_type": "分类变量-有子分类", "Class": 1, "Order": 0, "Label": "缓解", "Aval": "", "exclude": 0, "BlankCol": ""},
+        {"_id": "c1", "_parent_id": "p1", "_linked": True, "_expanded": True,
+         "_var_type": "手动输入", "Class": 1, "Order": 1, "Label": "<3月", "Aval": "xx (xx.x)", "exclude": 0, "BlankCol": ""},
+    ]
+    _, conflicts = normalize_dataset_state(state, templates)
+    assert conflicts == []

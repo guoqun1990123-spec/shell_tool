@@ -1,0 +1,28 @@
+default_collapse: true
+field_levels:
+  SeqNum: required
+  "Section no": required
+  "Section title": required
+  cat: required
+  "table no": required
+  title: required
+  pop: level1
+  footnote1: level1
+  footnote2: level1
+  footnote3: level1
+  footnote4: level1
+  footnote5: level1
+  footnote6: level1
+  footnote7: level1
+  Datasets: level1
+  MacVar: level1
+  Trtlab: level1
+  Dutoffdate: level2
+  Source_Data: level2
+  PgmNotes: level2
+  Subgrp: level2
+  Adcols: level2
+  Varlab: level2
+  Labparm: level2
+  ByseqL: level2
+  RefTFL: level2

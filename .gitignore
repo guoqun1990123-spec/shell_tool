@@ -1,0 +1,14 @@
+# R临时文件
+.RData
+.Rhistory
+.Rproj.user
+
+# 输出文件
+output/
+
+# 临时文件
+*.tmp
+*~
+
+# Claude Code 内存/配置（本地专用）
+.claude/

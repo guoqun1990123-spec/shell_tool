@@ -12,9 +12,11 @@ _BASE_CSS = """
 .tfl-caption { font-size: 9pt; color: #555; margin-bottom: 6px; }
 .tfl-table   { border-collapse: collapse; width: 100%; font-size: 10pt; }
 .tfl-table thead tr:first-child th { border-top: 2px solid #000; border-bottom: none; }
+.tfl-table thead tr:nth-child(2) th { border-top: 0.75px solid #000; }
 .tfl-table thead tr:last-child  th { border-bottom: 1.5px solid #000; padding: 3px 6px; }
 .tfl-table tbody tr:last-child  td { border-bottom: 2px solid #000; }
 .tfl-table td, .tfl-table th    { border: none; padding: 2px 6px; vertical-align: top; }
+.tfl-spacer td { height: 1px !important; padding: 0 !important; line-height: 0; font-size: 0; border: none !important; }
 .tfl-bold    { font-weight: bold; }
 .tfl-indent1 { padding-left: 1.5em; }
 .tfl-indent2 { padding-left: 3em; }
@@ -121,7 +123,7 @@ def _render_pstab(card: dict, datasets: dict) -> str:
             cur_class = row.get("Class")
             if prev_class is not None and cur_class != prev_class:
                 n_cols = 1 + len(data_cols)
-                body_html += f"<tr><td colspan='{n_cols}' style='height:6px'></td></tr>"
+                body_html += f"<tr class='tfl-spacer'><td colspan='{n_cols}'></td></tr>"
             prev_class = cur_class
 
             try:

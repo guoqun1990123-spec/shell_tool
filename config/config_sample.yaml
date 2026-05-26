@@ -1,0 +1,193 @@
+# TFL Shell 配置样例 - YAML格式
+# 文件命名约定（Web端自动提交Git时）：config_<方案简称>_<YYYYMMDD_HHMMSS>.yaml
+# 本文件同时包含 config 元数据和 datasets 表数据，对应原来的 config.xlsx + datasets.xlsx
+version: 1
+
+# ============================================================
+# config 段：每个列表项对应一行TFL定义，字段与 config.xlsx 列名完全一致
+# ============================================================
+config:
+
+  # --- 表格示例（MacVar: PStab）---
+  - SeqNum: 1
+    "Section no": "11.1"
+    "Section title": "人口学和基线特征"
+    "table no": "14.1.1"
+    title: "受试者基线特征（FAS）"
+    pop: "FAS"
+    MacVar: "PStab"
+    Datasets: "t_demo"
+    Trtlab: "A组^[a]|B组|合计"
+    Subgrp: ""
+    Adcols: ""
+    Varlab: ""
+    Labparm: ""
+    footnote1: "FAS=全分析集；SD=标准差；^[a]表示A组"
+    footnote2: ""
+    footnote3: ""
+    footnote4: ""
+    footnote5: ""
+    footnote6: ""
+    footnote7: ""
+    PgmNotes: "来源：ADSL数据集"
+    ByseqL: null
+    RefTFL: ""
+    Dutoffdate: ""
+    Source_Data: "ADSL"
+
+  # --- 清单示例（MacVar: RptList）---
+  - SeqNum: 2
+    "Section no": "16.2"
+    "Section title": "受试者清单"
+    "table no": "16.2.1"
+    title: "受试者基本信息清单（FAS）"
+    pop: "FAS"
+    MacVar: "RptList"
+    Datasets: "l_subj"
+    Trtlab: ""
+    Subgrp: ""
+    Adcols: ""
+    Varlab: ""
+    Labparm: ""
+    footnote1: "FAS=全分析集"
+    footnote2: ""
+    footnote3: ""
+    footnote4: ""
+    footnote5: ""
+    footnote6: ""
+    footnote7: ""
+    PgmNotes: "来源：ADSL数据集"
+    ByseqL: "USUBJID"
+    RefTFL: ""
+    Dutoffdate: ""
+    Source_Data: "ADSL"
+
+  # --- 引用已有表格（MacVar: mtext）---
+  - SeqNum: 3
+    "Section no": "11.1"
+    "Section title": "人口学和基线特征"
+    "table no": "14.1.1.1"
+    title: ""
+    pop: ""
+    MacVar: "mtext"
+    Datasets: ""
+    Trtlab: ""
+    Subgrp: ""
+    Adcols: ""
+    Varlab: ""
+    Labparm: ""
+    footnote1: ""
+    footnote2: ""
+    footnote3: ""
+    footnote4: ""
+    footnote5: ""
+    footnote6: ""
+    footnote7: ""
+    PgmNotes: ""
+    ByseqL: null
+    RefTFL: "14.1.1"
+    Dutoffdate: ""
+    Source_Data: ""
+
+  # --- KM图示例（MacVar: KMplot）---
+  - SeqNum: 4
+    "Section no": "11.3"
+    "Section title": "生存分析"
+    "table no": "14.3.1"
+    title: "PFS的Kaplan-Meier曲线（FAS）"
+    pop: "FAS"
+    MacVar: "KMplot"
+    Datasets: "f_km_pfs"
+    Trtlab: "A组|B组"
+    Subgrp: ""
+    Adcols: ""
+    Varlab: ""
+    Labparm: ""
+    footnote1: "PFS=无进展生存期；CI=置信区间"
+    footnote2: ""
+    footnote3: ""
+    footnote4: ""
+    footnote5: ""
+    footnote6: ""
+    footnote7: ""
+    PgmNotes: "来源：ADTTE数据集，PARAMCD=PFS"
+    ByseqL: null
+    RefTFL: ""
+    Dutoffdate: ""
+    Source_Data: "ADTTE"
+
+# ============================================================
+# datasets 段：键名为 Excel sheet 名，值为对象数组（每行是一条记录）
+# 表格类 sheet 列：Class, Label, Order, Aval, exclude, BlankCol, Drug, Visit, Base（可选）
+# 清单类固定使用 list sheet，列：ListName, Byseq, Byorder, Lvalable, Values, Merge, exclude（可选）
+# ============================================================
+datasets:
+
+  # 对应 config 行 Datasets: "t_demo" 的数据（PStab表格用）
+  t_demo:
+    - Class: ""
+      Label: "年龄（岁）"
+      Order: 0
+      Aval: ""
+      exclude: 0
+      BlankCol: ""
+    - Class: ""
+      Label: "均数（标准差）"
+      Order: 1
+      Aval: "Mean (SD)"
+      exclude: 0
+      BlankCol: ""
+    - Class: ""
+      Label: "中位数（最小值，最大值）"
+      Order: 1
+      Aval: "Median (Min, Max)"
+      exclude: 0
+      BlankCol: ""
+    - Class: "性别"
+      Label: ""
+      Order: 0
+      Aval: ""
+      exclude: 0
+      BlankCol: ""
+    - Class: ""
+      Label: "男，n（%）"
+      Order: 1
+      Aval: "N_PCT_M"
+      exclude: 0
+      BlankCol: ""
+    - Class: ""
+      Label: "女，n（%）"
+      Order: 1
+      Aval: "N_PCT_F"
+      exclude: 0
+      BlankCol: ""
+
+  # 对应 config 行 Datasets: "l_subj" 的数据（RptList清单用）
+  # 同时需要 list sheet 存储清单字段定义
+  l_subj:
+    - Class: ""
+      Label: "受试者编号"
+      Order: 0
+      Aval: "USUBJID"
+      exclude: 0
+      BlankCol: ""
+
+  # 清单字段定义（MacVar=RptList 时固定使用此表）
+  list:
+    - ListName: "l_subj"
+      Byseq: 1
+      Byorder: 1
+      Lvalable: "受试者编号"
+    - ListName: "l_subj"
+      Byseq: 2
+      Byorder: 2
+      Lvalable: "年龄"
+
+  # 对应 config 行 Datasets: "f_km_pfs" 的数据（KMplot图形用，字段按实际图形需求填充）
+  f_km_pfs:
+    - Class: ""
+      Label: "PFS（月）"
+      Order: 0
+      Aval: "AVAL"
+      exclude: 0
+      BlankCol: ""

@@ -1,0 +1,17 @@
+# TFL Web 界面配置
+# 首次使用前按实际情况修改下方各项
+# 注意：如果 Git 远程需要 PAT，请将本文件加入 .gitignore
+
+[git]
+# 本地仓库根目录（shell_tool 项目根）
+repo_path = "d:/shell_tool"
+
+# 远程名称（通常为 origin）
+remote = "origin"
+
+# 推送目标分支
+branch = "main"
+
+# Commit 作者信息
+author_name  = "郭群-生物统计师"
+author_email = "qun.guo@immuneonco.com"
