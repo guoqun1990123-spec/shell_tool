@@ -7,6 +7,7 @@ import pandas as pd
 import streamlit as st
 
 from schema import CONFIG_COLS, VALID_MACVAR
+import tfl_preview as _tfl_preview
 
 # ── 常量 ─────────────────────────────────────────────────────────────────────
 
@@ -505,35 +506,84 @@ def _render_level1(
             else:
                 st.caption("未关联 Datasets 或数据表尚未创建")
 
-        # 展开更多：footnote + level2 字段
-        with st.expander("展开更多 ▼"):
-            fn_snippets: list = templates.get("footnote_snippets", [])
-            for fn in ["footnote1", "footnote2", "footnote3", "footnote4",
-                       "footnote5", "footnote6", "footnote7"]:
-                if fn_snippets:
-                    fn_col, fn_ins_col = st.columns([5, 1])
-                    val = str(card.get(fn, "") or "")
-                    new_val = fn_col.text_input(fn, value=val, key=f"cfg_{fn}_{card_id}_{version}")
-                    if new_val != val:
-                        st.session_state[_CARD_STATE_KEY] = _update_card(
-                            st.session_state[_CARD_STATE_KEY], card_id, **{fn: new_val}
+        # ── 编辑 / 预览 双 tab ────────────────────────────────────────────────
+        tab_edit, tab_preview = st.tabs(["✏️ 编辑", "👁️ 预览"])
+
+        with tab_edit:
+            with st.expander("展开更多 ▼"):
+                fn_snippets: list = templates.get("footnote_snippets", [])
+                for fn in ["footnote1", "footnote2", "footnote3", "footnote4",
+                           "footnote5", "footnote6", "footnote7"]:
+                    if fn_snippets:
+                        fn_col, fn_ins_col = st.columns([5, 1])
+                        val = str(card.get(fn, "") or "")
+                        new_val = fn_col.text_input(fn, value=val, key=f"cfg_{fn}_{card_id}_{version}")
+                        if new_val != val:
+                            st.session_state[_CARD_STATE_KEY] = _update_card(
+                                st.session_state[_CARD_STATE_KEY], card_id, **{fn: new_val}
+                            )
+                            st.rerun()
+                        chosen = fn_ins_col.selectbox(
+                            "插入", ["＋"] + fn_snippets,
+                            key=f"cfg_{fn}_ins_{card_id}_{version}",
+                            label_visibility="collapsed",
                         )
-                        st.rerun()
-                    chosen = fn_ins_col.selectbox(
-                        "插入", ["＋"] + fn_snippets,
-                        key=f"cfg_{fn}_ins_{card_id}_{version}",
-                        label_visibility="collapsed",
-                    )
-                    if chosen != "＋":
-                        cur = str(card.get(fn, "") or "")
-                        merged = (cur + "；" + chosen).lstrip("；")
-                        st.session_state[_CARD_STATE_KEY] = _update_card(
-                            st.session_state[_CARD_STATE_KEY], card_id, **{fn: merged}
-                        )
-                        st.rerun()
-                else:
-                    _field(st, card, fn, card_id, version)
-            _render_level2(card, card_state, version)
+                        if chosen != "＋":
+                            cur = str(card.get(fn, "") or "")
+                            merged = (cur + "；" + chosen).lstrip("；")
+                            st.session_state[_CARD_STATE_KEY] = _update_card(
+                                st.session_state[_CARD_STATE_KEY], card_id, **{fn: merged}
+                            )
+                            st.rerun()
+                    else:
+                        _field(st, card, fn, card_id, version)
+                _render_level2(card, card_state, version)
+
+        with tab_preview:
+            _render_card_preview(card, card_id, version)
+
+
+# ── 预览 tab ─────────────────────────────────────────────────────────────────
+
+
+def _render_card_preview(card: dict, card_id: str, version: int) -> None:
+    datasets = st.session_state.get("datasets", {})
+    card_state = st.session_state.get(_CARD_STATE_KEY, [])
+    cur_card = next((c for c in card_state if c["_id"] == card_id), card)
+
+    html = _tfl_preview.render_preview(cur_card, datasets)
+    st.markdown(html, unsafe_allow_html=True)
+
+    st.divider()
+
+    col_btn, col_status = st.columns([1.5, 3])
+    with col_btn:
+        if st.button("🔄 用R真实渲染", key=f"cfg_real_render_{card_id}_{version}",
+                     help="调用R生成单表Word文档，可下载"):
+            from renderer import run_preview as _run_preview
+            with st.spinner("R 渲染中..."):
+                result = _run_preview(cur_card, datasets)
+            st.session_state["preview_result"] = result
+            st.session_state["preview_card_title"] = str(
+                cur_card.get("title") or cur_card.get("table no") or "TFL"
+            )
+            st.rerun()
+
+    with col_status:
+        pr = st.session_state.get("preview_result")
+        if pr and pr.get("status") == "success":
+            pr_title = st.session_state.get("preview_card_title", "TFL")
+            size_kb = len(pr["output_bytes"]) // 1024 if pr.get("output_bytes") else 0
+            st.download_button(
+                label=f"📥 下载 {pr_title}.docx",
+                data=pr["output_bytes"],
+                file_name=f"preview_{pr_title}.docx",
+                mime="application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+                key=f"cfg_dl_{card_id}_{version}",
+            )
+            st.caption(f"文件大小 {size_kb} KB")
+        elif pr and pr.get("status") == "error":
+            st.error(pr.get("error_summary") or "渲染失败")
 
 
 # ── Level2 字段 ───────────────────────────────────────────────────────────────
