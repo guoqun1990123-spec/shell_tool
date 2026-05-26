@@ -200,11 +200,13 @@ def main():
             {str(c.get("Section no", "") or "") for c in _current_card_state if c.get("Section no")},
             key=lambda s: [int(x) if x.isdigit() else x for x in s.replace("-", ".").split(".")],
         )
-        _nav_filt = st.session_state.get("cfg_nav_filter", {"section": "", "cats": [], "keyword": ""})
+        # section 状态统一用 section_nav_filter，cats/keyword 用 cfg_nav_filter
+        _snf = st.session_state.get("section_nav_filter", {"section": "", "scroll_to": None})
+        _nav_filt = st.session_state.get("cfg_nav_filter", {"cats": [], "keyword": ""})
         _fc1, _fc2, _fc3 = st.columns([1.5, 2.0, 2.5])
         with _fc1:
             _sec_opts = ["全部"] + _all_sections
-            _cur_sec = _nav_filt.get("section", "")
+            _cur_sec = _snf.get("section", "")
             _sel_sec = st.selectbox(
                 "Section", options=_sec_opts,
                 index=_sec_opts.index(_cur_sec) if _cur_sec in _sec_opts else 0,
@@ -212,8 +214,13 @@ def main():
             )
             _new_sec = "" if _sel_sec == "全部" else _sel_sec
             if _new_sec != _cur_sec:
-                _nav_filt["section"] = _new_sec
-                st.session_state["cfg_nav_filter"] = _nav_filt
+                _snf["section"] = _new_sec
+                _snf["scroll_to"] = None
+                st.session_state["section_nav_filter"] = _snf
+                st.session_state["section_nav_selected_id"] = None
+                if _new_sec:
+                    st.session_state["section_nav_view_mode"] = "table"
+                    st.session_state["section_nav_table_section"] = _new_sec
                 st.rerun()
         with _fc2:
             _new_cats = st.multiselect(

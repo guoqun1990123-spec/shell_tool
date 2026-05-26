@@ -95,22 +95,11 @@ def render_section_nav(card_state: list[dict], nav_filt: dict | None = None) -> 
     filt = _nav_filter()
     cur_section = filt.get("section", "")
 
-    # 筛选栏 section 下拉与导航树 cur_section 同步
-    if filt_section and filt_section != cur_section:
-        filt["section"] = filt_section
-        cur_section = filt_section
-        st.session_state[_NAV_FILTER_KEY] = filt
-    elif not filt_section and cur_section:
-        # 筛选栏清空 section 时，导航树也清空
-        filt["section"] = ""
-        cur_section = ""
-        st.session_state[_NAV_FILTER_KEY] = filt
-
     # 统计筛选后可见条目总数
     visible_total = sum(1 for c in card_state if _item_visible(c))
 
     # "全部" 按钮：清除导航树 section 选中，右侧保持不变
-    all_active = cur_section == "" and not filt_section
+    all_active = cur_section == ""
     if st.button(
         f"{'● ' if all_active else '  '}全部（{visible_total}）",
         key="nav_all",
@@ -119,16 +108,14 @@ def render_section_nav(card_state: list[dict], nav_filt: dict | None = None) -> 
         filt["section"] = ""
         filt["scroll_to"] = None
         st.session_state[_NAV_FILTER_KEY] = filt
+        st.session_state["section_nav_selected_id"] = None
         st.rerun()
 
     st.divider()
 
     for group in groups:
         sec_no = group["section_no"]
-        # 筛选栏 section 过滤
-        if filt_section and sec_no != filt_section:
-            continue
-        # 导航树 cur_section 过滤（点章节标题后只显示该 section）
+        # section 过滤（筛选栏下拉或点章节标题都写入 cur_section）
         if cur_section and sec_no != cur_section:
             continue
 
