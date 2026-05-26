@@ -254,6 +254,11 @@ def main():
 
             _view_mode = st.session_state.get("section_nav_view_mode", "table")
             _table_sec = st.session_state.get("section_nav_table_section", "")
+            _nav_selected = st.session_state.get("section_nav_selected_id")
+
+            # 有选中条目时强制卡片视图
+            if _nav_selected:
+                _view_mode = "card"
 
             # 默认表格视图：若无选中 section，自动选第一个
             if _view_mode == "table" and not _table_sec:
