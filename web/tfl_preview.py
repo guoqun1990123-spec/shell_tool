@@ -71,7 +71,77 @@ def _footnotes_html(card: dict) -> str:
 
 
 def _render_pstab(card: dict, datasets: dict) -> str:
-    return _wrap(_header_html(card) + "<p style='color:#888'>（PStab 预览占位）</p>")
+    ds_name = str(card.get("Datasets") or "").strip()
+    df = datasets.get(ds_name)
+
+    trtlab = str(card.get("Trtlab") or "").strip()
+    subgrp = str(card.get("Subgrp") or "").strip()
+    varlab = str(card.get("Varlab") or "指标").strip() or "指标"
+
+    trt_cols = [t.strip() for t in trtlab.split("|")] if trtlab else ["数据列"]
+    sub_cols = [s.strip() for s in subgrp.split("|")] if subgrp else []
+
+    # ── 表头 HTML ──
+    if sub_cols:
+        header_html = "<thead>"
+        header_html += "<tr>"
+        header_html += f"<th rowspan='2'>{varlab}</th>"
+        for trt in trt_cols:
+            header_html += f"<th colspan='{len(sub_cols)}'>{trt}</th>"
+        header_html += "</tr>"
+        header_html += "<tr>"
+        for _ in trt_cols:
+            for sub in sub_cols:
+                header_html += f"<th>{sub}</th>"
+        header_html += "</tr></thead>"
+        data_cols = [f"{t}_{s}" for t in trt_cols for s in sub_cols]
+    else:
+        header_html = "<thead><tr>"
+        header_html += f"<th>{varlab}</th>"
+        for trt in trt_cols:
+            header_html += f"<th>{trt}</th>"
+        header_html += "</tr></thead>"
+        data_cols = trt_cols
+
+    # ── 数据行 HTML ──
+    body_html = "<tbody>"
+    if df is None or df.empty:
+        n_cols = 1 + len(data_cols)
+        body_html += f"<tr><td colspan='{n_cols}' style='color:#aaa;text-align:center'>（无数据集）</td></tr>"
+    else:
+        prev_class = None
+        for _, row in df.iterrows():
+            if int(row.get("exclude") or 0) == 1:
+                continue
+            cur_class = row.get("Class")
+            if prev_class is not None and cur_class != prev_class:
+                n_cols = 1 + len(data_cols)
+                body_html += f"<tr><td colspan='{n_cols}' style='height:6px'></td></tr>"
+            prev_class = cur_class
+
+            order = int(row.get("Order") or 0)
+            label = str(row.get("Label") or "")
+            aval  = str(row.get("Aval") or "")
+
+            if order == 0:
+                label_cell = f"<td class='tfl-bold tfl-shaded'>{label}</td>"
+                aval_class = "tfl-bold tfl-shaded"
+            else:
+                indent_cls = "tfl-indent1" if order == 1 else "tfl-indent2"
+                label_cell = f"<td class='{indent_cls}'>{label}</td>"
+                aval_class = "tfl-aval"
+
+            body_html += f"<tr>{label_cell}"
+            for _ in data_cols:
+                body_html += f"<td class='{aval_class}'>{aval if aval else '────'}</td>"
+            body_html += "</tr>"
+
+    body_html += "</tbody>"
+
+    table_html = f"<table class='tfl-table'>{header_html}{body_html}</table>"
+    badge = "<div class='tfl-badge'>⚡ 快速预览（非最终R输出）</div>"
+    content = _header_html(card) + badge + table_html + _footnotes_html(card)
+    return _wrap(content)
 
 
 def _render_rptlist(card: dict, datasets: dict) -> str:
