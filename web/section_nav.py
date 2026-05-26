@@ -65,44 +65,83 @@ def group_by_section(card_state: list[dict]) -> list[dict]:
     )
 
 
-def render_section_nav(card_state: list[dict]) -> None:
+def render_section_nav(card_state: list[dict], nav_filt: dict | None = None) -> None:
     """
     渲染左侧章节导航树。
+    nav_filt: {"section": str, "cats": list, "keyword": str} 来自筛选栏
     副作用：更新 session_state[_NAV_FILTER_KEY]，供右侧卡片列表读取。
     """
+    if nav_filt is None:
+        nav_filt = {}
+
+    filt_section = nav_filt.get("section", "")
+    filt_cats = nav_filt.get("cats", [])
+    filt_kw = nav_filt.get("keyword", "").strip().lower()
+
+    def _item_visible(card: dict) -> bool:
+        if filt_cats and str(card.get("cat", "") or "") not in filt_cats:
+            return False
+        if filt_kw:
+            haystack = (
+                str(card.get("title", "") or "").lower()
+                + str(card.get("table no", "") or "").lower()
+            )
+            if filt_kw not in haystack:
+                return False
+        return True
+
     groups = group_by_section(card_state)
     nav = _nav_state()
     filt = _nav_filter()
     cur_section = filt.get("section", "")
 
-    # "全部" 按钮
-    all_active = cur_section == ""
+    # 筛选栏 section 下拉与导航树 cur_section 同步
+    if filt_section and filt_section != cur_section:
+        filt["section"] = filt_section
+        cur_section = filt_section
+        st.session_state[_NAV_FILTER_KEY] = filt
+    elif not filt_section and cur_section:
+        # 筛选栏清空 section 时，导航树也清空
+        filt["section"] = ""
+        cur_section = ""
+        st.session_state[_NAV_FILTER_KEY] = filt
+
+    # 统计筛选后可见条目总数
+    visible_total = sum(1 for c in card_state if _item_visible(c))
+
+    # "全部" 按钮：清除导航树 section 选中，右侧保持不变
+    all_active = cur_section == "" and not filt_section
     if st.button(
-        f"{'● ' if all_active else '  '}全部（{len(card_state)}）",
+        f"{'● ' if all_active else '  '}全部（{visible_total}）",
         key="nav_all",
         use_container_width=True,
     ):
         filt["section"] = ""
         filt["scroll_to"] = None
         st.session_state[_NAV_FILTER_KEY] = filt
-        st.session_state[_VIEW_MODE_KEY] = "card"
         st.rerun()
 
     st.divider()
 
     for group in groups:
         sec_no = group["section_no"]
-        # 筛选模式下只显示当前 section
+        # 筛选栏 section 过滤
+        if filt_section and sec_no != filt_section:
+            continue
+        # 导航树 cur_section 过滤（点章节标题后只显示该 section）
         if cur_section and sec_no != cur_section:
             continue
-        sec_no = group["section_no"]
+
         sec_title = group["section_title"]
         items = group["items"]
-        count = len(items)
+        # 只统计通过 cat/关键词 过滤的条目数
+        visible_items = [c for c in items if _item_visible(c)]
+        if not visible_items and (filt_cats or filt_kw):
+            continue
+        count = len(visible_items)
         is_collapsed = nav.get(sec_no, False)
         is_active_sec = cur_section == sec_no
 
-        # 章节标题行：展开/折叠 toggle + 点击筛选
         toggle_icon = "▼" if not is_collapsed else "▶"
         active_mark = "● " if is_active_sec else "  "
         sec_label = f"{toggle_icon}{active_mark}{sec_no}"
@@ -132,6 +171,8 @@ def render_section_nav(card_state: list[dict]) -> None:
         # 子条目列表（仅展开时显示）
         if not is_collapsed:
             for ci, card in enumerate(items):
+                if not _item_visible(card):
+                    continue
                 card_id = card.get("_id") or f"{sec_no}_{ci}"
                 tbl_no = str(card.get("table no") or "")
                 title = str(card.get("title") or "")
@@ -141,8 +182,8 @@ def render_section_nav(card_state: list[dict]) -> None:
                     if len(title) > 20:
                         label_text += "…"
 
-                scroll_active = filt.get("scroll_to") == card_id
-                item_label = f"{'● ' if scroll_active else '  '}{label_text}"
+                selected_id = st.session_state.get("section_nav_selected_id")
+                item_label = f"{'● ' if selected_id == card_id else '  '}{label_text}"
 
                 if st.button(item_label, key=f"nav_item_{card_id}", use_container_width=True):
                     filt["section"] = sec_no

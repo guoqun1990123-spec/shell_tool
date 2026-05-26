@@ -193,11 +193,53 @@ def main():
 
     # ── Tab: Config章节 ──────────────────────────────────────────────────────
     with tab_config:
+        _current_card_state = st.session_state.get(_CFG_CARD_KEY, [])
+
+        # 筛选栏（作用于左侧导航树）
+        _all_sections = sorted(
+            {str(c.get("Section no", "") or "") for c in _current_card_state if c.get("Section no")},
+            key=lambda s: [int(x) if x.isdigit() else x for x in s.replace("-", ".").split(".")],
+        )
+        _nav_filt = st.session_state.get("cfg_nav_filter", {"section": "", "cats": [], "keyword": ""})
+        _fc1, _fc2, _fc3 = st.columns([1.5, 2.0, 2.5])
+        with _fc1:
+            _sec_opts = ["全部"] + _all_sections
+            _cur_sec = _nav_filt.get("section", "")
+            _sel_sec = st.selectbox(
+                "Section", options=_sec_opts,
+                index=_sec_opts.index(_cur_sec) if _cur_sec in _sec_opts else 0,
+                key="cfg_nav_flt_sec", label_visibility="collapsed",
+            )
+            _new_sec = "" if _sel_sec == "全部" else _sel_sec
+            if _new_sec != _cur_sec:
+                _nav_filt["section"] = _new_sec
+                st.session_state["cfg_nav_filter"] = _nav_filt
+                st.rerun()
+        with _fc2:
+            _new_cats = st.multiselect(
+                "cat", options=["表", "图", "列表"],
+                default=_nav_filt.get("cats", []),
+                key="cfg_nav_flt_cat", label_visibility="collapsed", placeholder="cat（全部）",
+            )
+            if _new_cats != _nav_filt.get("cats", []):
+                _nav_filt["cats"] = _new_cats
+                st.session_state["cfg_nav_filter"] = _nav_filt
+                st.rerun()
+        with _fc3:
+            _new_kw = st.text_input(
+                "关键词", value=_nav_filt.get("keyword", ""),
+                placeholder="关键词（title / table no）",
+                key="cfg_nav_flt_kw", label_visibility="collapsed",
+            )
+            if _new_kw != _nav_filt.get("keyword", ""):
+                _nav_filt["keyword"] = _new_kw
+                st.session_state["cfg_nav_filter"] = _nav_filt
+                st.rerun()
+
         _nav_col, _edit_col = st.columns([1, 3], gap="small")
 
         with _nav_col:
-            _current_card_state = st.session_state.get(_CFG_CARD_KEY, [])
-            render_section_nav(_current_card_state)
+            render_section_nav(_current_card_state, st.session_state.get("cfg_nav_filter", {}))
 
         with _edit_col:
             dataset_keys = list(st.session_state.datasets.keys())
