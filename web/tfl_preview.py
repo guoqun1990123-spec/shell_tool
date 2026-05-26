@@ -41,13 +41,13 @@ def render_preview(card: dict, datasets: dict[str, pd.DataFrame]) -> str:
     if macvar in {"KMplot", "Swimplot", "WaterfallPlot",
                   "Spiderplot", "Seriesplot", "Forestplot"}:
         return _render_figure(card)
-    return _wrap(_header_html(card) + "<p style='color:#888'>（未知 MacVar 类型）</p>", card)
+    return _wrap(_header_html(card) + "<p style='color:#888'>（未知 MacVar 类型）</p>")
 
 
 # ── 内部工具 ──────────────────────────────────────────────────────────────────
 
-def _wrap(body: str, card: dict) -> str:
-    return f"{_BASE_CSS}<div class='tfl-preview'>{_header_html(card)}{body}</div>"
+def _wrap(body: str) -> str:
+    return f"{_BASE_CSS}<div class='tfl-preview'>{body}</div>"
 
 
 def _header_html(card: dict) -> str:
@@ -71,16 +71,16 @@ def _footnotes_html(card: dict) -> str:
 
 
 def _render_pstab(card: dict, datasets: dict) -> str:
-    return _wrap("<p style='color:#888'>（PStab 预览占位）</p>", card)
+    return _wrap(_header_html(card) + "<p style='color:#888'>（PStab 预览占位）</p>")
 
 
 def _render_rptlist(card: dict, datasets: dict) -> str:
-    return _wrap("<p style='color:#888'>（RptList 预览占位）</p>", card)
+    return _wrap(_header_html(card) + "<p style='color:#888'>（RptList 预览占位）</p>")
 
 
 def _render_mtext(card: dict) -> str:
-    return _wrap("<p style='color:#888'>（mtext 预览占位）</p>", card)
+    return _wrap(_header_html(card) + "<p style='color:#888'>（mtext 预览占位）</p>")
 
 
 def _render_figure(card: dict) -> str:
-    return _wrap("<p style='color:#888'>（图形预览占位）</p>", card)
+    return _wrap(_header_html(card) + "<p style='color:#888'>（图形预览占位）</p>")
