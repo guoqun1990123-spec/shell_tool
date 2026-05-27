@@ -318,6 +318,7 @@ def _render_header(
             st.session_state[_SELECTED_ID_KEY] = card_id
             st.session_state["selected_row"] = _card_idx_in_state(card_id)
             st.session_state["active_tab"] = "datasets"
+            st.session_state["_tab_switch_req"] = st.session_state.get("_tab_switch_req", 0) + 1
             st.rerun()
 
     # 信息区 / 标题展开入口
@@ -503,6 +504,7 @@ def _render_level1(
                 st.session_state[_SELECTED_ID_KEY] = card_id
                 st.session_state["selected_row"] = _card_idx_in_state(card_id)
                 st.session_state["active_tab"] = "datasets"
+                st.session_state["_tab_switch_req"] = st.session_state.get("_tab_switch_req", 0) + 1
                 st.rerun()
 
         # 行D: Trtlab
@@ -532,6 +534,7 @@ def _render_level1(
                     st.session_state[_SELECTED_ID_KEY] = card_id
                     st.session_state["selected_row"] = _card_idx_in_state(card_id)
                     st.session_state["active_tab"] = "datasets"
+                    st.session_state["_tab_switch_req"] = st.session_state.get("_tab_switch_req", 0) + 1
                     st.rerun()
             else:
                 st.caption("未关联 Datasets 或数据表尚未创建")

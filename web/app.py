@@ -199,7 +199,10 @@ def main():
     _tab_index = _tab_keys.index(_active) if _active in _tab_keys else 0
     _default_tab = _tab_names[_tab_index]
 
-    tab_config, tab_datasets, tab_overview, tab_templates = st.tabs(_tab_names, default=_default_tab)
+    _tab_ver = st.session_state.get("_tab_switch_req", 0)
+    tab_config, tab_datasets, tab_overview, tab_templates = st.tabs(
+        _tab_names, default=_default_tab, key=f"main_tabs_v{_tab_ver}"
+    )
 
     # ── Tab: Config章节 ──────────────────────────────────────────────────────
     with tab_config:
@@ -357,13 +360,19 @@ def main():
             else:
                 card_key = state_key(ds_name)
                 version_key = f"_ds_version_{ds_name}"
+                templates = load_templates()
                 if st.session_state.get(version_key) != st.session_state.editor_version:
-                    st.session_state[card_key] = df_to_card_state(ds_df)
+                    from dataset_editor import normalize_dataset_state, apply_normalize
+                    _init_state_val = df_to_card_state(ds_df)
+                    _, _conflicts = normalize_dataset_state(_init_state_val, templates)
+                    if _conflicts:
+                        _sel = {c["child_id"] or c["parent_id"] for c in _conflicts}
+                        _init_state_val = apply_normalize(_init_state_val, _conflicts, _sel)
+                    st.session_state[card_key] = _init_state_val
                     st.session_state[version_key] = st.session_state.editor_version
 
                 tab_edit, tab_preview = st.tabs(["✏️ 编辑", "👁️ 结构预览"])
                 with tab_edit:
-                    templates = load_templates()
                     result_df = render_dataset_editor(ds_name, ds_df, templates)
                     st.session_state.datasets[ds_name] = result_df
                 with tab_preview:

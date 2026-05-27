@@ -107,6 +107,7 @@ def render_overview(
                     st.session_state[_NAV_FILTER_KEY] = nav_filt
                     st.session_state["section_nav_view_mode"] = "card"
                     st.session_state[_ACTIVE_TAB_KEY] = "config"
+                    st.session_state["_tab_switch_req"] = st.session_state.get("_tab_switch_req", 0) + 1
                     st.rerun()
     else:
         st.caption("无章节数据")

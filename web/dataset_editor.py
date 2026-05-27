@@ -454,12 +454,17 @@ def state_key(ds_name: str) -> str:
     return f"card_state_{ds_name}"
 
 
-def _ensure_card_state(ds_name: str, df) -> list[dict]:
-    """确保 session_state 中有该 dataset 的 card state，不存在则从 df 初始化。"""
+def _ensure_card_state(ds_name: str, df, templates: dict) -> list[dict]:
+    """确保 session_state 中有该 dataset 的 card state，不存在则从 df 初始化并矫正 Aval。"""
     import streamlit as st
     key = state_key(ds_name)
     if key not in st.session_state:
-        st.session_state[key] = df_to_card_state(df)
+        state = df_to_card_state(df)
+        _, conflicts = normalize_dataset_state(state, templates)
+        if conflicts:
+            selected = {c["child_id"] or c["parent_id"] for c in conflicts}
+            state = apply_normalize(state, conflicts, selected)
+        st.session_state[key] = state
     return st.session_state[key]
 
 
@@ -471,7 +476,7 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
     import streamlit as st
     from schema import VAR_TYPES
 
-    state = _ensure_card_state(ds_name, df)
+    state = _ensure_card_state(ds_name, df, templates)
     key = state_key(ds_name)
 
     # ── 全局控制栏 ────────────────────────────────────────────────────────
