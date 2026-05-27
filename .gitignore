@@ -17,3 +17,4 @@ __pycache__/
 
 # Claude Code 内存/配置（本地专用）
 .claude/
+config/IMM01-010-CMML_TFL_Shells_V0.1_20260506.yaml
