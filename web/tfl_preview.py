@@ -157,7 +157,7 @@ def _render_pstab(card: dict, datasets: dict) -> str:
 
 
 def _render_rptlist(card: dict, datasets: dict) -> str:
-    ds_name = str(card.get("Datasets") or "").strip()
+    import re as _re
     list_df = datasets.get("list")
     badge = "<div class='tfl-badge'>📋 清单视图（横向A4模拟）</div>"
 
@@ -165,15 +165,26 @@ def _render_rptlist(card: dict, datasets: dict) -> str:
         content = _header_html(card) + badge + "<p style='color:#aaa;font-size:9pt'>（无 list 数据集）</p>"
         return _wrap(content)
 
-    # 筛选对应 ListName 的行，排除 exclude=1
-    if "ListName" in list_df.columns:
-        mask = list_df["ListName"] == ds_name
-        rows = list_df[mask]
-        if rows.empty:
-            rows = list_df
-    else:
-        rows = list_df
+    # 解析 ByseqL → byseq 数值（与 R 端 add_listing_to_doc 逻辑对齐）
+    byseq_str = str(card.get("ByseqL") or "").strip()
+    byseq = None
+    if byseq_str:
+        m = _re.search(r"\d+", byseq_str)
+        if m:
+            byseq = int(m.group())
 
+    # 按 Byseq 筛选，未设置 ByseqL 时 fallback 展示全部
+    if byseq is not None and "Byseq" in list_df.columns:
+        try:
+            rows = list_df[list_df["Byseq"].fillna(-1).astype(float).astype(int) == byseq]
+        except (ValueError, TypeError):
+            rows = list_df
+        if "Byorder" in rows.columns:
+            rows = rows.sort_values("Byorder")
+    else:
+        rows = list_df  # fallback：ByseqL 未填
+
+    # 过滤 exclude=1
     if "exclude" in rows.columns:
         try:
             rows = rows[rows["exclude"].fillna(0).astype(float).astype(int) != 1]
@@ -183,20 +194,33 @@ def _render_rptlist(card: dict, datasets: dict) -> str:
     cols = [escape(str(r)) for r in rows.get("Lvalable", pd.Series()).tolist() if str(r).strip()]
 
     if not cols:
-        content = _header_html(card) + badge + "<p style='color:#aaa;font-size:9pt'>（无列定义）</p>"
+        hint = "（无列定义，请检查 ByseqL 值）" if byseq is None else f"（Byseq={byseq} 无匹配列）"
+        content = _header_html(card) + badge + f"<p style='color:#aaa;font-size:9pt'>{hint}</p>"
         return _wrap(content)
 
-    cols = cols[:10]
+    cols = cols[:15]
+
+    # Values 字段作为示例数据行
+    if "Values" in rows.columns:
+        raw_vals = rows["Values"].fillna("").astype(str).tolist()[:15]
+        example_vals = [escape(v) if v.strip() else "────" for v in raw_vals]
+    else:
+        example_vals = ["────"] * len(cols)
+
     header_row = "".join(f"<th style='background:#eee;font-size:9pt'>{c}</th>" for c in cols)
-    data_row = "".join("<td style='font-size:9pt;color:#ccc'>────</td>" for _ in cols)
-    rows_html = "".join(f"<tr>{data_row}</tr>" for _ in range(3))
+    ex_row = "".join(f"<td style='font-size:9pt;color:#666'>{v}</td>" for v in example_vals)
+    empty_row = "".join(f"<td style='font-size:9pt;color:#ccc'>────</td>" for _ in cols)
+    rows_html = f"<tr>{ex_row}</tr>" + "".join(f"<tr>{empty_row}</tr>" for _ in range(2))
+
+    byseq_hint = f" (Byseq={byseq})" if byseq is not None else " ⚠️ ByseqL 未填"
+    badge_full = f"<div class='tfl-badge'>📋 清单视图{escape(byseq_hint)}</div>"
 
     table_html = (
         f"<table class='tfl-table' style='font-size:9pt'>"
         f"<thead><tr>{header_row}</tr></thead>"
         f"<tbody>{rows_html}</tbody></table>"
     )
-    content = _header_html(card) + badge + table_html + _footnotes_html(card)
+    content = _header_html(card) + badge_full + table_html + _footnotes_html(card)
     return _wrap(content)
 
 

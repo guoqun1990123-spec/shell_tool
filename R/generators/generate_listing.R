@@ -17,13 +17,29 @@ extract_listing_data <- function(list_data, byseq) {
 #' 构建清单表格
 build_listing_table <- function(listing_data) {
 
-  # 获取列名和列标签
+  # 过滤 exclude=1 的列
+  if ("exclude" %in% colnames(listing_data)) {
+    listing_data <- listing_data[is.na(listing_data$exclude) | listing_data$exclude != 1, ]
+  }
+
   col_labels <- listing_data$Lvalable
   n_cols <- nrow(listing_data)
 
-  # 创建空数据框（清单通常是空模板）
+  if (n_cols == 0) {
+    return(data.frame())
+  }
+
+  # 示例行：有 Values 字段时用其内容，否则空白
+  if ("Values" %in% colnames(listing_data)) {
+    example_vals <- as.character(listing_data$Values)
+    example_vals[is.na(example_vals)] <- ""
+  } else {
+    example_vals <- rep("", n_cols)
+  }
+
   result <- data.frame(matrix("", nrow = 2, ncol = n_cols))
   colnames(result) <- col_labels
+  result[1, ] <- example_vals
 
   return(result)
 }

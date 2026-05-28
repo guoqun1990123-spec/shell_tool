@@ -147,6 +147,52 @@ def detect_anomalies(card_state: list[dict]) -> list[dict]:
     return anomalies
 
 
+# ── List 预览 ────────────────────────────────────────────────────────────────
+
+def render_list_preview(list_df) -> None:
+    """按 Byseq 分组渲染每张 Listing 的模拟表格外观。"""
+    import pandas as pd
+    import streamlit as st
+
+    if list_df is None or list_df.empty:
+        st.info("list 表为空，请先在「编辑」标签页填入数据。")
+        return
+
+    df = list_df.copy()
+    if "exclude" in df.columns:
+        df["exclude"] = pd.to_numeric(df["exclude"], errors="coerce").fillna(0)
+        df = df[df["exclude"] != 1]
+
+    if df.empty:
+        st.info("所有列均已设为 exclude=1。")
+        return
+
+    byseqs = sorted(df["Byseq"].dropna().unique())
+    if not byseqs:
+        st.info("Byseq 为空，请先填写数据。")
+        return
+
+    for byseq in byseqs:
+        group = df[df["Byseq"] == byseq].sort_values("Byorder")
+        list_names = group["ListName"].dropna().unique()
+        list_name = str(list_names[0]) if len(list_names) > 0 else f"Byseq={int(byseq)}"
+
+        col_labels = group["Lvalable"].tolist()
+        if "Values" in group.columns:
+            values = group["Values"].fillna("").astype(str).tolist()
+        else:
+            values = [""] * len(col_labels)
+
+        st.caption(f"**{list_name}** （Byseq={int(byseq)}，{len(col_labels)} 列）")
+        preview_row = dict(zip(col_labels, values))
+        st.dataframe(
+            pd.DataFrame([preview_row]),
+            use_container_width=True,
+            hide_index=True,
+        )
+        st.divider()
+
+
 # ── Streamlit 渲染 ──────────────────────────────────────────────────────────
 
 def render_preview(ds_name: str, card_state: list[dict]) -> None:

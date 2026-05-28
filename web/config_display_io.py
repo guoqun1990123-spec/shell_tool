@@ -40,7 +40,7 @@ _DEFAULTS: dict = {
         "Adcols": "level2",
         "Varlab": "level2",
         "Labparm": "level2",
-        "ByseqL": "level2",
+        "ByseqL": "level1",
         "RefTFL": "level2",
     },
 }

@@ -10,6 +10,8 @@
     Aval: xx – xx
 分类变量-有子分类:
   children: []
+  aval_options:
+  - xx (xx.x)
 分类变量-无子分类:
   aval: xx (xx.x)
 日期变量:

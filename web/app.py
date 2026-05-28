@@ -348,15 +348,20 @@ def main():
             ds_df = st.session_state.datasets[ds_name]
 
             if is_list:
-                ds_cc = _build_list_column_config()
-                edited_ds = st.data_editor(
-                    ds_df,
-                    column_config=ds_cc,
-                    num_rows="dynamic",
-                    width="stretch",
-                    key=f"ds_editor_{ds_name}_{st.session_state.editor_version}",
-                )
-                st.session_state.datasets[ds_name] = edited_ds
+                tab_edit, tab_preview = st.tabs(["✏️ 编辑", "👁️ Listing 预览"])
+                with tab_edit:
+                    ds_cc = _build_list_column_config()
+                    edited_ds = st.data_editor(
+                        ds_df,
+                        column_config=ds_cc,
+                        num_rows="dynamic",
+                        width="stretch",
+                        key=f"ds_editor_{ds_name}_{st.session_state.editor_version}",
+                    )
+                    st.session_state.datasets[ds_name] = edited_ds
+                with tab_preview:
+                    from dataset_preview import render_list_preview
+                    render_list_preview(st.session_state.datasets[ds_name])
             else:
                 card_key = state_key(ds_name)
                 version_key = f"_ds_version_{ds_name}"
@@ -439,6 +444,89 @@ def main():
                     key="tmpl_date_aval",
                     label_visibility="collapsed",
                 )
+
+            st.caption("分类变量子分类 Aval 候选（子行 Aval 下拉选项）")
+            aval_opts = list(templates_edit.get("分类变量-有子分类", {}).get("aval_options", ["xx (xx.x)"]))
+            new_aval_opts = []
+            for j, opt in enumerate(aval_opts):
+                oc1, oc2 = st.columns([5, 0.5])
+                with oc1:
+                    val = st.text_input(
+                        "候选值", value=opt, label_visibility="collapsed",
+                        key=f"tmpl_aval_opt_{st.session_state.tmpl_version}_{j}"
+                    )
+                with oc2:
+                    if not st.button("🗑", key=f"tmpl_aval_opt_del_{st.session_state.tmpl_version}_{j}"):
+                        new_aval_opts.append(val)
+            if st.button("＋ 添加候选 Aval", key="tmpl_aval_opt_add"):
+                new_aval_opts.append("")
+            templates_edit.setdefault("分类变量-有子分类", {})["aval_options"] = new_aval_opts
+
+            from templates_io import _BASE_TYPES
+            custom_types = [k for k in templates_edit if k not in _BASE_TYPES]
+            with st.expander(f"自定义变量类型（{len(custom_types)} 个）", expanded=bool(custom_types)):
+                for ct in list(custom_types):
+                    ct_data = templates_edit[ct]
+                    st.markdown(f"**{ct}**")
+                    ct_col1, ct_col2 = st.columns([5, 1])
+                    with ct_col2:
+                        if st.button("删除此类型", key=f"tmpl_del_type_{ct}"):
+                            del templates_edit[ct]
+                            st.rerun()
+                    with ct_col1:
+                        st.caption("子行模板（Label + Aval）")
+                    ct_children = ct_data.get("children", [])
+                    new_ct_children = []
+                    for j, ch in enumerate(ct_children):
+                        cc1, cc2, cc3 = st.columns([3, 3, 0.5])
+                        with cc1:
+                            lbl = st.text_input(
+                                "Label", value=ch.get("Label", ""), label_visibility="collapsed",
+                                key=f"tmpl_ct_{ct}_lbl_{st.session_state.tmpl_version}_{j}"
+                            )
+                        with cc2:
+                            avl = st.text_input(
+                                "Aval", value=ch.get("Aval", ""), label_visibility="collapsed",
+                                key=f"tmpl_ct_{ct}_avl_{st.session_state.tmpl_version}_{j}"
+                            )
+                        with cc3:
+                            if not st.button("🗑", key=f"tmpl_ct_{ct}_del_{st.session_state.tmpl_version}_{j}"):
+                                new_ct_children.append({"Label": lbl, "Aval": avl})
+                    if st.button(f"＋ 添加子行", key=f"tmpl_ct_{ct}_add"):
+                        new_ct_children.append({"Label": "", "Aval": ""})
+                    templates_edit[ct]["children"] = new_ct_children
+
+                    ct_opts = list(ct_data.get("aval_options", []))
+                    new_ct_opts = []
+                    st.caption("子行 Aval 候选")
+                    for j, opt in enumerate(ct_opts):
+                        oo1, oo2 = st.columns([5, 0.5])
+                        with oo1:
+                            v = st.text_input(
+                                "候选值", value=opt, label_visibility="collapsed",
+                                key=f"tmpl_ct_{ct}_opt_{st.session_state.tmpl_version}_{j}"
+                            )
+                        with oo2:
+                            if not st.button("🗑", key=f"tmpl_ct_{ct}_opt_del_{st.session_state.tmpl_version}_{j}"):
+                                new_ct_opts.append(v)
+                    if st.button("＋ 添加候选 Aval", key=f"tmpl_ct_{ct}_opt_add"):
+                        new_ct_opts.append("")
+                    templates_edit[ct]["aval_options"] = new_ct_opts
+                    st.divider()
+
+                new_type_key = f"tmpl_new_type_name_{st.session_state.tmpl_version}"
+                new_type_name = st.text_input("新变量类型名称", key=new_type_key, placeholder="如：生存分析指标")
+                if st.button("＋ 新增变量类型", key="tmpl_add_type"):
+                    name = new_type_name.strip()
+                    if name and name not in templates_edit:
+                        templates_edit[name] = {"children": [], "aval_options": []}
+                        st.session_state.tmpl_version += 1
+                        st.rerun()
+                    elif not name:
+                        st.warning("请先输入类型名称")
+                    else:
+                        st.warning(f"类型「{name}」已存在")
+
             if st.button("保存模板", key="btn_save_tmpl", type="secondary"):
                 try:
                     save_templates(templates_edit)
