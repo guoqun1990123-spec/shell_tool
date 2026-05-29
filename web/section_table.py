@@ -285,11 +285,16 @@ def _render_row(
 
     with c4:
         cur_pop = str(card.get("pop") or "")
-        pop_opts = [""] + pop_options
-        new_pop = st.selectbox("pop", options=pop_opts,
-                               index=pop_opts.index(cur_pop) if cur_pop in pop_opts else 0,
-                               key=f"tbl_pop_{card_id}_{ver}",
-                               label_visibility="collapsed")
+        cur_pop_list = [p.strip() for p in cur_pop.split(",") if p.strip()]
+        all_pop = list(dict.fromkeys(pop_options + cur_pop_list))
+        new_pop_list = st.multiselect(
+            "pop", options=all_pop,
+            default=cur_pop_list,
+            key=f"tbl_pop_{card_id}_{ver}",
+            label_visibility="collapsed",
+            placeholder="人群",
+        )
+        new_pop = ", ".join(new_pop_list)
         if new_pop != cur_pop:
             state = st.session_state[_CARD_STATE_KEY]
             st.session_state[_CARD_STATE_KEY] = _update_card(state, card_id, pop=new_pop)
