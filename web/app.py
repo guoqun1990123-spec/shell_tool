@@ -127,6 +127,10 @@ def _do_load(loader, success_msg: str):
         st.session_state.datasets = dsets
         st.session_state.selected_row = None
         st.session_state.editor_version += 1
+        # 清除所有数据集的 card state，避免旧编辑状态污染新文件
+        for key in list(st.session_state.keys()):
+            if key.startswith("card_state_") or key.startswith("_ds_version_"):
+                del st.session_state[key]
         st.success(success_msg)
     except Exception as e:
         st.error(f"加载失败：{e}")
@@ -183,6 +187,9 @@ def main():
             st.session_state.datasets = {}
             st.session_state.selected_row = None
             st.session_state.editor_version += 1
+            for key in list(st.session_state.keys()):
+                if key.startswith("card_state_") or key.startswith("_ds_version_"):
+                    del st.session_state[key]
 
     # 工具栏第二行：默认 Trtlab
     st.session_state.default_trtlab = st.text_input(
