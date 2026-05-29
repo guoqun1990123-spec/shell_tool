@@ -600,11 +600,13 @@ def _render_card_preview(card: dict, card_id: str, version: int) -> None:
             st.session_state["preview_card_title"] = str(
                 cur_card.get("title") or cur_card.get("table no") or "TFL"
             )
+            st.session_state["preview_card_id"] = card_id
             st.rerun()
 
     with col_status:
         pr = st.session_state.get("preview_result")
-        if pr and pr.get("status") == "success":
+        pr_card_id = st.session_state.get("preview_card_id")
+        if pr and pr_card_id == card_id and pr.get("status") == "success":
             pr_title = st.session_state.get("preview_card_title", "TFL")
             size_kb = len(pr["output_bytes"]) // 1024 if pr.get("output_bytes") else 0
             st.download_button(
@@ -615,7 +617,9 @@ def _render_card_preview(card: dict, card_id: str, version: int) -> None:
                 key=f"cfg_dl_{card_id}_{version}",
             )
             st.caption(f"文件大小 {size_kb} KB")
-        elif pr and pr.get("status") == "error":
+        elif pr and pr_card_id != card_id and pr.get("status") == "success":
+            st.caption("💡 预览属于其他 TFL，点击上方按钮重新渲染本表")
+        elif pr and pr_card_id == card_id and pr.get("status") == "error":
             st.error(pr.get("error_summary") or "渲染失败")
 
 
@@ -790,7 +794,14 @@ def render_config_editor(
 
     # 顶部添加按钮
     if st.button("＋ 添加行", key=f"cfg_add_{version}"):
-        st.session_state[_CARD_STATE_KEY] = _add_card(card_state)
+        new_state = _add_card(card_state)
+        default_trtlab = st.session_state.get("default_trtlab", "").strip()
+        if default_trtlab:
+            for c in new_state:
+                if c["_id"] not in {x["_id"] for x in card_state}:
+                    new_state = _update_card(new_state, c["_id"], Trtlab=default_trtlab)
+                    break
+        st.session_state[_CARD_STATE_KEY] = new_state
         st.rerun()
 
     # 章节导航树控制渲染范围

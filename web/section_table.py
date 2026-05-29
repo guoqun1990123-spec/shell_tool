@@ -339,6 +339,7 @@ def _render_row(
                 result = run_preview(cur_card, datasets)
             st.session_state["preview_result"] = result
             st.session_state["preview_card_title"] = str(cur_card.get("title") or cur_card.get("table no") or "TFL")
+            st.session_state["preview_card_id"] = card_id
             st.rerun()
 
     if is_expanded:
