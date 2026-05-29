@@ -1034,6 +1034,8 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
             continue
         # 断链的 Order=1 行：作为独立行渲染
         row_id = row["_id"]
+        cls = int(row.get("Class") or 0)
+        st.warning(f"⚠️ 断链行（原 Class={cls}）：此行已与父行断开，请重新分配或删除。")
         with st.container(border=True):
             cc, cl, ca, cd = st.columns([1, 3, 3, 0.5])
             with cc:
