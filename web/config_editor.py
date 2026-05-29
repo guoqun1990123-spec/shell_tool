@@ -460,7 +460,7 @@ def _render_level1(
             all_pop = list(dict.fromkeys(pop_options + cur_pop_list))
             new_pop_list = st.multiselect(
                 "pop", options=all_pop,
-                default=[p for p in cur_pop_list if p in all_pop],
+                default=cur_pop_list,
                 key=f"cfg_pop_{card_id}_{version}",
             )
             new_pop = ", ".join(new_pop_list)
