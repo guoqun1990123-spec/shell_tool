@@ -617,7 +617,7 @@ def _render_card_preview(card: dict, card_id: str, version: int) -> None:
                 key=f"cfg_dl_{card_id}_{version}",
             )
             st.caption(f"文件大小 {size_kb} KB")
-        elif pr and pr_card_id != card_id and pr.get("status") == "success":
+        elif pr and pr_card_id is not None and pr_card_id != card_id and pr.get("status") == "success":
             st.caption("💡 预览属于其他 TFL，点击上方按钮重新渲染本表")
         elif pr and pr_card_id == card_id and pr.get("status") == "error":
             st.error(pr.get("error_summary") or "渲染失败")
