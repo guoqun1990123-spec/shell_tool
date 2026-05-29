@@ -826,17 +826,21 @@ def main():
                 with st.expander("查看 R 日志"):
                     st.code(pr["error_log"], language=None)
 
-    # ── YAML 预览（只读，不写 session_state）────────────────────────────────
-    with st.expander("YAML 预览"):
-        try:
-            preview = dump_yaml(
-                edited_config,
-                st.session_state.datasets,
-                st.session_state.protocol_name,
-            )
-            st.code(preview, language="yaml")
-        except Exception as e:
-            st.error(f"序列化失败：{e}")
+    # ── YAML 预览（按钮触发，避免每次 rerun 序列化）────────────────────────
+    _yaml_preview_key = "_yaml_preview_content"
+    with st.expander("YAML 预览", expanded=False):
+        if st.button("生成 YAML 预览", key="btn_yaml_preview"):
+            try:
+                st.session_state[_yaml_preview_key] = dump_yaml(
+                    edited_config,
+                    st.session_state.datasets,
+                    st.session_state.protocol_name,
+                )
+            except Exception as e:
+                st.session_state[_yaml_preview_key] = f"序列化失败：{e}"
+        content = st.session_state.get(_yaml_preview_key, "")
+        if content:
+            st.code(content, language="yaml")
 
 
 def _do_save(git_ops):
