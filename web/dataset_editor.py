@@ -425,7 +425,9 @@ def _infer_is_header(state: list[dict]) -> list[dict]:
             result.append({**row, "_is_header": False})
         else:
             aval = str(row.get("Aval") or "").strip()
-            inferred = aval == ""
+            label = str(row.get("Label") or "").strip()
+            # 只有 Label 非空且 Aval 为空才推断为标题行；Label 也空说明是刚新增的空行
+            inferred = (aval == "" and label != "")
             result.append({**row, "_is_header": inferred})
     return result
 
@@ -904,6 +906,52 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
 
         # ── 子行渲染（仅展开时，header 行无子行不渲染）──────────────
         if is_expanded and not is_header:
+            with st.expander("更多字段 ▼", expanded=False):
+                ef1, ef2, ef3, ef4, ef5 = st.columns(5)
+                cur_excl = int(row.get("exclude") or 0)
+                new_excl = ef1.selectbox(
+                    "exclude", options=[0, 1], index=cur_excl,
+                    format_func=lambda x: "显示" if x == 0 else "隐藏",
+                    key=f"excl_{row_id}",
+                )
+                if new_excl != cur_excl:
+                    st.session_state[key] = [
+                        {**r, "exclude": new_excl} if r["_id"] == row_id else r
+                        for r in st.session_state[key]
+                    ]
+                cur_bc = str(row.get("BlankCol") or "")
+                new_bc = ef2.text_input("BlankCol", value=cur_bc,
+                                        key=f"blankcol_{row_id}",
+                                        placeholder="如 1|2")
+                if new_bc != cur_bc:
+                    st.session_state[key] = [
+                        {**r, "BlankCol": new_bc} if r["_id"] == row_id else r
+                        for r in st.session_state[key]
+                    ]
+                cur_drug = str(row.get("Drug") or "")
+                new_drug = ef3.text_input("Drug", value=cur_drug,
+                                          key=f"drug_{row_id}")
+                if new_drug != cur_drug:
+                    st.session_state[key] = [
+                        {**r, "Drug": new_drug} if r["_id"] == row_id else r
+                        for r in st.session_state[key]
+                    ]
+                cur_visit = str(row.get("Visit") or "")
+                new_visit = ef4.text_input("Visit", value=cur_visit,
+                                           key=f"visit_{row_id}")
+                if new_visit != cur_visit:
+                    st.session_state[key] = [
+                        {**r, "Visit": new_visit} if r["_id"] == row_id else r
+                        for r in st.session_state[key]
+                    ]
+                cur_base = str(row.get("Base") or "")
+                new_base = ef5.text_input("Base", value=cur_base,
+                                          key=f"base_{row_id}")
+                if new_base != cur_base:
+                    st.session_state[key] = [
+                        {**r, "Base": new_base} if r["_id"] == row_id else r
+                        for r in st.session_state[key]
+                    ]
             for child in linked_children:
                 child_id = child["_id"]
                 with st.container():
