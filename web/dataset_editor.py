@@ -536,8 +536,15 @@ def _ensure_card_state(ds_name: str, df, templates: dict) -> list[dict]:
         state = df_to_card_state(df)
         _, conflicts = normalize_dataset_state(state, templates)
         if conflicts:
-            selected = {c["child_id"] or c["parent_id"] for c in conflicts}
-            state = apply_normalize(state, conflicts, selected)
+            # 只自动填充 Aval 为空的行；非空 Aval 与模板不符时留给用户手动矫正
+            _state_map = {r["_id"]: r for r in state}
+            selected = {
+                c["child_id"] or c["parent_id"]
+                for c in conflicts
+                if not str(_state_map.get(c["child_id"] or c["parent_id"], {}).get("Aval") or "").strip()
+            }
+            if selected:
+                state = apply_normalize(state, conflicts, selected)
         st.session_state[key] = state
     return st.session_state[key]
 
