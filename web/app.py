@@ -100,6 +100,14 @@ def _init_state():
         st.session_state.default_trtlab = ""
 
 
+def _clear_card_state():
+    """清除所有 card state 相关的 session key，避免旧编辑状态污染。"""
+    stale = [k for k in st.session_state.keys()
+             if k.startswith("card_state_") or k.startswith("_ds_version_")]
+    for k in stale:
+        del st.session_state[k]
+
+
 def _build_list_column_config() -> dict:
     cc = {}
     for col in DATASET_LIST_COLS:
@@ -128,9 +136,7 @@ def _do_load(loader, success_msg: str):
         st.session_state.selected_row = None
         st.session_state.editor_version += 1
         # 清除所有数据集的 card state，避免旧编辑状态污染新文件
-        for key in list(st.session_state.keys()):
-            if key.startswith("card_state_") or key.startswith("_ds_version_"):
-                del st.session_state[key]
+        _clear_card_state()
         st.success(success_msg)
     except Exception as e:
         st.error(f"加载失败：{e}")
@@ -187,9 +193,7 @@ def main():
             st.session_state.datasets = {}
             st.session_state.selected_row = None
             st.session_state.editor_version += 1
-            for key in list(st.session_state.keys()):
-                if key.startswith("card_state_") or key.startswith("_ds_version_"):
-                    del st.session_state[key]
+            _clear_card_state()
 
     # 工具栏第二行：默认 Trtlab
     st.session_state.default_trtlab = st.text_input(
