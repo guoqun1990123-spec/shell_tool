@@ -382,8 +382,15 @@ def main():
                     _init_state_val = df_to_card_state(ds_df)
                     _, _conflicts = normalize_dataset_state(_init_state_val, templates)
                     if _conflicts:
-                        _sel = {c["child_id"] or c["parent_id"] for c in _conflicts}
-                        _init_state_val = apply_normalize(_init_state_val, _conflicts, _sel)
+                        # 只自动填充 Aval 为空的行；非空 Aval 与模板不符时留给用户手动矫正
+                        _state_map2 = {r["_id"]: r for r in _init_state_val}
+                        _sel = {
+                            c["child_id"] or c["parent_id"]
+                            for c in _conflicts
+                            if not str(_state_map2.get(c["child_id"] or c["parent_id"], {}).get("Aval") or "").strip()
+                        }
+                        if _sel:
+                            _init_state_val = apply_normalize(_init_state_val, _conflicts, _sel)
                     st.session_state[card_key] = _init_state_val
                     st.session_state[version_key] = st.session_state.editor_version
 
