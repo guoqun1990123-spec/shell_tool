@@ -336,7 +336,8 @@ def normalize_dataset_state(state: list[dict], templates: dict) -> tuple[list[di
             cur = str(child.get("Aval") or "").strip()
 
             if vtype == "分类变量-有子分类":
-                tmpl_aval = "xx (xx.x)"
+                aval_opts = tmpl.get("aval_options", [])
+                tmpl_aval = aval_opts[0] if aval_opts else "xx (xx.x)"
                 if cur == tmpl_aval:
                     continue
             elif i < len(tmpl_children):
