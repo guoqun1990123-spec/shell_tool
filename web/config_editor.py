@@ -65,7 +65,7 @@ def df_to_card_state(df: pd.DataFrame) -> list[dict]:
             card[col] = "" if (val is None or (isinstance(val, float) and pd.isna(val))) else val
         card["_id"] = str(uuid.uuid4())
         card["_level"] = "collapsed"
-        card["_title_overridden"] = bool(str(card.get("Section title", "")).strip())
+        card["_title_overridden"] = False   # 加载时不视为用户手动覆盖
         card["_tableno_overridden"] = False
         rows.append(card)
     return rows
