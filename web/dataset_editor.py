@@ -994,7 +994,7 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
             for child in linked_children:
                 child_id = child["_id"]
                 with st.container():
-                    cc_link, cc_class, cc_label, cc_aval, cc_unlink = st.columns([0.4, 1, 3, 3, 1.5])
+                    cc_link, cc_class, cc_order, cc_label, cc_aval, cc_unlink = st.columns([0.4, 0.8, 0.8, 2.8, 3, 1.5])
                     with cc_link:
                         st.markdown("🔗")
                     with cc_class:
@@ -1003,6 +1003,20 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                             disabled=True, label_visibility="collapsed",
                             key=f"child_class_{child_id}"
                         )
+                    with cc_order:
+                        cur_order = int(child.get("Order") or 1)
+                        new_order = st.number_input(
+                            "Order", value=cur_order,
+                            min_value=1, max_value=5, step=1,
+                            label_visibility="collapsed",
+                            key=f"child_order_{child_id}",
+                        )
+                        if new_order != cur_order:
+                            st.session_state[key] = [
+                                {**r, "Order": new_order} if r["_id"] == child_id else r
+                                for r in st.session_state[key]
+                            ]
+                            st.rerun()
                     with cc_label:
                         new_child_label = st.text_input(
                             "Label", value=str(child.get("Label") or ""),
