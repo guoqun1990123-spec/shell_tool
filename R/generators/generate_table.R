@@ -100,8 +100,9 @@ build_table_data <- function(dataset, header, varlab = "指标") {
   for (i in 1:nrow(dataset)) {
     current_class <- dataset$Class[i]
 
-    # 如果Class变化且不是第一行，插入空行
-    if (!is.na(prev_class) && !is.na(current_class) && prev_class != current_class) {
+    # Class变化时插分隔空行；标题行（Class=0）前不插，由上一组变化自然触发
+    if (!is.na(prev_class) && !is.na(current_class) &&
+        prev_class != current_class && current_class != 0) {
       empty_row <- as.list(rep("", n_cols))
       names(empty_row) <- colnames(header)
       result_rows[[length(result_rows) + 1]] <- empty_row
@@ -150,7 +151,8 @@ build_table_data <- function(dataset, header, varlab = "指标") {
   result <- do.call(rbind.data.frame, c(result_rows, stringsAsFactors = FALSE))
   colnames(result) <- colnames(header)
   attr(result, "spacer_rows") <- spacer_rows
-
+  header_rows <- which(dataset$Class == 0 & dataset$Order == 0)
+  attr(result, "header_rows") <- header_rows
   return(result)
 }
 
@@ -255,6 +257,12 @@ create_flextable <- function(data, header, varlab = "指标") {
   spacer_rows <- attr(data, "spacer_rows")
   if (!is.null(spacer_rows) && length(spacer_rows) > 0) {
     ft <- height(ft, i = spacer_rows, height = 0.01, part = "body")
+  }
+
+  # 标题行（Class=0）加粗
+  header_rows <- attr(data, "header_rows")
+  if (!is.null(header_rows) && length(header_rows) > 0) {
+    ft <- bold(ft, i = header_rows, bold = TRUE, part = "body")
   }
 
   # 设置表格宽度为页面宽度（横向A4：11.69英寸 - 左右边距1.58英寸 = 10.11英寸）
