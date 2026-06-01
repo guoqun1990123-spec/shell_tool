@@ -113,6 +113,7 @@ def _render_pstab(card: dict, datasets: dict) -> str:
         body_html += f"<tr><td colspan='{n_cols}' style='color:#aaa;text-align:center'>（无数据集）</td></tr>"
     else:
         prev_class = None
+        n_cols = 1 + len(data_cols)
         for _, row in df.iterrows():
             try:
                 excluded = int(float(row.get("exclude") or 0)) == 1
@@ -120,9 +121,12 @@ def _render_pstab(card: dict, datasets: dict) -> str:
                 excluded = False
             if excluded:
                 continue
-            cur_class = row.get("Class")
-            if prev_class is not None and cur_class != prev_class:
-                n_cols = 1 + len(data_cols)
+            try:
+                cur_class = int(float(row.get("Class") or 0))
+            except (ValueError, TypeError):
+                cur_class = 0
+            # 与 R 端一致：Class=0 标题行前不插空行，普通分组变化才插
+            if prev_class is not None and cur_class != prev_class and cur_class != 0:
                 body_html += f"<tr class='tfl-spacer'><td colspan='{n_cols}'></td></tr>"
             prev_class = cur_class
 
@@ -132,6 +136,12 @@ def _render_pstab(card: dict, datasets: dict) -> str:
                 order = 0
             label = escape(str(row.get("Label") or ""))
             aval  = escape(str(row.get("Aval") or ""))
+
+            # Class=0：标题行（加粗，数据列留空，与 R 端 bold 处理对齐）
+            if cur_class == 0 and order == 0:
+                label_cell = f"<td class='tfl-bold' colspan='{n_cols}'>{label}</td>"
+                body_html += f"<tr>{label_cell}</tr>"
+                continue
 
             if order == 0:
                 label_cell = f"<td class='tfl-bold tfl-shaded'>{label}</td>"
