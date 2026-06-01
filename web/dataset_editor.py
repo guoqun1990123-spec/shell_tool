@@ -410,13 +410,13 @@ def _smart_promote_children(state: list[dict], parent_id: str) -> list[dict]:
     for child in children:
         aval = str(child.get("Aval") or "").strip()
         if aval == "":
-            new_row = {**child, "_parent_id": None, "_linked": False, "Order": 0}
+            new_row = {**child, "_parent_id": None, "_linked": False, "Order": 0, "Class": -1}
             current_new_parent_id = new_row["_id"]
         else:
             if current_new_parent_id is not None:
                 new_row = {**child, "_parent_id": current_new_parent_id, "_linked": True, "Order": 1}
             else:
-                new_row = {**child, "_parent_id": None, "_linked": False, "Order": 0}
+                new_row = {**child, "_parent_id": None, "_linked": False, "Order": 0, "Class": -1}
                 current_new_parent_id = new_row["_id"]
         promoted.append(new_row)
 
@@ -542,7 +542,7 @@ def insert_after(state: list[dict], parent_id: str) -> list[dict]:
     新行 Class 由移动后 _reindex_class 自动分配，此处先用占位值 0。
     """
     _, end = _group_slice(state, parent_id)
-    new_row = _new_data_row(class_val=0, order=0) | _new_meta()
+    new_row = _new_data_row(class_val=-1, order=0) | _new_meta()
     new_state = state[:end] + [new_row] + state[end:]
     return _reindex_class(new_state)
 
@@ -734,6 +734,7 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                         {**r, "Label": new_label} if r["_id"] == row_id else r
                         for r in st.session_state[key]
                     ]
+                    st.rerun()
 
             if not is_header:
                 with c_type:
@@ -874,7 +875,8 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                 if st.button("确认生成子行", key=f"subclass_ok_{row_id}", type="primary"):
                     names = [n.strip() for n in subclass_text.splitlines() if n.strip()]
                     cls = row.get("Class", 0)
-                    aval_val = "xx (xx.x)"
+                    aval_opts = templates.get("分类变量-有子分类", {}).get("aval_options", [])
+                    aval_val = aval_opts[0] if aval_opts else "xx (xx.x)"
                     new_children = []
                     for name in names:
                         child_data = _new_data_row(class_val=cls, order=1)
@@ -951,6 +953,7 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                         {**r, "exclude": new_excl} if r["_id"] == row_id else r
                         for r in st.session_state[key]
                     ]
+                    st.rerun()
                 cur_bc = str(row.get("BlankCol") or "")
                 new_bc = ef2.text_input("BlankCol", value=cur_bc,
                                         key=f"blankcol_{row_id}",
@@ -960,6 +963,7 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                         {**r, "BlankCol": new_bc} if r["_id"] == row_id else r
                         for r in st.session_state[key]
                     ]
+                    st.rerun()
                 cur_drug = str(row.get("Drug") or "")
                 new_drug = ef3.text_input("Drug", value=cur_drug,
                                           key=f"drug_{row_id}")
@@ -968,6 +972,7 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                         {**r, "Drug": new_drug} if r["_id"] == row_id else r
                         for r in st.session_state[key]
                     ]
+                    st.rerun()
                 cur_visit = str(row.get("Visit") or "")
                 new_visit = ef4.text_input("Visit", value=cur_visit,
                                            key=f"visit_{row_id}")
@@ -976,6 +981,7 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                         {**r, "Visit": new_visit} if r["_id"] == row_id else r
                         for r in st.session_state[key]
                     ]
+                    st.rerun()
                 cur_base = str(row.get("Base") or "")
                 new_base = ef5.text_input("Base", value=cur_base,
                                           key=f"base_{row_id}")
@@ -984,6 +990,7 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                         {**r, "Base": new_base} if r["_id"] == row_id else r
                         for r in st.session_state[key]
                     ]
+                    st.rerun()
             for child in linked_children:
                 child_id = child["_id"]
                 with st.container():
@@ -1007,6 +1014,7 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                                 {**r, "Label": new_child_label} if r["_id"] == child_id else r
                                 for r in st.session_state[key]
                             ]
+                            st.rerun()
                     with cc_aval:
                         parent_vtype = row.get("_var_type", VAR_TYPE_DEFAULT)
                         aval_opts_for_child = templates.get(parent_vtype, {}).get("aval_options", [])
