@@ -33,14 +33,6 @@ def _ds_open() -> set:
     return st.session_state[_DS_OPEN_KEY]
 
 
-def _card_idx_in_state(card_id: str) -> int | None:
-    """返回卡片在当前 card_state 中的下标，找不到返回 None。"""
-    state = st.session_state.get(_CARD_STATE_KEY, [])
-    for i, c in enumerate(state):
-        if c["_id"] == card_id:
-            return i
-    return None
-
 
 # ── 纯函数 ───────────────────────────────────────────────────────────────────
 
@@ -736,7 +728,7 @@ def render_config_editor(
     config_df: pd.DataFrame,
     dataset_keys: list[str],
     templates: dict,
-) -> tuple[pd.DataFrame, int | None]:
+) -> tuple[pd.DataFrame, str | None]:
     """Render card-based config editor with 3-level display system.
 
     Returns (edited_df, selected_card_id).
