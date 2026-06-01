@@ -16,7 +16,7 @@ from validators import validate
 from dataset_editor import render_dataset_editor, df_to_card_state, state_key
 from dataset_preview import render_preview
 from templates_io import load_templates
-from config_editor import render_config_editor, _CARD_STATE_KEY as _CFG_CARD_KEY, _FOCUS_KEY, _update_card
+from config_editor import render_config_editor, _CARD_STATE_KEY as _CFG_CARD_KEY, _FOCUS_KEY, _update_card, card_state_to_df
 from config_templates_io import load_config_templates, save_config_templates
 from renderer import run_render
 from config_display_io import load_display_levels, save_display_levels, REQUIRED_FIELDS
@@ -303,9 +303,7 @@ def main():
                     dataset_keys,
                     cfg_templates,
                 )
-                from config_editor import card_state_to_df
                 edited_config = card_state_to_df(st.session_state.get(_CFG_CARD_KEY, []))
-                selected_id = st.session_state.get("selected_id")
             else:
                 edited_config, selected_id = render_config_editor(
                     st.session_state.config_df,
@@ -685,8 +683,7 @@ def main():
     try:
         _ = edited_config
     except NameError:
-        from config_editor import card_state_to_df as _cs2df2
-        edited_config = _cs2df2(st.session_state.get(_CFG_CARD_KEY, []))
+        edited_config = card_state_to_df(st.session_state.get(_CFG_CARD_KEY, []))
 
     errors = validate(edited_config, st.session_state.datasets)
 
