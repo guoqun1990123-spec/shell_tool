@@ -590,6 +590,15 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
     """
     import streamlit as st
     from templates_io import get_var_types
+
+    def _update_field(widget_key: str, state_key: str, row_id: str, field: str) -> None:
+        """text_input on_change 回调：将 widget 当前值写回对应行的 field。"""
+        new_val = st.session_state.get(widget_key, "")
+        st.session_state[state_key] = [
+            {**r, field: new_val} if r["_id"] == row_id else r
+            for r in st.session_state[state_key]
+        ]
+
     VAR_TYPES = get_var_types(templates)
 
     state = _ensure_card_state(ds_name, df, templates)
@@ -739,18 +748,14 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                             ]
 
             with c_label:
-                new_label = st.text_input(
+                st.text_input(
                     "Label", value=str(row.get("Label") or ""),
                     placeholder="小节标题" if is_header else "变量名称",
                     label_visibility="collapsed",
-                    key=f"label_{row_id}"
+                    key=f"label_{row_id}",
+                    on_change=_update_field,
+                    args=(f"label_{row_id}", key, row_id, "Label"),
                 )
-                if new_label != str(row.get("Label") or ""):
-                    st.session_state[key] = [
-                        {**r, "Label": new_label} if r["_id"] == row_id else r
-                        for r in st.session_state[key]
-                    ]
-                    st.rerun()
 
             if not is_header:
                 with c_type:
@@ -986,43 +991,23 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                         for r in st.session_state[key]
                     ]
                     st.rerun()
-                cur_bc = str(row.get("BlankCol") or "")
-                new_bc = ef2.text_input("BlankCol", value=cur_bc,
-                                        key=f"blankcol_{row_id}",
-                                        placeholder="如 1|2")
-                if new_bc != cur_bc:
-                    st.session_state[key] = [
-                        {**r, "BlankCol": new_bc} if r["_id"] == row_id else r
-                        for r in st.session_state[key]
-                    ]
-                    st.rerun()
-                cur_drug = str(row.get("Drug") or "")
-                new_drug = ef3.text_input("Drug", value=cur_drug,
-                                          key=f"drug_{row_id}")
-                if new_drug != cur_drug:
-                    st.session_state[key] = [
-                        {**r, "Drug": new_drug} if r["_id"] == row_id else r
-                        for r in st.session_state[key]
-                    ]
-                    st.rerun()
-                cur_visit = str(row.get("Visit") or "")
-                new_visit = ef4.text_input("Visit", value=cur_visit,
-                                           key=f"visit_{row_id}")
-                if new_visit != cur_visit:
-                    st.session_state[key] = [
-                        {**r, "Visit": new_visit} if r["_id"] == row_id else r
-                        for r in st.session_state[key]
-                    ]
-                    st.rerun()
-                cur_base = str(row.get("Base") or "")
-                new_base = ef5.text_input("Base", value=cur_base,
-                                          key=f"base_{row_id}")
-                if new_base != cur_base:
-                    st.session_state[key] = [
-                        {**r, "Base": new_base} if r["_id"] == row_id else r
-                        for r in st.session_state[key]
-                    ]
-                    st.rerun()
+                ef2.text_input("BlankCol", value=str(row.get("BlankCol") or ""),
+                               key=f"blankcol_{row_id}",
+                               placeholder="如 1|2",
+                               on_change=_update_field,
+                               args=(f"blankcol_{row_id}", key, row_id, "BlankCol"))
+                ef3.text_input("Drug", value=str(row.get("Drug") or ""),
+                               key=f"drug_{row_id}",
+                               on_change=_update_field,
+                               args=(f"drug_{row_id}", key, row_id, "Drug"))
+                ef4.text_input("Visit", value=str(row.get("Visit") or ""),
+                               key=f"visit_{row_id}",
+                               on_change=_update_field,
+                               args=(f"visit_{row_id}", key, row_id, "Visit"))
+                ef5.text_input("Base", value=str(row.get("Base") or ""),
+                               key=f"base_{row_id}",
+                               on_change=_update_field,
+                               args=(f"base_{row_id}", key, row_id, "Base"))
             for child in linked_children:
                 child_id = child["_id"]
                 with st.container():
@@ -1050,17 +1035,13 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                             ]
                             st.rerun()
                     with cc_label:
-                        new_child_label = st.text_input(
+                        st.text_input(
                             "Label", value=str(child.get("Label") or ""),
                             label_visibility="collapsed",
-                            key=f"child_label_{child_id}"
+                            key=f"child_label_{child_id}",
+                            on_change=_update_field,
+                            args=(f"child_label_{child_id}", key, child_id, "Label"),
                         )
-                        if new_child_label != str(child.get("Label") or ""):
-                            st.session_state[key] = [
-                                {**r, "Label": new_child_label} if r["_id"] == child_id else r
-                                for r in st.session_state[key]
-                            ]
-                            st.rerun()
                     with cc_aval:
                         parent_vtype = row.get("_var_type", VAR_TYPE_DEFAULT)
                         aval_opts_for_child = templates.get(parent_vtype, {}).get("aval_options", [])
@@ -1090,12 +1071,15 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                                 if f"child_aval_{child_id}" in st.session_state:
                                     del st.session_state[f"child_aval_{child_id}"]
                         else:
-                            new_aval = st.text_input(
+                            st.text_input(
                                 "Aval", value=cur_child_aval,
                                 label_visibility="collapsed",
-                                key=f"child_aval_{child_id}"
+                                key=f"child_aval_{child_id}",
+                                on_change=_update_field,
+                                args=(f"child_aval_{child_id}", key, child_id, "Aval"),
                             )
-                        if new_aval != cur_child_aval:
+                        # selectbox 版（aval_opts_for_child 非空时）的写回
+                        if aval_opts_for_child and new_aval != cur_child_aval:
                             st.session_state[key] = [
                                 {**r, "Aval": new_aval} if r["_id"] == child_id else r
                                 for r in st.session_state[key]
