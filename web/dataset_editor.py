@@ -433,25 +433,29 @@ def _infer_is_header(state: list[dict]) -> list[dict]:
 
 
 def _parent_order(state: list[dict]) -> list[dict]:
-    """返回所有 Order=0 父行，按当前在 state 中的出现顺序。"""
-    return [r for r in state if r.get("_parent_id") is None and int(r.get("Order") or 0) == 0]
+    """返回所有 Order=0 非标题父行，按当前在 state 中的出现顺序。"""
+    return [r for r in state
+            if r.get("_parent_id") is None
+            and int(r.get("Order") or 0) == 0
+            and not r.get("_is_header")]
 
 
 def _reindex_class(state: list[dict]) -> list[dict]:
     """
-    按父行在 state 中的顺序重新分配 Class（从 1 递增），
+    按非标题父行在 state 中的顺序重新分配 Class（从 1 递增）。
+    标题行 Class 固定为 0，不参与编号分配。
     同步更新每个父行的 linked 子行 Class，断链行 Class 不变。
     """
     parents = _parent_order(state)
     class_map: dict[str, int] = {p["_id"]: i + 1 for i, p in enumerate(parents)}
     result = []
     for r in state:
-        rid = r["_id"]
-        pid = r.get("_parent_id")
-        if rid in class_map:
-            result.append({**r, "Class": class_map[rid]})
-        elif pid in class_map and r.get("_linked"):
-            result.append({**r, "Class": class_map[pid]})
+        if r.get("_is_header"):
+            result.append({**r, "Class": 0})
+        elif r["_id"] in class_map:
+            result.append({**r, "Class": class_map[r["_id"]]})
+        elif r.get("_parent_id") in class_map and r.get("_linked"):
+            result.append({**r, "Class": class_map[r.get("_parent_id")]})
         else:
             result.append(r)
     return result
