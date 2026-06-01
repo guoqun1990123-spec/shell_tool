@@ -579,6 +579,7 @@ def _render_card_preview(card: dict, card_id: str, version: int) -> None:
     ds_name = str(cur_card.get("Datasets") or "")
     ds = datasets.get(ds_name)
     if ds is not None and not ds.empty:
+        # 用行数+列名作轻量签名；单元格内容变化但结构不变时缓存不更新（已知 tradeoff，可接受）
         ds_sig = f"{len(ds)}_{list(ds.columns)}"
     else:
         ds_sig = "empty"
