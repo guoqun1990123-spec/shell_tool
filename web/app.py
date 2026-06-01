@@ -76,8 +76,8 @@ def _init_state():
         st.session_state.config_df = _empty_config()
     if "datasets" not in st.session_state:
         st.session_state.datasets = {}
-    if "selected_row" not in st.session_state:
-        st.session_state.selected_row = None
+    if "selected_id" not in st.session_state:
+        st.session_state.selected_id = None
     if "protocol_name" not in st.session_state:
         st.session_state.protocol_name = ""
     if "editor_version" not in st.session_state:
@@ -133,7 +133,7 @@ def _do_load(loader, success_msg: str):
         cfg_df, dsets = loader()
         st.session_state.config_df = cfg_df
         st.session_state.datasets = dsets
-        st.session_state.selected_row = None
+        st.session_state.selected_id = None
         st.session_state.editor_version += 1
         # 清除所有数据集的 card state，避免旧编辑状态污染新文件
         _clear_card_state()
@@ -191,7 +191,7 @@ def main():
         if st.button("新建空白", key="btn_new"):
             st.session_state.config_df = _empty_config()
             st.session_state.datasets = {}
-            st.session_state.selected_row = None
+            st.session_state.selected_id = None
             st.session_state.editor_version += 1
             _clear_card_state()
 
@@ -305,27 +305,25 @@ def main():
                 )
                 from config_editor import card_state_to_df
                 edited_config = card_state_to_df(st.session_state.get(_CFG_CARD_KEY, []))
-                selected_idx = st.session_state.selected_row
+                selected_id = st.session_state.get("selected_id")
             else:
-                edited_config, selected_idx = render_config_editor(
+                edited_config, selected_id = render_config_editor(
                     st.session_state.config_df,
                     dataset_keys,
                     cfg_templates,
                 )
-                st.session_state.selected_row = selected_idx
+                st.session_state.selected_id = selected_id
 
     # ── Tab: Datasets ────────────────────────────────────────────────────────
     with tab_datasets:
-        _cs = st.session_state.get(_CFG_CARD_KEY, [])
-        from config_editor import card_state_to_df as _cs2df
-        edited_config_ds = _cs2df(_cs)
-        sel_idx_ds = st.session_state.get("selected_row")
+        sel_id_ds = st.session_state.get("selected_id")
+        _cs_for_ds = st.session_state.get(_CFG_CARD_KEY, [])
+        sel_card = next((c for c in _cs_for_ds if c.get("_id") == sel_id_ds), None) if sel_id_ds else None
 
-        if sel_idx_ds is not None and sel_idx_ds < len(edited_config_ds):
-            sel_row = edited_config_ds.iloc[sel_idx_ds]
-            ds_name = str(sel_row.get("Datasets", "") or "").strip()
-            macvar = str(sel_row.get("MacVar", "") or "").strip()
-            seq_no = sel_row.get("SeqNum", "?")
+        if sel_card is not None:
+            ds_name = str(sel_card.get("Datasets", "") or "").strip()
+            macvar = str(sel_card.get("MacVar", "") or "").strip()
+            seq_no = sel_card.get("SeqNum", "?")
             st.caption(f"当前选中：SeqNum={seq_no}，Datasets='{ds_name}'，MacVar='{macvar}'")
         else:
             ds_name = ""
