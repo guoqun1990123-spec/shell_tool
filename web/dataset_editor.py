@@ -644,6 +644,13 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
     # 计算父行列表（用于边界判断）
     parent_ids = [r["_id"] for r in state if r.get("_parent_id") is None and int(r.get("Order") or 0) == 0]
 
+    # 预建 UI 层索引，避免渲染循环内 O(n²) 扫描
+    _ui_children_map: dict[str, list[dict]] = {}
+    for _r in state:
+        _pid = _r.get("_parent_id")
+        if _pid is not None and _r.get("_linked"):
+            _ui_children_map.setdefault(_pid, []).append(_r)
+
     for row in state:
         if row.get("_parent_id") is not None or int(row.get("Order") or 0) != 0:
             continue  # 子行在父行处理中渲染
@@ -651,7 +658,7 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
         row_id = row["_id"]
         is_expanded = row.get("_expanded", True)
         is_header = row.get("_is_header", False)
-        linked_children = [r for r in state if r.get("_parent_id") == row_id and r.get("_linked")]
+        linked_children = _ui_children_map.get(row_id, [])
         p_idx = parent_ids.index(row_id) if row_id in parent_ids else 0
         is_first = p_idx == 0
         is_last = p_idx == len(parent_ids) - 1
