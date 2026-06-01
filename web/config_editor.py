@@ -316,7 +316,6 @@ def _render_header(
                      help=f"编辑 Datasets: {cur_ds_hdr}" if cur_ds_hdr else "编辑 Datasets",
                      disabled=not cur_ds_hdr):
             st.session_state[_SELECTED_ID_KEY] = card_id
-            st.session_state["selected_row"] = _card_idx_in_state(card_id)
             st.session_state["active_tab"] = "datasets"
             st.session_state["_tab_switch_req"] = st.session_state.get("_tab_switch_req", 0) + 1
             st.rerun()
@@ -502,7 +501,6 @@ def _render_level1(
                          help=f"编辑 Datasets: {cur_ds}" if cur_ds else "编辑 Datasets",
                          disabled=not cur_ds):
                 st.session_state[_SELECTED_ID_KEY] = card_id
-                st.session_state["selected_row"] = _card_idx_in_state(card_id)
                 st.session_state["active_tab"] = "datasets"
                 st.session_state["_tab_switch_req"] = st.session_state.get("_tab_switch_req", 0) + 1
                 st.rerun()
@@ -532,7 +530,6 @@ def _render_level1(
                 st.dataframe(ds_df.head(20), height=150, use_container_width=True)
                 if st.button("🗂 编辑 Datasets", key=f"cfg_ds_edit_{card_id}_{version}"):
                     st.session_state[_SELECTED_ID_KEY] = card_id
-                    st.session_state["selected_row"] = _card_idx_in_state(card_id)
                     st.session_state["active_tab"] = "datasets"
                     st.session_state["_tab_switch_req"] = st.session_state.get("_tab_switch_req", 0) + 1
                     st.rerun()
@@ -742,7 +739,7 @@ def render_config_editor(
 ) -> tuple[pd.DataFrame, int | None]:
     """Render card-based config editor with 3-level display system.
 
-    Returns (edited_df, selected_row_idx).
+    Returns (edited_df, selected_card_id).
     """
     _ensure_card_state(config_df)
     card_state: list[dict] = st.session_state[_CARD_STATE_KEY]
@@ -819,13 +816,5 @@ def render_config_editor(
 
     final_state: list[dict] = st.session_state[_CARD_STATE_KEY]
     df = card_state_to_df(final_state)
-
     selected_id = st.session_state.get(_SELECTED_ID_KEY)
-    selected_idx: int | None = None
-    if selected_id:
-        for i, c in enumerate(final_state):
-            if c["_id"] == selected_id:
-                selected_idx = i
-                break
-
-    return df, selected_idx
+    return df, selected_id
