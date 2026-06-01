@@ -21,6 +21,7 @@ def _new_meta(
     return {
         "_id": str(uuid.uuid4()),
         "_var_type": var_type,
+        "_var_type_locked": False,
         "_parent_id": parent_id,
         "_linked": linked,
         "_expanded": expanded,
@@ -271,7 +272,7 @@ def _infer_var_types(state: list[dict]) -> list[dict]:
         if row.get("_parent_id") is not None:
             result.append(row)
             continue
-        if row.get("_var_type", VAR_TYPE_DEFAULT) != VAR_TYPE_DEFAULT:
+        if row.get("_var_type_locked") or row.get("_var_type", VAR_TYPE_DEFAULT) != VAR_TYPE_DEFAULT:
             result.append(row)
             continue
 
@@ -754,9 +755,14 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                             # 不调 st.rerun()，确认框在同一轮渲染里直接出现，避免无限 rerun
                             st.session_state[f"pending_vartype_{row_id}"] = new_type
                         else:
-                            st.session_state[key] = expand_var_type(
+                            new_state = expand_var_type(
                                 st.session_state[key], row_id, new_type, templates
                             )
+                            new_state = [
+                                {**r, "_var_type_locked": True} if r["_id"] == row_id else r
+                                for r in new_state
+                            ]
+                            st.session_state[key] = new_state
                             if new_type == "分类变量-有子分类":
                                 st.session_state[pending_sub_key] = ""
                             st.rerun()
@@ -795,9 +801,14 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
             col_replace, col_keep, col_vt_cancel = st.columns(3)
             with col_replace:
                 if st.button("替换为模板子行", key=f"vt_replace_{row_id}"):
-                    st.session_state[key] = expand_var_type(
+                    new_state = expand_var_type(
                         st.session_state[key], row_id, new_vt, templates
                     )
+                    new_state = [
+                        {**r, "_var_type_locked": True} if r["_id"] == row_id else r
+                        for r in new_state
+                    ]
+                    st.session_state[key] = new_state
                     if new_vt == "分类变量-有子分类":
                         st.session_state[f"pending_subclass_{row_id}"] = ""
                     del st.session_state[pending_vt_key]
@@ -805,7 +816,7 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
             with col_keep:
                 if st.button("保留现有子行", key=f"vt_keep_{row_id}"):
                     st.session_state[key] = [
-                        {**r, "_var_type": new_vt} if r["_id"] == row_id else r
+                        {**r, "_var_type": new_vt, "_var_type_locked": True} if r["_id"] == row_id else r
                         for r in st.session_state[key]
                     ]
                     del st.session_state[pending_vt_key]
