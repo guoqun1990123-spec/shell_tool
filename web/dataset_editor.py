@@ -351,10 +351,16 @@ def normalize_dataset_state(state: list[dict], templates: dict) -> tuple[list[di
                 })
 
         # 子行 Aval（连续变量 / 分类变量-有子分类 的模板子行）
+        # 预建模板子行 Label→Aval 映射，按 Label 匹配而非位置匹配
         tmpl_children = tmpl.get("children", [])
+        tmpl_by_label: dict[str, str] = {
+            str(c.get("Label") or "").strip(): str(c.get("Aval") or "").strip()
+            for c in tmpl_children
+            if c.get("Label") and c.get("Aval")
+        }
         linked_children = children_map.get(parent_id, [])
 
-        for i, child in enumerate(linked_children):
+        for child in linked_children:
             cur = str(child.get("Aval") or "").strip()
 
             if vtype == "分类变量-有子分类":
@@ -362,19 +368,21 @@ def normalize_dataset_state(state: list[dict], templates: dict) -> tuple[list[di
                 tmpl_aval = aval_opts[0] if aval_opts else "xx (xx.x)"
                 if cur == tmpl_aval:
                     continue
-            elif i < len(tmpl_children):
-                tmpl_aval = str(tmpl_children[i].get("Aval") or "").strip()
+            else:
+                # 按 Label 查找期望 Aval；非模板子行跳过
+                child_label = str(child.get("Label") or "").strip()
+                if child_label not in tmpl_by_label:
+                    continue
+                tmpl_aval = tmpl_by_label[child_label]
                 if not tmpl_aval or cur == tmpl_aval:
                     continue
-            else:
-                continue
 
             conflicts.append({
                 "parent_id": parent_id,
                 "parent_label": parent_label,
                 "var_type": vtype,
                 "child_id": child["_id"],
-                "child_label": str(child.get("Label") or f"子行 {i+1}"),
+                "child_label": str(child.get("Label") or "子行"),
                 "current_aval": cur,
                 "template_aval": tmpl_aval,
                 "apply": True,
@@ -770,14 +778,20 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                 with c_aval:
                     if cur_type == "分类变量-有子分类":
                         cur_aval = str(row.get("Aval") or "")
-                        aval_options = ["空", "xx (xx.x)"]
-                        aval_idx = 1 if cur_aval == "xx (xx.x)" else 0
+                        # 从模板读取候选值，不硬编码
+                        tmpl_aval_opts = templates.get("分类变量-有子分类", {}).get("aval_options", ["xx (xx.x)"])
+                        radio_opts = ["空"] + tmpl_aval_opts
+                        # 当前值在候选中找到则选中，否则选「空」
+                        if cur_aval and cur_aval in tmpl_aval_opts:
+                            radio_idx = tmpl_aval_opts.index(cur_aval) + 1  # +1 因为「空」在首位
+                        else:
+                            radio_idx = 0
                         sel_aval = st.radio(
-                            "父行Aval", options=aval_options, index=aval_idx,
+                            "父行Aval", options=radio_opts, index=radio_idx,
                             key=f"parent_aval_{row_id}", label_visibility="collapsed",
                             horizontal=True,
                         )
-                        new_aval_val = "" if sel_aval == "空" else "xx (xx.x)"
+                        new_aval_val = "" if sel_aval == "空" else sel_aval
                         if new_aval_val != cur_aval:
                             st.session_state[key] = [
                                 {**r, "Aval": new_aval_val} if r["_id"] == row_id else r
