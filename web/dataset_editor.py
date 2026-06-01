@@ -1078,6 +1078,7 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                                 on_change=_update_field,
                                 args=(f"child_aval_{child_id}", key, child_id, "Aval"),
                             )
+                            new_aval = cur_child_aval  # else 分支由 on_change 回调处理，此处仅占位保持变量定义
                         # selectbox 版（aval_opts_for_child 非空时）的写回
                         if aval_opts_for_child and new_aval != cur_child_aval:
                             st.session_state[key] = [
