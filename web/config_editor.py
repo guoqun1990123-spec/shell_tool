@@ -569,11 +569,33 @@ def _render_level1(
 
 
 def _render_card_preview(card: dict, card_id: str, version: int) -> None:
+    import hashlib
+    import json
     datasets = st.session_state.get("datasets", {})
     card_state = st.session_state.get(_CARD_STATE_KEY, [])
     cur_card = next((c for c in card_state if c["_id"] == card_id), card)
 
-    html = _tfl_preview.render_preview(cur_card, datasets)
+    # 计算轻量 cache key：card 数据字段 + 对应 dataset 的行数和列名
+    ds_name = str(cur_card.get("Datasets") or "")
+    ds = datasets.get(ds_name)
+    if ds is not None and not ds.empty:
+        ds_sig = f"{len(ds)}_{list(ds.columns)}"
+    else:
+        ds_sig = "empty"
+    card_data = {k: v for k, v in cur_card.items() if not k.startswith("_")}
+    card_sig = json.dumps(card_data, ensure_ascii=False, sort_keys=True)
+    current_sig = hashlib.md5((card_sig + ds_sig).encode()).hexdigest()
+
+    cache_key = f"_preview_html_{card_id}"
+    sig_key   = f"_preview_sig_{card_id}"
+
+    if st.session_state.get(sig_key) != current_sig:
+        html = _tfl_preview.render_preview(cur_card, datasets)
+        st.session_state[cache_key] = html
+        st.session_state[sig_key]   = current_sig
+    else:
+        html = st.session_state[cache_key]
+
     st.markdown(html, unsafe_allow_html=True)
 
     st.divider()
