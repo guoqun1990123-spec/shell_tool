@@ -259,6 +259,13 @@ def _infer_var_types(state: list[dict]) -> list[dict]:
     根据子行数量和 Aval 模式推断父行的 _var_type。
     仅对 _var_type == '手动输入' 的父行生效，有明确类型的不覆盖。
     """
+    # 预建 parent_id → linked_children 索引，避免 O(n²)
+    children_map: dict[str, list[dict]] = {}
+    for r in state:
+        pid = r.get("_parent_id")
+        if pid is not None and r.get("_linked"):
+            children_map.setdefault(pid, []).append(r)
+
     result = []
     for row in state:
         if row.get("_parent_id") is not None:
@@ -269,7 +276,7 @@ def _infer_var_types(state: list[dict]) -> list[dict]:
             continue
 
         parent_id = row["_id"]
-        children = [r for r in state if r.get("_parent_id") == parent_id and r.get("_linked")]
+        children = children_map.get(parent_id, [])
         n_children = len(children)
 
         if n_children == 0:
@@ -280,7 +287,6 @@ def _infer_var_types(state: list[dict]) -> list[dict]:
                 inferred = VAR_TYPE_DEFAULT
         else:
             child_avals = [str(c.get("Aval") or "").strip() for c in children]
-            # 排除纯例数行（全为 xx），它们不参与类型判断
             non_empty = [a for a in child_avals if a and not _aval_is_count(a)]
             if non_empty and all(_aval_is_continuous(a) for a in non_empty):
                 inferred = "连续变量"
@@ -309,6 +315,13 @@ def normalize_dataset_state(state: list[dict], templates: dict) -> tuple[list[di
         "apply": bool,            # 用户可勾选
       }
     """
+    # 预建 parent_id → linked_children 索引
+    children_map: dict[str, list[dict]] = {}
+    for r in state:
+        pid = r.get("_parent_id")
+        if pid is not None and r.get("_linked"):
+            children_map.setdefault(pid, []).append(r)
+
     conflicts = []
     for row in state:
         if row.get("_parent_id") is not None:
@@ -338,7 +351,7 @@ def normalize_dataset_state(state: list[dict], templates: dict) -> tuple[list[di
 
         # 子行 Aval（连续变量 / 分类变量-有子分类 的模板子行）
         tmpl_children = tmpl.get("children", [])
-        linked_children = [r for r in state if r.get("_parent_id") == parent_id and r.get("_linked")]
+        linked_children = children_map.get(parent_id, [])
 
         for i, child in enumerate(linked_children):
             cur = str(child.get("Aval") or "").strip()
@@ -412,10 +425,14 @@ def _smart_promote_children(state: list[dict], parent_id: str) -> list[dict]:
 
 def _infer_is_header(state: list[dict]) -> list[dict]:
     """
-    推断父行是否为小节标题行：Order=0 + Aval空 + 无 linked 子行 → _is_header=True。
-    仅对 _is_header 尚未显式设置（即值为 False 且无子行）的父行生效，
-    已有子行的父行强制置 False（有子行不可能是纯标题行）。
+    推断父行是否为小节标题行：Order=0 + Aval空 + Label非空 + 无 linked 子行 → _is_header=True。
     """
+    # 预建有 linked 子行的父行 id 集合，避免 O(n²)
+    parents_with_children: set[str] = {
+        r["_parent_id"] for r in state
+        if r.get("_parent_id") is not None and r.get("_linked")
+    }
+
     result = []
     for row in state:
         if row.get("_parent_id") is not None:
@@ -424,11 +441,7 @@ def _infer_is_header(state: list[dict]) -> list[dict]:
         if int(row.get("Order") or 0) != 0:
             result.append(row)
             continue
-        parent_id = row["_id"]
-        has_linked_children = any(
-            r.get("_parent_id") == parent_id and r.get("_linked")
-            for r in state
-        )
+        has_linked_children = row["_id"] in parents_with_children
         if has_linked_children:
             result.append({**row, "_is_header": False})
         else:
