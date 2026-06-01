@@ -1008,10 +1008,48 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                                key=f"base_{row_id}",
                                on_change=_update_field,
                                args=(f"base_{row_id}", key, row_id, "Base"))
+            if linked_children and not is_header and is_expanded:
+                # ── 批量设 Aval ──────────────────────────────────────
+                _bulk_opts = templates.get(row.get("_var_type", VAR_TYPE_DEFAULT), {}).get("aval_options", [])
+                bc1, bc2, bc3 = st.columns([2, 2, 1.5])
+                with bc1:
+                    st.caption("批量设子行 Aval：")
+                with bc2:
+                    _CUSTOM_BULK = "✏️ 自定义"
+                    if _bulk_opts:
+                        bulk_sel = st.selectbox(
+                            "批量Aval", options=_bulk_opts + [_CUSTOM_BULK],
+                            key=f"bulk_aval_sel_{row_id}",
+                            label_visibility="collapsed",
+                        )
+                        bulk_val = "" if bulk_sel == _CUSTOM_BULK else bulk_sel
+                        if bulk_sel == _CUSTOM_BULK:
+                            bulk_val = st.text_input(
+                                "自定义批量Aval", key=f"bulk_aval_custom_{row_id}",
+                                label_visibility="collapsed",
+                            )
+                    else:
+                        bulk_val = st.text_input(
+                            "批量Aval", key=f"bulk_aval_{row_id}",
+                            label_visibility="collapsed", placeholder="输入后点应用"
+                        )
+                with bc3:
+                    if st.button("应用到所有子行", key=f"bulk_aval_apply_{row_id}",
+                                 disabled=not str(bulk_val).strip()):
+                        child_ids = {c["_id"] for c in linked_children}
+                        st.session_state[key] = [
+                            {**r, "Aval": bulk_val} if r["_id"] in child_ids else r
+                            for r in st.session_state[key]
+                        ]
+                        for c in linked_children:
+                            for wk in (f"child_aval_{c['_id']}", f"child_aval_sel_{c['_id']}"):
+                                if wk in st.session_state:
+                                    del st.session_state[wk]
+                        st.rerun()
             for child in linked_children:
                 child_id = child["_id"]
                 with st.container():
-                    cc_link, cc_class, cc_order, cc_label, cc_aval, cc_unlink = st.columns([0.4, 0.8, 0.8, 2.8, 3, 1.5])
+                    cc_link, cc_class, cc_order, cc_label, cc_aval, cc_ins, cc_unlink = st.columns([0.4, 0.8, 0.8, 2.8, 3, 0.6, 1.5])
                     with cc_link:
                         st.markdown("🔗")
                     with cc_class:
@@ -1085,6 +1123,22 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                                 {**r, "Aval": new_aval} if r["_id"] == child_id else r
                                 for r in st.session_state[key]
                             ]
+                    with cc_ins:
+                        if st.button("＋", key=f"child_ins_{child_id}", help="在此后插入子行"):
+                            parent_cls = int(row.get("Class") or 0)
+                            new_child_data = _new_data_row(class_val=parent_cls, order=1)
+                            new_child_meta = _new_meta(parent_id=row_id, linked=True)
+                            new_child = {**new_child_data, **new_child_meta}
+                            cur_state = st.session_state[key]
+                            child_pos = next(
+                                (i for i, r in enumerate(cur_state) if r["_id"] == child_id),
+                                None
+                            )
+                            if child_pos is not None:
+                                st.session_state[key] = (
+                                    cur_state[:child_pos + 1] + [new_child] + cur_state[child_pos + 1:]
+                                )
+                            st.rerun()
                     with cc_unlink:
                         if st.button("断开链接", key=f"unlink_{child_id}"):
                             st.session_state[key] = unlink_child(st.session_state[key], child_id)
