@@ -87,23 +87,31 @@ def df_to_card_state(df: pd.DataFrame) -> list[dict]:
 def card_state_to_df(state: list[dict]) -> pd.DataFrame:
     """
     card state → DataFrame。
-    父行按 Class 排序，每个父行后紧跟其子行（按 Order 排序）。
-    折叠状态子行仍保留。
+    按 state 中出现顺序输出（不再按 Class 排序），每个父行后紧跟其子行。
+    断链行（_parent_id=None, Order=1）不写入 DataFrame。
     """
     if not state:
         return pd.DataFrame(columns=DATASET_TABLE_COLS)
 
-    # 父行按 Class 排序（稳定排序保留同 Class 的插入顺序）
-    parents = sorted(
-        [r for r in state if r.get("_parent_id") is None],
-        key=lambda r: int(r.get("Class") or 0),
-    )
+    # 按 state 位置顺序取 Order=0 父行（天然排除 Order=1 的断链行）
+    parents = [
+        r for r in state
+        if r.get("_parent_id") is None
+        and int(r.get("Order") or 0) == 0
+    ]
+
+    # 预建 parent_id → linked_children 索引，避免 O(n²)
+    children_map: dict[str, list[dict]] = {}
+    for r in state:
+        pid = r.get("_parent_id")
+        if pid is not None and r.get("_linked"):
+            children_map.setdefault(pid, []).append(r)
 
     ordered: list[dict] = []
     for parent in parents:
         ordered.append(parent)
         children = sorted(
-            [r for r in state if r.get("_parent_id") == parent["_id"]],
+            children_map.get(parent["_id"], []),
             key=lambda r: int(r.get("Order") or 0),
         )
         ordered.extend(children)
@@ -116,10 +124,10 @@ def card_state_to_df(state: list[dict]) -> pd.DataFrame:
 
 
 def get_next_class(state: list[dict]) -> int:
-    """计算新父行应得的 Class（当前所有父行最大 Class + 1）。"""
+    """计算新父行应得的 Class（当前所有非标题父行最大 Class + 1）。"""
     parent_classes = []
     for r in state:
-        if r.get("_parent_id") is None:
+        if r.get("_parent_id") is None and not r.get("_is_header"):
             try:
                 parent_classes.append(int(r.get("Class") or 0))
             except (ValueError, TypeError):
