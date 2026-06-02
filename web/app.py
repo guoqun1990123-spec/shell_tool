@@ -1,4 +1,5 @@
 """TFL Shell 配置编辑器 —— Streamlit 入口"""
+import re
 import tomllib
 from pathlib import Path
 
@@ -136,7 +137,7 @@ def _extract_protocol(filename: str) -> str:
     config_ISS.yaml → ISS
     config_ISS_20260601_093000.yaml → ISS（兼容旧时间戳格式）
     """
-    import re
+    # 仅对 config_*.yaml 命名约定的文件有效
     stem = Path(filename).stem          # config_ISS 或 config_ISS_20260601_093000
     body = stem.removeprefix("config_") # ISS 或 ISS_20260601_093000
     return re.sub(r"_\d{8}_\d{6}$", "", body)
