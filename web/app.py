@@ -131,6 +131,17 @@ def _invalidate_preview_cache(ds_name: str) -> None:
                     del st.session_state[_k]
 
 
+def _extract_protocol(filename: str) -> str:
+    """从 YAML 文件名提取方案简称。
+    config_ISS.yaml → ISS
+    config_ISS_20260601_093000.yaml → ISS（兼容旧时间戳格式）
+    """
+    import re
+    stem = Path(filename).stem          # config_ISS 或 config_ISS_20260601_093000
+    body = stem.removeprefix("config_") # ISS 或 ISS_20260601_093000
+    return re.sub(r"_\d{8}_\d{6}$", "", body)
+
+
 def _guess_dataset_pair(cfg_name: str, ds_names: list[str]) -> str:
     """config_ISS.xlsx → datasets_ISS.xlsx（找不到则返回首个）。"""
     stem = cfg_name.removeprefix("config_").removesuffix(".xlsx")
@@ -138,7 +149,7 @@ def _guess_dataset_pair(cfg_name: str, ds_names: list[str]) -> str:
     return target if target in ds_names else (ds_names[0] if ds_names else "")
 
 
-def _do_load(loader, success_msg: str):
+def _do_load(loader, success_msg: str, protocol_name: str | None = None):
     """统一加载入口：调用 loader()，成功则写入 session_state 并重置编辑器。"""
     try:
         cfg_df, dsets = loader()
@@ -146,6 +157,8 @@ def _do_load(loader, success_msg: str):
         st.session_state.datasets = dsets
         st.session_state.selected_id = None
         st.session_state.editor_version += 1
+        if protocol_name is not None:
+            st.session_state.protocol_name = protocol_name
         # 清除所有数据集的 card state，避免旧编辑状态污染新文件
         _clear_card_state()
         st.success(success_msg)
@@ -178,8 +191,12 @@ def main():
             file_labels = ["-- 新建空白 --"] + [f.name for f in yaml_files]
             selected_file = st.selectbox("加载已有 YAML", file_labels, key="load_yaml_sel")
             if st.button("加载", key="btn_load_yaml") and selected_file != "-- 新建空白 --":
-                _do_load(lambda p=config_dir / selected_file: load_yaml(p),
-                         f"已加载 YAML：{selected_file}")
+                proto = _extract_protocol(selected_file)
+                _do_load(
+                    lambda p=config_dir / selected_file: load_yaml(p),
+                    f"已加载 YAML：{selected_file}",
+                    protocol_name=proto,
+                )
         else:
             cfg_files, ds_files = list_excel_pairs(config_dir)
             if not cfg_files or not ds_files:
@@ -321,7 +338,8 @@ def main():
                     dataset_keys,
                     cfg_templates,
                 )
-                st.session_state.selected_id = selected_id
+                if selected_id is not None:
+                    st.session_state.selected_id = selected_id
 
     # ── Tab: Datasets ────────────────────────────────────────────────────────
     with tab_datasets:
