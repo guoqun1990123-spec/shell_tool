@@ -120,6 +120,18 @@ def _build_list_column_config() -> dict:
 
 # ── 加载辅助 ────────────────────────────────────────────────────────────────
 
+def _invalidate_preview_cache(ds_name: str) -> None:
+    """清除所有引用该数据集的 Config 卡片的静态预览缓存。"""
+    from config_editor import _CARD_STATE_KEY as _cfgkey_inv
+    _cs_inv = st.session_state.get(_cfgkey_inv, [])
+    for _c in _cs_inv:
+        if str(_c.get("Datasets") or "").strip() == ds_name:
+            _cid = _c["_id"]
+            for _k in (f"_preview_html_{_cid}", f"_preview_sig_{_cid}"):
+                if _k in st.session_state:
+                    del st.session_state[_k]
+
+
 def _guess_dataset_pair(cfg_name: str, ds_names: list[str]) -> str:
     """config_ISS.xlsx → datasets_ISS.xlsx（找不到则返回首个）。"""
     stem = cfg_name.removeprefix("config_").removesuffix(".xlsx")
@@ -401,6 +413,47 @@ def main():
                     + "。修改将影响所有引用此数据集的 TFL。"
                 )
 
+        # 数据集重命名
+        if ds_name and ds_name in st.session_state.datasets:
+            with st.expander("✏️ 重命名此数据集", expanded=False):
+                _rename_col1, _rename_col2 = st.columns([3, 1])
+                with _rename_col1:
+                    _new_name = st.text_input(
+                        "新名称", value=ds_name,
+                        key=f"rename_ds_{ds_name}",
+                        label_visibility="collapsed",
+                    )
+                with _rename_col2:
+                    if st.button("确认重命名", key=f"btn_rename_ds_{ds_name}",
+                                 disabled=not _new_name.strip() or _new_name == ds_name):
+                        _new_name = _new_name.strip()
+                        if _new_name in st.session_state.datasets:
+                            st.error(f"数据集名 `{_new_name}` 已存在，请换一个名称。")
+                        else:
+                            # 1. 迁移数据
+                            st.session_state.datasets[_new_name] = st.session_state.datasets.pop(ds_name)
+                            # 2. 迁移 card state 和 version key
+                            from dataset_editor import state_key as _ds_state_key
+                            _old_card_key = _ds_state_key(ds_name)
+                            _new_card_key = _ds_state_key(_new_name)
+                            if _old_card_key in st.session_state:
+                                st.session_state[_new_card_key] = st.session_state.pop(_old_card_key)
+                            _old_ver_key = f"_ds_version_{ds_name}"
+                            _new_ver_key = f"_ds_version_{_new_name}"
+                            if _old_ver_key in st.session_state:
+                                st.session_state[_new_ver_key] = st.session_state.pop(_old_ver_key)
+                            # 3. 更新所有 Config 卡片的 Datasets 字段
+                            from config_editor import _CARD_STATE_KEY as _cfgkey3
+                            _cs3 = st.session_state.get(_cfgkey3, [])
+                            st.session_state[_cfgkey3] = [
+                                {**c, "Datasets": _new_name}
+                                if str(c.get("Datasets") or "").strip() == ds_name
+                                else c
+                                for c in _cs3
+                            ]
+                            st.toast(f"✅ 已将数据集 `{ds_name}` 重命名为 `{_new_name}`，并同步更新了所有引用")
+                            st.rerun()
+
         if ds_name and ds_name in st.session_state.datasets:
             is_list = ds_name == "list"
             ds_df = st.session_state.datasets[ds_name]
@@ -417,6 +470,7 @@ def main():
                         key=f"ds_editor_{ds_name}_{st.session_state.editor_version}",
                     )
                     st.session_state.datasets[ds_name] = edited_ds
+                    _invalidate_preview_cache(ds_name)
                 with tab_preview:
                     from dataset_preview import render_list_preview
                     render_list_preview(st.session_state.datasets[ds_name])
@@ -445,6 +499,7 @@ def main():
                 with tab_edit:
                     result_df = render_dataset_editor(ds_name, ds_df, templates)
                     st.session_state.datasets[ds_name] = result_df
+                    _invalidate_preview_cache(ds_name)
                 with tab_preview:
                     render_preview(ds_name, st.session_state.get(card_key, []))
 
