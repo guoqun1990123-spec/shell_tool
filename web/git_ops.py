@@ -1,4 +1,5 @@
 """GitPython 封装：写文件 → git add → commit → push。"""
+import re
 from pathlib import Path
 
 import git
@@ -47,7 +48,7 @@ class GitOps:
 
 def make_filename(protocol_name: str) -> str:
     """生成约定文件名：config_<方案简称>.yaml（同名覆盖，版本历史由 Git 保留）"""
-    safe_name = protocol_name.strip().replace(" ", "_") or "unnamed"
+    safe_name = re.sub(r"[^\w\-]", "_", protocol_name.strip()) or "unnamed"
     return f"config/config_{safe_name}.yaml"
 
 
