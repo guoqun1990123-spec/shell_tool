@@ -1,5 +1,4 @@
 """GitPython 封装：写文件 → git add → commit → push。"""
-from datetime import datetime
 from pathlib import Path
 
 import git
@@ -47,12 +46,10 @@ class GitOps:
 
 
 def make_filename(protocol_name: str) -> str:
-    """生成约定文件名：config_<方案简称>_<YYYYMMDD_HHMMSS>.yaml"""
-    ts = datetime.now().strftime("%Y%m%d_%H%M%S")
+    """生成约定文件名：config_<方案简称>.yaml（同名覆盖，版本历史由 Git 保留）"""
     safe_name = protocol_name.strip().replace(" ", "_") or "unnamed"
-    return f"config/config_{safe_name}_{ts}.yaml"
+    return f"config/config_{safe_name}.yaml"
 
 
 def make_commit_msg(protocol_name: str) -> str:
-    ts = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    return f"feat(tfl): update config for {protocol_name or 'unnamed'} at {ts}"
+    return f"feat(tfl): update config for {protocol_name or 'unnamed'}"
