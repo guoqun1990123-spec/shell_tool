@@ -481,14 +481,16 @@ def _render_level1(
                     _datasets = st.session_state.get("datasets", {})
                     _cur_ds = str(card.get("Datasets") or "").strip()
                     if "list" not in _datasets:
-                        st.warning(
-                            "⚠️ MacVar 已改为 RptList，但 datasets 中尚无 `list` 数据集，"
-                            "请在 Datasets 标签页新建名为 `list` 的数据表。"
+                        st.toast(
+                            "MacVar 已改为 RptList，但 datasets 中尚无 `list` 数据集，"
+                            "请在 Datasets 标签页新建名为 `list` 的数据表。",
+                            icon="⚠️",
                         )
                     elif _cur_ds and _cur_ds != "list":
-                        st.warning(
-                            f"⚠️ MacVar 已改为 RptList，当前 Datasets=`{_cur_ds}`，"
-                            "RptList 使用 `list` 数据集，建议将 Datasets 字段改为 `list`。"
+                        st.toast(
+                            f"MacVar 已改为 RptList，当前 Datasets=`{_cur_ds}`，"
+                            "建议将 Datasets 字段改为 `list`。",
+                            icon="⚠️",
                         )
                 st.rerun()
 
