@@ -322,7 +322,30 @@ def main():
             ds_name = str(sel_card.get("Datasets", "") or "").strip()
             macvar = str(sel_card.get("MacVar", "") or "").strip()
             seq_no = sel_card.get("SeqNum", "?")
-            st.caption(f"当前选中：SeqNum={seq_no}，Datasets='{ds_name}'，MacVar='{macvar}'")
+            tbl_no = str(sel_card.get("table no", "") or "").strip()
+            title  = str(sel_card.get("title", "") or "").strip()
+            title_short = (title[:30] + "…") if len(title) > 30 else title
+
+            _info_col, _back_col = st.columns([5, 1])
+            with _info_col:
+                st.caption(
+                    f"**{tbl_no}** {title_short}  ·  "
+                    f"SeqNum={seq_no}  ·  Datasets=`{ds_name}`  ·  MacVar=`{macvar}`"
+                )
+            with _back_col:
+                if st.button("← Config", key="btn_back_to_config",
+                             help="返回 Config 章节并定位到该卡片"):
+                    sel_id = st.session_state.get("selected_id")
+                    if sel_id:
+                        from config_editor import _CARD_STATE_KEY as _cfgkey_back, _update_card as _uc_back
+                        _cs_back = st.session_state.get(_cfgkey_back, [])
+                        _cs_back = _uc_back(_cs_back, sel_id, _level="focus")
+                        st.session_state[_cfgkey_back] = _cs_back
+                        st.session_state["_cfg_focus_id"] = sel_id
+                        st.session_state["section_nav_view_mode"] = "card"
+                    st.session_state["active_tab"] = "config"
+                    st.session_state["_tab_switch_req"] = st.session_state.get("_tab_switch_req", 0) + 1
+                    st.rerun()
         else:
             ds_name = ""
             st.info("请先在「Config章节」标签页中点击某行以选中，再切换此标签查看数据表。")
@@ -348,7 +371,35 @@ def main():
                         st.session_state.datasets[new_ds_name] = (
                             _empty_dataset_list() if is_list else _empty_dataset_table()
                         )
+                    # 若当前选中的 Config 行 Datasets 字段为空，自动关联
+                    _cur_sel_id = st.session_state.get("selected_id")
+                    if _cur_sel_id:
+                        from config_editor import _CARD_STATE_KEY as _cfgkey2, _update_card as _uc2
+                        _cs2 = st.session_state.get(_cfgkey2, [])
+                        _cur_card2 = next((c for c in _cs2 if c["_id"] == _cur_sel_id), None)
+                        if _cur_card2 and not str(_cur_card2.get("Datasets") or "").strip():
+                            st.session_state[_cfgkey2] = _uc2(_cs2, _cur_sel_id, Datasets=new_ds_name)
+                            st.toast(f"✅ 已自动关联到当前 TFL 的 Datasets 字段")
                     st.rerun()
+
+        # 共用数据集提示
+        if ds_name:
+            _cs_all = st.session_state.get(_CFG_CARD_KEY, [])
+            _shared_cards = [
+                c for c in _cs_all
+                if str(c.get("Datasets") or "").strip() == ds_name
+            ]
+            if len(_shared_cards) > 1:
+                _shared_labels = [
+                    str(c.get("table no") or c.get("SeqNum") or "?")
+                    for c in _shared_cards
+                ]
+                st.warning(
+                    f"⚠️ 此数据集被 **{len(_shared_cards)}** 张表共用："
+                    f" {', '.join(_shared_labels[:5])}"
+                    + ("…" if len(_shared_labels) > 5 else "")
+                    + "。修改将影响所有引用此数据集的 TFL。"
+                )
 
         if ds_name and ds_name in st.session_state.datasets:
             is_list = ds_name == "list"
