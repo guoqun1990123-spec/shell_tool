@@ -8,14 +8,20 @@ import streamlit as st
 
 from schema import CONFIG_COLS, VALID_MACVAR
 import tfl_preview as _tfl_preview
+from keys import (
+    ACTIVE_TAB, TAB_SWITCH_REQ,
+    CFG_CARD_STATE, CFG_SELECTED_ID, CFG_FOCUS_ID,
+    NAV_FILTER, NAV_SELECTED_ID, MAIN_SELECTED_ID,
+)
 
 # ── 常量 ─────────────────────────────────────────────────────────────────────
 
 CAT_OPTIONS = ["", "表", "图", "列表"]
-_CARD_STATE_KEY = "config_card_state"
-_SELECTED_ID_KEY = "_cfg_selected_id"
+# Re-export：section_table.py 从此处导入，保持向后兼容
+_CARD_STATE_KEY = CFG_CARD_STATE
+_SELECTED_ID_KEY = CFG_SELECTED_ID
+_FOCUS_KEY = CFG_FOCUS_ID
 _SYNC_VER_KEY = "_cfg_editor_sync_ver"
-_FOCUS_KEY = "_cfg_focus_id"
 _FILTER_KEY = "_cfg_filter"
 _MENU_OPEN_KEY = "cfg_menu_open"    # set[card_id]，⋮ 菜单展开状态
 _DS_OPEN_KEY = "cfg_ds_panel_open"  # set[card_id]，Datasets 面板展开状态
@@ -283,12 +289,16 @@ def _render_header(
     with c_ins:
         if st.button("+", key=f"cfg_ins_{card_id}_{version}"):
             new_state = _insert_after(card_state, card_id)
-            default_trtlab = st.session_state.get("default_trtlab", "").strip()
-            if default_trtlab:
-                for c in new_state:
-                    if c["_id"] not in {x["_id"] for x in card_state}:
-                        new_state = _update_card(new_state, c["_id"], Trtlab=default_trtlab)
-                        break
+            _existing_ids = {x["_id"] for x in card_state}
+            for c in new_state:
+                if c["_id"] not in _existing_ids:
+                    _dft = st.session_state.get("default_trtlab", "").strip()
+                    _dfd = st.session_state.get("default_dutoffdate", "").strip()
+                    if _dft:
+                        new_state = _update_card(new_state, c["_id"], Trtlab=_dft)
+                    if _dfd:
+                        new_state = _update_card(new_state, c["_id"], Dutoffdate=_dfd)
+                    break
             st.session_state[_CARD_STATE_KEY] = new_state
             st.rerun()
 
@@ -308,8 +318,8 @@ def _render_header(
                      help=f"编辑 Datasets: {cur_ds_hdr}" if cur_ds_hdr else "编辑 Datasets",
                      disabled=not cur_ds_hdr):
             st.session_state[_SELECTED_ID_KEY] = card_id
-            st.session_state["active_tab"] = "datasets"
-            st.session_state["_tab_switch_req"] = st.session_state.get("_tab_switch_req", 0) + 1
+            st.session_state[ACTIVE_TAB] = "datasets"
+            st.session_state[TAB_SWITCH_REQ] = st.session_state.get(TAB_SWITCH_REQ, 0) + 1
             st.rerun()
 
     # 信息区 / 标题展开入口
@@ -344,10 +354,10 @@ def _render_header(
                     st.session_state[_SELECTED_ID_KEY] = None
                 if st.session_state.get(_FOCUS_KEY) == card_id:
                     st.session_state[_FOCUS_KEY] = None
-                if st.session_state.get("selected_id") == card_id:
-                    st.session_state["selected_id"] = None
-                if st.session_state.get("section_nav_selected_id") == card_id:
-                    st.session_state["section_nav_selected_id"] = None
+                if st.session_state.get(MAIN_SELECTED_ID) == card_id:
+                    st.session_state[MAIN_SELECTED_ID] = None
+                if st.session_state.get(NAV_SELECTED_ID) == card_id:
+                    st.session_state[NAV_SELECTED_ID] = None
                 st.session_state[_CARD_STATE_KEY] = _delete_card(card_state, card_id)
                 st.rerun()
 
@@ -513,8 +523,8 @@ def _render_level1(
                          help=f"编辑 Datasets: {cur_ds}" if cur_ds else "编辑 Datasets",
                          disabled=not cur_ds):
                 st.session_state[_SELECTED_ID_KEY] = card_id
-                st.session_state["active_tab"] = "datasets"
-                st.session_state["_tab_switch_req"] = st.session_state.get("_tab_switch_req", 0) + 1
+                st.session_state[ACTIVE_TAB] = "datasets"
+                st.session_state[TAB_SWITCH_REQ] = st.session_state.get(TAB_SWITCH_REQ, 0) + 1
                 st.rerun()
 
         # 行D: Trtlab
@@ -542,8 +552,8 @@ def _render_level1(
                 st.dataframe(ds_df.head(20), height=150, use_container_width=True)
                 if st.button("🗂 编辑 Datasets", key=f"cfg_ds_edit_{card_id}_{version}"):
                     st.session_state[_SELECTED_ID_KEY] = card_id
-                    st.session_state["active_tab"] = "datasets"
-                    st.session_state["_tab_switch_req"] = st.session_state.get("_tab_switch_req", 0) + 1
+                    st.session_state[ACTIVE_TAB] = "datasets"
+                    st.session_state[TAB_SWITCH_REQ] = st.session_state.get(TAB_SWITCH_REQ, 0) + 1
                     st.rerun()
             else:
                 st.caption("未关联 Datasets 或数据表尚未创建")
@@ -782,9 +792,7 @@ def render_config_editor(
     focus_id: str | None = st.session_state.get(_FOCUS_KEY)
 
     # 处理章节导航树的 scroll_to 定位请求
-    _NAV_FILTER_KEY = "section_nav_filter"
-    _NAV_SELECTED_KEY = "section_nav_selected_id"  # 持久记录当前选中条目
-    nav_filt = st.session_state.get(_NAV_FILTER_KEY, {})
+    nav_filt = st.session_state.get(NAV_FILTER, {})
 
     # 若无选中 section，自动选中第一个，避免渲染全部卡片
     if not focus_id and not nav_filt.get("section"):
@@ -793,7 +801,7 @@ def render_config_editor(
             "",
         )
         if first_sec:
-            st.session_state[_NAV_FILTER_KEY] = {**nav_filt, "section": first_sec}
+            st.session_state[NAV_FILTER] = {**nav_filt, "section": first_sec}
             st.rerun()
     scroll_to_id = nav_filt.get("scroll_to")
     if scroll_to_id:
@@ -808,9 +816,9 @@ def render_config_editor(
             else:
                 new_state.append(c)
         st.session_state[_CARD_STATE_KEY] = new_state
-        st.session_state[_NAV_SELECTED_KEY] = scroll_to_id
+        st.session_state[NAV_SELECTED_ID] = scroll_to_id
         nav_filt["scroll_to"] = None
-        st.session_state[_NAV_FILTER_KEY] = nav_filt
+        st.session_state[NAV_FILTER] = nav_filt
         st.rerun()
 
     # 专注模式横幅
@@ -827,18 +835,22 @@ def render_config_editor(
     # 顶部添加按钮
     if st.button("＋ 添加行", key=f"cfg_add_{version}"):
         new_state = _add_card(card_state)
-        default_trtlab = st.session_state.get("default_trtlab", "").strip()
-        if default_trtlab:
-            for c in new_state:
-                if c["_id"] not in {x["_id"] for x in card_state}:
-                    new_state = _update_card(new_state, c["_id"], Trtlab=default_trtlab)
-                    break
+        _existing_ids = {x["_id"] for x in card_state}
+        for c in new_state:
+            if c["_id"] not in _existing_ids:
+                _dft = st.session_state.get("default_trtlab", "").strip()
+                _dfd = st.session_state.get("default_dutoffdate", "").strip()
+                if _dft:
+                    new_state = _update_card(new_state, c["_id"], Trtlab=_dft)
+                if _dfd:
+                    new_state = _update_card(new_state, c["_id"], Dutoffdate=_dfd)
+                break
         st.session_state[_CARD_STATE_KEY] = new_state
         st.rerun()
 
     # 章节导航树控制渲染范围
-    nav_section = st.session_state.get("section_nav_filter", {}).get("section", "")
-    nav_selected_id = st.session_state.get("section_nav_selected_id")
+    nav_section = st.session_state.get(NAV_FILTER, {}).get("section", "")
+    nav_selected_id = st.session_state.get(NAV_SELECTED_ID)
 
     total = len(card_state)
     for i, card in enumerate(card_state):

@@ -1,9 +1,15 @@
 """R 渲染器：保存临时 YAML、调用 Rscript、返回结果。"""
 from __future__ import annotations
 
+import re
 import subprocess
 import time
 from pathlib import Path
+
+# R 日志里表示错误的行头/子串
+_ERROR_MARKERS = ("Error", "Error in", "stop(")
+# 提取 SeqNum 的正则（匹配 "Seq 3"、"SeqNum=3"、"seqnum: 3" 等）
+_SEQ_PATTERN = re.compile(r"[Ss]eq(?:[Nn]um)?\s*[=:]?\s*(\d+)")
 
 # 项目根目录（web/ 的上一级）
 _REPO_ROOT = Path(__file__).parent.parent
@@ -104,27 +110,22 @@ def run_render(yaml_content: str) -> dict:
 
 
 def _parse_r_error(log: str) -> tuple[str, int | None]:
-    """Extract first Error/stop line and any SeqNum hint."""
+    """从 R 日志中提取首条错误摘要和 SeqNum 提示。"""
     seq_hint: int | None = None
     summary_line = ""
 
     for line in log.splitlines():
         stripped = line.strip()
-        if not summary_line and (
-            stripped.startswith("Error") or "Error in" in stripped or "stop(" in stripped
-        ):
+        if not summary_line and any(marker in stripped for marker in _ERROR_MARKERS):
             summary_line = stripped[:200]
-        # Look for "Seq X" or "SeqNum X" pattern
         if seq_hint is None:
-            import re
-            m = re.search(r"[Ss]eq(?:[Nn]um)?\s*[=:]?\s*(\d+)", stripped)
+            m = _SEQ_PATTERN.search(stripped)
             if m:
                 seq_hint = int(m.group(1))
 
     if not summary_line:
-        # Fall back to last non-empty line
-        lines = [l.strip() for l in log.splitlines() if l.strip()]
-        summary_line = lines[-1][:200] if lines else "未知错误"
+        non_empty = [l.strip() for l in log.splitlines() if l.strip()]
+        summary_line = non_empty[-1][:200] if non_empty else "未知错误"
 
     return summary_line, seq_hint
 

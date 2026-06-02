@@ -1,12 +1,13 @@
 # web/section_nav.py
 """左侧章节导航树 —— 纯视图层，不修改数据。"""
 from __future__ import annotations
-import re
 import streamlit as st
 
-_NAV_STATE_KEY = "section_nav_state"   # { sec_no: collapsed:bool }
-_NAV_FILTER_KEY = "section_nav_filter" # { "section": str, "scroll_to": str|None }
-_VIEW_MODE_KEY = "section_nav_view_mode"      # "card" | "table"
+from utils import sec_sort_key as _sec_sort_key
+from keys import NAV_FILTER as _NAV_FILTER_KEY, NAV_SELECTED_ID, CFG_FOCUS_ID, MAIN_SELECTED_ID
+
+_NAV_STATE_KEY = "section_nav_state"         # { sec_no: collapsed:bool }
+_VIEW_MODE_KEY = "section_nav_view_mode"     # "card" | "table"
 _TABLE_SECTION_KEY = "section_nav_table_section"  # 当前表格视图的 section_no
 
 
@@ -21,17 +22,6 @@ def _nav_filter() -> dict:
         st.session_state[_NAV_FILTER_KEY] = {"section": "", "scroll_to": None}
     return st.session_state[_NAV_FILTER_KEY]
 
-
-def _sec_sort_key(sec_no: str) -> tuple:
-    """将 '14.1.2' 拆成 (14, 1, 2) 用于数值排序。"""
-    parts = re.split(r"[.\-]", sec_no.strip())
-    result = []
-    for p in parts:
-        try:
-            result.append(int(p))
-        except ValueError:
-            result.append(p)
-    return tuple(result)
 
 
 def group_by_section(card_state: list[dict]) -> list[dict]:
@@ -108,15 +98,15 @@ def render_section_nav(card_state: list[dict], nav_filt: dict | None = None) -> 
         filt["section"] = ""
         filt["scroll_to"] = None
         st.session_state[_NAV_FILTER_KEY] = filt
-        st.session_state["section_nav_selected_id"] = None
+        st.session_state[NAV_SELECTED_ID] = None
         st.rerun()
 
     st.divider()
 
     for group in groups:
         sec_no = group["section_no"]
-        # section 过滤（筛选栏下拉或点章节标题都写入 cur_section）
-        if cur_section and sec_no != cur_section:
+        # section 过滤：筛选栏下拉写入 filt_section，导航树内部选中写入 cur_section
+        if filt_section and sec_no != filt_section:
             continue
 
         sec_title = group["section_title"]
@@ -146,7 +136,7 @@ def render_section_nav(card_state: list[dict], nav_filt: dict | None = None) -> 
                 st.session_state[_NAV_STATE_KEY] = nav
                 st.session_state[_VIEW_MODE_KEY] = "table"
                 st.session_state[_TABLE_SECTION_KEY] = sec_no
-                st.session_state["section_nav_selected_id"] = None
+                st.session_state[NAV_SELECTED_ID] = None
                 st.rerun()
 
         with col_toggle:
@@ -169,7 +159,7 @@ def render_section_nav(card_state: list[dict], nav_filt: dict | None = None) -> 
                     if len(title) > 20:
                         label_text += "…"
 
-                selected_id = st.session_state.get("section_nav_selected_id")
+                selected_id = st.session_state.get(NAV_SELECTED_ID)
                 item_label = f"{'● ' if selected_id == card_id else '  '}{label_text}"
 
                 if st.button(item_label, key=f"nav_item_{card_id}", use_container_width=True):
@@ -179,7 +169,7 @@ def render_section_nav(card_state: list[dict], nav_filt: dict | None = None) -> 
                     st.session_state[_NAV_FILTER_KEY] = filt
                     st.session_state[_NAV_STATE_KEY] = nav
                     st.session_state[_VIEW_MODE_KEY] = "card"
-                    st.session_state["section_nav_selected_id"] = card_id
-                    st.session_state["selected_id"] = card_id
-                    st.session_state["_cfg_focus_id"] = None
+                    st.session_state[NAV_SELECTED_ID] = card_id
+                    st.session_state[MAIN_SELECTED_ID] = card_id
+                    st.session_state[CFG_FOCUS_ID] = None
                     st.rerun()

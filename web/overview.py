@@ -1,22 +1,10 @@
 # web/overview.py
 """项目总览页 —— 纯视图层，不修改数据。"""
 from __future__ import annotations
-import re
 import streamlit as st
 
-_ACTIVE_TAB_KEY = "active_tab"          # "config" | "datasets" | "overview" | "templates"
-_NAV_FILTER_KEY = "section_nav_filter"  # 复用 section_nav 的筛选 key
-
-
-def _sec_sort_key(sec_no: str) -> tuple:
-    parts = re.split(r"[.\-]", sec_no.strip())
-    result = []
-    for p in parts:
-        try:
-            result.append(int(p))
-        except ValueError:
-            result.append(p)
-    return tuple(result)
+from utils import sec_sort_key as _sec_sort_key
+from keys import ACTIVE_TAB as _ACTIVE_TAB_KEY, NAV_FILTER as _NAV_FILTER_KEY, TAB_SWITCH_REQ
 
 
 def compute_section_stats(card_state: list[dict]) -> list[dict]:
@@ -107,7 +95,7 @@ def render_overview(
                     st.session_state[_NAV_FILTER_KEY] = nav_filt
                     st.session_state["section_nav_view_mode"] = "card"
                     st.session_state[_ACTIVE_TAB_KEY] = "config"
-                    st.session_state["_tab_switch_req"] = st.session_state.get("_tab_switch_req", 0) + 1
+                    st.session_state[TAB_SWITCH_REQ] = st.session_state.get(TAB_SWITCH_REQ, 0) + 1
                     st.rerun()
     else:
         st.caption("无章节数据")

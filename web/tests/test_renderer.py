@@ -1,4 +1,4 @@
-"""renderer.run_preview 单元测试（mock掉 run_render 以隔离R依赖）"""
+"""renderer 单元测试（run_preview + _parse_r_error）"""
 from unittest.mock import patch
 import pandas as pd
 import sys
@@ -6,7 +6,53 @@ import os
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from renderer import run_preview
+from renderer import run_preview, _parse_r_error
+
+
+# ── _parse_r_error 测试 ───────────────────────────────────────────────────────
+
+def test_parse_error_extracts_error_in_line():
+    log = "some preamble\nError in generate_table(cfg) : object 'x' not found\nTraceback..."
+    summary, seq = _parse_r_error(log)
+    assert "Error in generate_table" in summary
+    assert seq is None
+
+
+def test_parse_error_extracts_seqnum():
+    log = "Processing SeqNum=3\nError in foo() : bad value"
+    summary, seq = _parse_r_error(log)
+    assert seq == 3
+
+
+def test_parse_error_seqnum_case_variants():
+    for pattern in ["Seq 5", "seqnum: 5", "SeqNum=5", "seq=5"]:
+        _, seq = _parse_r_error(pattern)
+        assert seq == 5, f"failed for pattern: {pattern!r}"
+
+
+def test_parse_error_fallback_to_last_line():
+    log = "line1\nline2\nfinal error message"
+    summary, seq = _parse_r_error(log)
+    assert summary == "final error message"
+    assert seq is None
+
+
+def test_parse_error_empty_log():
+    summary, seq = _parse_r_error("")
+    assert summary == "未知错误"
+    assert seq is None
+
+
+def test_parse_error_stop_call_detected():
+    log = 'stop("invalid MacVar: FooBar")'
+    summary, _ = _parse_r_error(log)
+    assert "stop(" in summary
+
+
+def test_parse_error_summary_capped_at_200_chars():
+    long_line = "Error in foo() : " + "x" * 300
+    summary, _ = _parse_r_error(long_line)
+    assert len(summary) <= 200
 
 
 def _make_card(macvar="PStab", ds="t_demo"):

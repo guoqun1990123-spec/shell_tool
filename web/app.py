@@ -8,23 +8,17 @@ import streamlit as st
 
 from excel_io import list_excel_pairs, load_excel
 from git_ops import GitOps, make_commit_msg, make_filename
-from schema import (
-    CONFIG_COLS,
-    DATASET_LIST_COLS, DATASET_LIST_NUM_COLS,
-    DATASET_TABLE_COLS, DATASET_TABLE_NUM_COLS,
-)
+from schema import CONFIG_COLS
 from validators import validate
-from dataset_editor import render_dataset_editor, df_to_card_state, state_key
-from dataset_preview import render_preview
-from templates_io import load_templates
-from config_editor import render_config_editor, _CARD_STATE_KEY as _CFG_CARD_KEY, _FOCUS_KEY, _update_card, card_state_to_df
-from config_templates_io import load_config_templates, save_config_templates
+from config_editor import _CARD_STATE_KEY as _CFG_CARD_KEY, _FOCUS_KEY, _update_card
 from renderer import run_render
-from config_display_io import load_display_levels, save_display_levels, REQUIRED_FIELDS
+
 from yaml_io import dump_yaml, list_yaml_files, load_yaml
-from section_nav import render_section_nav
-from section_table import render_section_table
-from overview import render_overview, _ACTIVE_TAB_KEY
+from overview import render_overview
+from templates_tab import render_templates_tab
+from datasets_tab import render_datasets_tab
+from config_tab import render_config_tab
+from keys import ACTIVE_TAB as _ACTIVE_TAB_KEY, TAB_SWITCH_REQ, CFG_FOCUS_ID
 
 # ── 配置加载 ────────────────────────────────────────────────────────────────
 
@@ -64,14 +58,6 @@ def _empty_config() -> pd.DataFrame:
     return pd.DataFrame(columns=CONFIG_COLS)
 
 
-def _empty_dataset_table() -> pd.DataFrame:
-    return pd.DataFrame(columns=DATASET_TABLE_COLS)
-
-
-def _empty_dataset_list() -> pd.DataFrame:
-    return pd.DataFrame(columns=DATASET_LIST_COLS)
-
-
 def _init_state():
     if "config_df" not in st.session_state:
         st.session_state.config_df = _empty_config()
@@ -95,10 +81,12 @@ def _init_state():
             "seq_hint": None,
             "elapsed": None,
         }
-    if "active_tab" not in st.session_state:
-        st.session_state["active_tab"] = "config"
+    if _ACTIVE_TAB_KEY not in st.session_state:
+        st.session_state[_ACTIVE_TAB_KEY] = "config"
     if "default_trtlab" not in st.session_state:
         st.session_state.default_trtlab = ""
+    if "default_dutoffdate" not in st.session_state:
+        st.session_state.default_dutoffdate = ""
 
 
 def _clear_card_state():
@@ -109,28 +97,7 @@ def _clear_card_state():
         del st.session_state[k]
 
 
-def _build_list_column_config() -> dict:
-    cc = {}
-    for col in DATASET_LIST_COLS:
-        if col in DATASET_LIST_NUM_COLS:
-            cc[col] = st.column_config.NumberColumn(col, step=1, min_value=0)
-        else:
-            cc[col] = st.column_config.TextColumn(col)
-    return cc
-
-
 # ── 加载辅助 ────────────────────────────────────────────────────────────────
-
-def _invalidate_preview_cache(ds_name: str) -> None:
-    """清除所有引用该数据集的 Config 卡片的静态预览缓存。"""
-    _cs_inv = st.session_state.get(_CFG_CARD_KEY, [])
-    for _c in _cs_inv:
-        if str(_c.get("Datasets") or "").strip() == ds_name:
-            _cid = _c["_id"]
-            for _k in (f"_preview_html_{_cid}", f"_preview_sig_{_cid}"):
-                if _k in st.session_state:
-                    del st.session_state[_k]
-
 
 def _extract_protocol(filename: str) -> str:
     """从 YAML 文件名提取方案简称。
@@ -225,13 +192,44 @@ def main():
             st.session_state.editor_version += 1
             _clear_card_state()
 
-    # 工具栏第二行：默认 Trtlab
-    st.session_state.default_trtlab = st.text_input(
-        "默认 Trtlab（新增TFL时自动填入）",
-        value=st.session_state.default_trtlab,
-        placeholder="如 A组|B组|合计",
-        key="input_default_trtlab",
-    )
+    # 工具栏第二行：Trtlab / Dutoffdate 统一填写
+    _tb_l1, _tb_l2, _tb_r1, _tb_r2 = st.columns([3, 1, 3, 1])
+    with _tb_l1:
+        st.session_state.default_trtlab = st.text_input(
+            "默认 Trtlab（新增TFL时自动填入）",
+            value=st.session_state.default_trtlab,
+            placeholder="如 A组|B组|合计",
+            key="input_default_trtlab",
+        )
+    with _tb_l2:
+        st.write("")
+        st.write("")
+        if st.button("统一替换", key="btn_replace_trtlab", help="将所有行的 Trtlab 替换为上方输入值"):
+            _rv = st.session_state.default_trtlab.strip()
+            if _rv:
+                _cs = st.session_state.get(_CFG_CARD_KEY, [])
+                for _c in list(_cs):
+                    _cs = _update_card(_cs, _c["_id"], Trtlab=_rv)
+                st.session_state[_CFG_CARD_KEY] = _cs
+                st.rerun()
+    with _tb_r1:
+        st.session_state.default_dutoffdate = st.text_input(
+            "默认 Dutoffdate（新增TFL时自动填入）",
+            value=st.session_state.default_dutoffdate,
+            placeholder="如 2026-06-01",
+            key="input_default_dutoffdate",
+        )
+    with _tb_r2:
+        st.write("")
+        st.write("")
+        if st.button("统一替换", key="btn_replace_dutoffdate", help="将所有行的 Dutoffdate 替换为上方输入值"):
+            _rv2 = st.session_state.default_dutoffdate.strip()
+            if _rv2:
+                _cs2 = st.session_state.get(_CFG_CARD_KEY, [])
+                for _c in list(_cs2):
+                    _cs2 = _update_card(_cs2, _c["_id"], Dutoffdate=_rv2)
+                st.session_state[_CFG_CARD_KEY] = _cs2
+                st.rerun()
 
     # ── 标签页 ──────────────────────────────────────────────────────────────
     _active = st.session_state.get(_ACTIVE_TAB_KEY, "config")
@@ -240,287 +238,18 @@ def main():
     _tab_index = _tab_keys.index(_active) if _active in _tab_keys else 0
     _default_tab = _tab_names[_tab_index]
 
-    _tab_ver = st.session_state.get("_tab_switch_req", 0)
+    _tab_ver = st.session_state.get(TAB_SWITCH_REQ, 0)
     tab_config, tab_datasets, tab_overview, tab_templates = st.tabs(
         _tab_names, default=_default_tab, key=f"main_tabs_v{_tab_ver}"
     )
 
-    # ── Tab: Config章节 ──────────────────────────────────────────────────────
+    # ── 四个标签页 ───────────────────────────────────────────────────────────
     with tab_config:
-        _current_card_state = st.session_state.get(_CFG_CARD_KEY, [])
+        edited_config = render_config_tab()
 
-        # 筛选栏（作用于左侧导航树）
-        _all_sections = sorted(
-            {str(c.get("Section no", "") or "") for c in _current_card_state if c.get("Section no")},
-            key=lambda s: [int(x) if x.isdigit() else x for x in s.replace("-", ".").split(".")],
-        )
-        # section/cats/keyword 筛选全部走 cfg_nav_filter，只影响左侧导航树可见性
-        _nav_filt = st.session_state.get("cfg_nav_filter", {"section": "", "cats": [], "keyword": ""})
-        _fc1, _fc2, _fc3 = st.columns([1.5, 2.0, 2.5])
-        with _fc1:
-            _sec_opts = ["全部"] + _all_sections
-            _cur_sec = _nav_filt.get("section", "")
-            _sel_sec = st.selectbox(
-                "Section", options=_sec_opts,
-                index=_sec_opts.index(_cur_sec) if _cur_sec in _sec_opts else 0,
-                key="cfg_nav_flt_sec", label_visibility="collapsed",
-            )
-            _new_sec = "" if _sel_sec == "全部" else _sel_sec
-            if _new_sec != _cur_sec:
-                _nav_filt["section"] = _new_sec
-                st.session_state["cfg_nav_filter"] = _nav_filt
-                st.rerun()
-        with _fc2:
-            _new_cats = st.multiselect(
-                "cat", options=["表", "图", "列表"],
-                default=_nav_filt.get("cats", []),
-                key="cfg_nav_flt_cat", label_visibility="collapsed", placeholder="cat（全部）",
-            )
-            if _new_cats != _nav_filt.get("cats", []):
-                _nav_filt["cats"] = _new_cats
-                st.session_state["cfg_nav_filter"] = _nav_filt
-                st.rerun()
-        with _fc3:
-            _new_kw = st.text_input(
-                "关键词", value=_nav_filt.get("keyword", ""),
-                placeholder="关键词（title / table no）",
-                key="cfg_nav_flt_kw", label_visibility="collapsed",
-            )
-            if _new_kw != _nav_filt.get("keyword", ""):
-                _nav_filt["keyword"] = _new_kw
-                st.session_state["cfg_nav_filter"] = _nav_filt
-                st.rerun()
-
-        _nav_col, _edit_col = st.columns([1, 3], gap="small")
-
-        with _nav_col:
-            render_section_nav(_current_card_state, st.session_state.get("cfg_nav_filter", {}))
-
-        with _edit_col:
-            dataset_keys = list(st.session_state.datasets.keys())
-            cfg_templates = load_config_templates()
-
-            _view_mode = st.session_state.get("section_nav_view_mode", "table")
-            _table_sec = st.session_state.get("section_nav_table_section", "")
-            _nav_selected = st.session_state.get("section_nav_selected_id")
-
-            # 有选中条目时强制卡片视图
-            if _nav_selected:
-                _view_mode = "card"
-
-            # 默认表格视图：若无选中 section，自动选第一个
-            if _view_mode == "table" and not _table_sec:
-                _card_state_now = st.session_state.get(_CFG_CARD_KEY, [])
-                _first_sec = next(
-                    (str(c.get("Section no", "") or "") for c in _card_state_now if c.get("Section no")),
-                    "",
-                )
-                if _first_sec:
-                    st.session_state["section_nav_table_section"] = _first_sec
-                    st.session_state["section_nav_view_mode"] = "table"
-                    _table_sec = _first_sec
-
-            if _view_mode == "table" and _table_sec:
-                render_section_table(
-                    st.session_state.get(_CFG_CARD_KEY, []),
-                    _table_sec,
-                    dataset_keys,
-                    cfg_templates,
-                )
-                edited_config = card_state_to_df(st.session_state.get(_CFG_CARD_KEY, []))
-            else:
-                edited_config, selected_id = render_config_editor(
-                    st.session_state.config_df,
-                    dataset_keys,
-                    cfg_templates,
-                )
-                if selected_id is not None:
-                    st.session_state.selected_id = selected_id
-
-    # ── Tab: Datasets ────────────────────────────────────────────────────────
     with tab_datasets:
-        sel_id_ds = st.session_state.get("selected_id")
-        _cs_for_ds = st.session_state.get(_CFG_CARD_KEY, [])
-        sel_card = next((c for c in _cs_for_ds if c.get("_id") == sel_id_ds), None) if sel_id_ds else None
+        render_datasets_tab()
 
-        if sel_card is not None:
-            ds_name = str(sel_card.get("Datasets", "") or "").strip()
-            macvar = str(sel_card.get("MacVar", "") or "").strip()
-            seq_no = sel_card.get("SeqNum", "?")
-            tbl_no = str(sel_card.get("table no", "") or "").strip()
-            title  = str(sel_card.get("title", "") or "").strip()
-            title_short = (title[:30] + "…") if len(title) > 30 else title
-
-            _info_col, _back_col = st.columns([5, 1])
-            with _info_col:
-                st.caption(
-                    f"**{tbl_no}** {title_short}  ·  "
-                    f"SeqNum={seq_no}  ·  Datasets=`{ds_name}`  ·  MacVar=`{macvar}`"
-                )
-            with _back_col:
-                if st.button("← Config", key="btn_back_to_config",
-                             help="返回 Config 章节并定位到该卡片"):
-                    sel_id = st.session_state.get("selected_id")
-                    if sel_id:
-                        from config_editor import _CARD_STATE_KEY as _cfgkey_back, _update_card as _uc_back
-                        _cs_back = st.session_state.get(_cfgkey_back, [])
-                        _cs_back = _uc_back(_cs_back, sel_id, _level="focus")
-                        st.session_state[_cfgkey_back] = _cs_back
-                        st.session_state["_cfg_focus_id"] = sel_id
-                        st.session_state["section_nav_view_mode"] = "card"
-                    st.session_state["active_tab"] = "config"
-                    st.session_state["_tab_switch_req"] = st.session_state.get("_tab_switch_req", 0) + 1
-                    st.rerun()
-        else:
-            ds_name = ""
-            st.info("请先在「Config章节」标签页中点击某行以选中，再切换此标签查看数据表。")
-
-        col_dsname, col_dscopy, col_dsadd = st.columns([2, 2, 1])
-        with col_dsname:
-            new_ds_name = st.text_input("新建数据表名", placeholder="如 t_demo", key="new_ds_name")
-        with col_dscopy:
-            existing_keys = list(st.session_state.datasets.keys())
-            copy_from = st.selectbox(
-                "复制自（可选）", ["— 空白 —"] + existing_keys,
-                key="new_ds_copy_from",
-            )
-        with col_dsadd:
-            st.write("")
-            st.write("")
-            if st.button("新建数据表", key="btn_add_ds"):
-                if new_ds_name and new_ds_name not in st.session_state.datasets:
-                    if copy_from != "— 空白 —" and copy_from in st.session_state.datasets:
-                        st.session_state.datasets[new_ds_name] = st.session_state.datasets[copy_from].copy()
-                    else:
-                        is_list = new_ds_name == "list"
-                        st.session_state.datasets[new_ds_name] = (
-                            _empty_dataset_list() if is_list else _empty_dataset_table()
-                        )
-                    # 若当前选中的 Config 行 Datasets 字段为空，自动关联
-                    _cur_sel_id = st.session_state.get("selected_id")
-                    if _cur_sel_id:
-                        from config_editor import _CARD_STATE_KEY as _cfgkey2, _update_card as _uc2
-                        _cs2 = st.session_state.get(_cfgkey2, [])
-                        _cur_card2 = next((c for c in _cs2 if c["_id"] == _cur_sel_id), None)
-                        if _cur_card2 and not str(_cur_card2.get("Datasets") or "").strip():
-                            st.session_state[_cfgkey2] = _uc2(_cs2, _cur_sel_id, Datasets=new_ds_name)
-                            st.toast(f"✅ 已自动关联到当前 TFL 的 Datasets 字段")
-                    st.rerun()
-
-        # 共用数据集提示
-        if ds_name:
-            _cs_all = st.session_state.get(_CFG_CARD_KEY, [])
-            _shared_cards = [
-                c for c in _cs_all
-                if str(c.get("Datasets") or "").strip() == ds_name
-            ]
-            if len(_shared_cards) > 1:
-                _shared_labels = [
-                    str(c.get("table no") or c.get("SeqNum") or "?")
-                    for c in _shared_cards
-                ]
-                st.warning(
-                    f"⚠️ 此数据集被 **{len(_shared_cards)}** 张表共用："
-                    f" {', '.join(_shared_labels[:5])}"
-                    + ("…" if len(_shared_labels) > 5 else "")
-                    + "。修改将影响所有引用此数据集的 TFL。"
-                )
-
-        # 数据集重命名
-        if ds_name and ds_name in st.session_state.datasets:
-            with st.expander("✏️ 重命名此数据集", expanded=False):
-                _rename_col1, _rename_col2 = st.columns([3, 1])
-                with _rename_col1:
-                    _new_name = st.text_input(
-                        "新名称", value=ds_name,
-                        key=f"rename_ds_{ds_name}",
-                        label_visibility="collapsed",
-                    )
-                with _rename_col2:
-                    if st.button("确认重命名", key=f"btn_rename_ds_{ds_name}",
-                                 disabled=not _new_name.strip() or _new_name == ds_name):
-                        _new_name = _new_name.strip()
-                        if _new_name in st.session_state.datasets:
-                            st.error(f"数据集名 `{_new_name}` 已存在，请换一个名称。")
-                            st.stop()
-                        else:
-                            # 1. 迁移数据
-                            st.session_state.datasets[_new_name] = st.session_state.datasets.pop(ds_name)
-                            # 2. 迁移 card state 和 version key
-                            from dataset_editor import state_key as _ds_state_key
-                            _old_card_key = _ds_state_key(ds_name)
-                            _new_card_key = _ds_state_key(_new_name)
-                            if _old_card_key in st.session_state:
-                                st.session_state[_new_card_key] = st.session_state.pop(_old_card_key)
-                            _old_ver_key = f"_ds_version_{ds_name}"
-                            _new_ver_key = f"_ds_version_{_new_name}"
-                            if _old_ver_key in st.session_state:
-                                st.session_state[_new_ver_key] = st.session_state.pop(_old_ver_key)
-                            # 3. 更新所有 Config 卡片的 Datasets 字段
-                            from config_editor import _CARD_STATE_KEY as _cfgkey3
-                            _cs3 = st.session_state.get(_cfgkey3, [])
-                            st.session_state[_cfgkey3] = [
-                                {**c, "Datasets": _new_name}
-                                if str(c.get("Datasets") or "").strip() == ds_name
-                                else c
-                                for c in _cs3
-                            ]
-                            st.toast(f"✅ 已将数据集 `{ds_name}` 重命名为 `{_new_name}`，并同步更新了所有引用")
-                            st.rerun()
-
-        if ds_name and ds_name in st.session_state.datasets:
-            is_list = ds_name == "list"
-            ds_df = st.session_state.datasets[ds_name]
-
-            if is_list:
-                tab_edit, tab_preview = st.tabs(["✏️ 编辑", "👁️ Listing 预览"])
-                with tab_edit:
-                    ds_cc = _build_list_column_config()
-                    edited_ds = st.data_editor(
-                        ds_df,
-                        column_config=ds_cc,
-                        num_rows="dynamic",
-                        width="stretch",
-                        key=f"ds_editor_{ds_name}_{st.session_state.editor_version}",
-                    )
-                    st.session_state.datasets[ds_name] = edited_ds
-                    _invalidate_preview_cache(ds_name)
-                with tab_preview:
-                    from dataset_preview import render_list_preview
-                    render_list_preview(st.session_state.datasets[ds_name])
-            else:
-                card_key = state_key(ds_name)
-                version_key = f"_ds_version_{ds_name}"
-                templates = load_templates()
-                if st.session_state.get(version_key) != st.session_state.editor_version:
-                    from dataset_editor import normalize_dataset_state, apply_normalize
-                    _init_state_val = df_to_card_state(ds_df)
-                    _, _conflicts = normalize_dataset_state(_init_state_val, templates)
-                    if _conflicts:
-                        # 只自动填充 Aval 为空的行；非空 Aval 与模板不符时留给用户手动矫正
-                        _state_map2 = {r["_id"]: r for r in _init_state_val}
-                        _sel = {
-                            c["child_id"] or c["parent_id"]
-                            for c in _conflicts
-                            if not str(_state_map2.get(c["child_id"] or c["parent_id"], {}).get("Aval") or "").strip()
-                        }
-                        if _sel:
-                            _init_state_val = apply_normalize(_init_state_val, _conflicts, _sel)
-                    st.session_state[card_key] = _init_state_val
-                    st.session_state[version_key] = st.session_state.editor_version
-
-                tab_edit, tab_preview = st.tabs(["✏️ 编辑", "👁️ 结构预览"])
-                with tab_edit:
-                    result_df = render_dataset_editor(ds_name, ds_df, templates)
-                    st.session_state.datasets[ds_name] = result_df
-                    _invalidate_preview_cache(ds_name)
-                with tab_preview:
-                    render_preview(ds_name, st.session_state.get(card_key, []))
-
-        elif ds_name:
-            st.info(f"数据表 '{ds_name}' 尚未创建，请在上方新建。")
-
-    # ── Tab: 项目总览 ────────────────────────────────────────────────────────
     with tab_overview:
         render_overview(
             card_state=st.session_state.get(_CFG_CARD_KEY, []),
@@ -528,282 +257,8 @@ def main():
             protocol_name=st.session_state.protocol_name,
         )
 
-    # ── Tab: 模板配置 ────────────────────────────────────────────────────────
     with tab_templates:
-        cfg_tmpl_ver = st.session_state.get("cfg_tmpl_version", 0)
-
-        with st.expander("变量类型模板配置", expanded=True):
-            from templates_io import save_templates
-            templates_edit = load_templates()
-
-            st.caption("连续变量子行（Label + Aval 模板）")
-            cont_tmpl = templates_edit.get("连续变量", {})
-            cont_children = cont_tmpl.get("children", [])
-            new_children = []
-            for j, child in enumerate(cont_children):
-                c1, c2, c3 = st.columns([3, 3, 0.5])
-                with c1:
-                    lbl = st.text_input(
-                        "Label", value=child.get("Label", ""),
-                        label_visibility="collapsed",
-                        key=f"tmpl_label_{st.session_state.tmpl_version}_{j}"
-                    )
-                with c2:
-                    avl = st.text_input(
-                        "Aval", value=child.get("Aval", ""),
-                        label_visibility="collapsed",
-                        key=f"tmpl_aval_{st.session_state.tmpl_version}_{j}"
-                    )
-                with c3:
-                    if not st.button("🗑", key=f"tmpl_del_{st.session_state.tmpl_version}_{j}"):
-                        new_children.append({"Label": lbl, "Aval": avl})
-            if st.button("＋ 添加子行", key="tmpl_add"):
-                new_children.append({"Label": "", "Aval": ""})
-            templates_edit.setdefault("连续变量", {})["children"] = new_children
-
-            col_a, col_b = st.columns(2)
-            with col_a:
-                st.caption("分类变量-无子分类 Aval")
-                templates_edit.setdefault("分类变量-无子分类", {})["aval"] = st.text_input(
-                    "Aval",
-                    value=templates_edit.get("分类变量-无子分类", {}).get("aval", "xx (xx.x)"),
-                    key="tmpl_cat_aval",
-                    label_visibility="collapsed",
-                )
-            with col_b:
-                st.caption("日期变量 Aval")
-                templates_edit.setdefault("日期变量", {})["aval"] = st.text_input(
-                    "Aval",
-                    value=templates_edit.get("日期变量", {}).get("aval", "YYYY-MM-DD"),
-                    key="tmpl_date_aval",
-                    label_visibility="collapsed",
-                )
-
-            st.caption("分类变量子分类 Aval 候选（子行 Aval 下拉选项）")
-            aval_opts = list(templates_edit.get("分类变量-有子分类", {}).get("aval_options", ["xx (xx.x)"]))
-            new_aval_opts = []
-            for j, opt in enumerate(aval_opts):
-                oc1, oc2 = st.columns([5, 0.5])
-                with oc1:
-                    val = st.text_input(
-                        "候选值", value=opt, label_visibility="collapsed",
-                        key=f"tmpl_aval_opt_{st.session_state.tmpl_version}_{j}"
-                    )
-                with oc2:
-                    if not st.button("🗑", key=f"tmpl_aval_opt_del_{st.session_state.tmpl_version}_{j}"):
-                        new_aval_opts.append(val)
-            if st.button("＋ 添加候选 Aval", key="tmpl_aval_opt_add"):
-                new_aval_opts.append("")
-            templates_edit.setdefault("分类变量-有子分类", {})["aval_options"] = new_aval_opts
-
-            from templates_io import _BASE_TYPES
-            custom_types = [k for k in templates_edit if k not in _BASE_TYPES]
-            with st.expander(f"自定义变量类型（{len(custom_types)} 个）", expanded=bool(custom_types)):
-                for ct in list(custom_types):
-                    ct_data = templates_edit[ct]
-                    st.markdown(f"**{ct}**")
-                    ct_col1, ct_col2 = st.columns([5, 1])
-                    with ct_col2:
-                        if st.button("删除此类型", key=f"tmpl_del_type_{ct}"):
-                            del templates_edit[ct]
-                            st.rerun()
-                    with ct_col1:
-                        st.caption("子行模板（Label + Aval）")
-                    ct_children = ct_data.get("children", [])
-                    new_ct_children = []
-                    for j, ch in enumerate(ct_children):
-                        cc1, cc2, cc3 = st.columns([3, 3, 0.5])
-                        with cc1:
-                            lbl = st.text_input(
-                                "Label", value=ch.get("Label", ""), label_visibility="collapsed",
-                                key=f"tmpl_ct_{ct}_lbl_{st.session_state.tmpl_version}_{j}"
-                            )
-                        with cc2:
-                            avl = st.text_input(
-                                "Aval", value=ch.get("Aval", ""), label_visibility="collapsed",
-                                key=f"tmpl_ct_{ct}_avl_{st.session_state.tmpl_version}_{j}"
-                            )
-                        with cc3:
-                            if not st.button("🗑", key=f"tmpl_ct_{ct}_del_{st.session_state.tmpl_version}_{j}"):
-                                new_ct_children.append({"Label": lbl, "Aval": avl})
-                    if st.button(f"＋ 添加子行", key=f"tmpl_ct_{ct}_add"):
-                        new_ct_children.append({"Label": "", "Aval": ""})
-                    templates_edit[ct]["children"] = new_ct_children
-
-                    ct_opts = list(ct_data.get("aval_options", []))
-                    new_ct_opts = []
-                    st.caption("子行 Aval 候选")
-                    for j, opt in enumerate(ct_opts):
-                        oo1, oo2 = st.columns([5, 0.5])
-                        with oo1:
-                            v = st.text_input(
-                                "候选值", value=opt, label_visibility="collapsed",
-                                key=f"tmpl_ct_{ct}_opt_{st.session_state.tmpl_version}_{j}"
-                            )
-                        with oo2:
-                            if not st.button("🗑", key=f"tmpl_ct_{ct}_opt_del_{st.session_state.tmpl_version}_{j}"):
-                                new_ct_opts.append(v)
-                    if st.button("＋ 添加候选 Aval", key=f"tmpl_ct_{ct}_opt_add"):
-                        new_ct_opts.append("")
-                    templates_edit[ct]["aval_options"] = new_ct_opts
-                    st.divider()
-
-                new_type_key = f"tmpl_new_type_name_{st.session_state.tmpl_version}"
-                new_type_name = st.text_input("新变量类型名称", key=new_type_key, placeholder="如：生存分析指标")
-                if st.button("＋ 新增变量类型", key="tmpl_add_type"):
-                    name = new_type_name.strip()
-                    if name and name not in templates_edit:
-                        templates_edit[name] = {"children": [], "aval_options": []}
-                        st.session_state.tmpl_version += 1
-                        st.rerun()
-                    elif not name:
-                        st.warning("请先输入类型名称")
-                    else:
-                        st.warning(f"类型「{name}」已存在")
-
-            if st.button("保存模板", key="btn_save_tmpl", type="secondary"):
-                try:
-                    save_templates(templates_edit)
-                    st.cache_data.clear()
-                    st.session_state.tmpl_version += 1
-                    st.success("模板已保存")
-                except OSError as e:
-                    st.error(f"保存失败：{e}")
-
-        with st.expander("⚙️ Config 模板配置", expanded=True):
-            tab_sec, tab_pop, tab_fn, tab_levels = st.tabs(["Section 映射", "pop 选项", "脚注片段", "显示级别"])
-
-            with tab_sec:
-                cfg_tmpl_edit = load_config_templates()
-                sec_map: dict = dict(cfg_tmpl_edit.get("section_map", {}))
-                sec_items = list(sec_map.items())
-                new_sec_map: dict = {}
-                for j, (k, v) in enumerate(sec_items):
-                    sc1, sc2, sc3 = st.columns([2, 3, 0.5])
-                    with sc1:
-                        new_k = st.text_input(
-                            "Section no", value=k, label_visibility="collapsed",
-                            key=f"cfgtmpl_secno_{cfg_tmpl_ver}_{j}",
-                        )
-                    with sc2:
-                        new_v = st.text_input(
-                            "Section title", value=v, label_visibility="collapsed",
-                            key=f"cfgtmpl_sectitle_{cfg_tmpl_ver}_{j}",
-                        )
-                    with sc3:
-                        if not st.button("🗑", key=f"cfgtmpl_secdel_{cfg_tmpl_ver}_{j}"):
-                            if new_k.strip():
-                                new_sec_map[new_k.strip()] = new_v
-                if st.button("＋ 添加 Section", key="cfgtmpl_secadd"):
-                    new_sec_map[""] = ""
-                cfg_tmpl_edit["section_map"] = new_sec_map
-                if st.button("保存 Section 映射", key="btn_save_secmap", type="secondary"):
-                    try:
-                        save_config_templates(cfg_tmpl_edit)
-                        st.cache_data.clear()
-                        st.session_state["cfg_tmpl_version"] = cfg_tmpl_ver + 1
-                        st.success("已保存")
-                    except OSError as e:
-                        st.error(f"保存失败：{e}")
-
-            with tab_pop:
-                cfg_tmpl_pop = load_config_templates()
-                pop_opts: list = list(cfg_tmpl_pop.get("pop_options", []))
-                new_pop_opts: list = []
-                for j, opt in enumerate(pop_opts):
-                    pc1, pc2 = st.columns([4, 0.5])
-                    with pc1:
-                        new_opt = st.text_input(
-                            "pop", value=opt, label_visibility="collapsed",
-                            key=f"cfgtmpl_pop_{cfg_tmpl_ver}_{j}",
-                        )
-                    with pc2:
-                        if not st.button("🗑", key=f"cfgtmpl_popdel_{cfg_tmpl_ver}_{j}"):
-                            if new_opt.strip():
-                                new_pop_opts.append(new_opt.strip())
-                if st.button("＋ 添加人群", key="cfgtmpl_popadd"):
-                    new_pop_opts.append("")
-                cfg_tmpl_pop["pop_options"] = new_pop_opts
-                if st.button("保存 pop 选项", key="btn_save_pop", type="secondary"):
-                    try:
-                        save_config_templates(cfg_tmpl_pop)
-                        st.cache_data.clear()
-                        st.session_state["cfg_tmpl_version"] = cfg_tmpl_ver + 1
-                        st.success("已保存")
-                    except OSError as e:
-                        st.error(f"保存失败：{e}")
-
-            with tab_fn:
-                cfg_tmpl_fn = load_config_templates()
-                fn_snippets: list = list(cfg_tmpl_fn.get("footnote_snippets", []))
-                new_fn_snippets: list = []
-                for j, snippet in enumerate(fn_snippets):
-                    fc1, fc2 = st.columns([5, 0.5])
-                    with fc1:
-                        new_s = st.text_input(
-                            "脚注片段", value=snippet, label_visibility="collapsed",
-                            key=f"cfgtmpl_fn_{cfg_tmpl_ver}_{j}",
-                        )
-                    with fc2:
-                        if not st.button("🗑", key=f"cfgtmpl_fndel_{cfg_tmpl_ver}_{j}"):
-                            if new_s.strip():
-                                new_fn_snippets.append(new_s.strip())
-                if st.button("＋ 添加片段", key="cfgtmpl_fnadd"):
-                    new_fn_snippets.append("")
-                cfg_tmpl_fn["footnote_snippets"] = new_fn_snippets
-                if st.button("保存脚注片段", key="btn_save_fn", type="secondary"):
-                    try:
-                        save_config_templates(cfg_tmpl_fn)
-                        st.cache_data.clear()
-                        st.session_state["cfg_tmpl_version"] = cfg_tmpl_ver + 1
-                        st.success("已保存")
-                    except OSError as e:
-                        st.error(f"保存失败：{e}")
-
-            with tab_levels:
-                from schema import CONFIG_COLS as _ALL_COLS
-                disp_cfg = load_display_levels()
-                field_levels: dict = disp_cfg.get("field_levels", {})
-                level_options = ["一级", "二级", "不显示"]
-                level_map = {"level1": "一级", "level2": "二级", "hidden": "不显示"}
-                level_rev = {"一级": "level1", "二级": "level2", "不显示": "hidden"}
-                new_field_levels: dict = {}
-                st.caption("字段  →  显示级别（必显示字段锁定不可修改）")
-                for field in _ALL_COLS:
-                    cur_level = field_levels.get(field, "level2")
-                    if field in REQUIRED_FIELDS:
-                        st.text(f"  {field:<28} 必显示 🔒")
-                        new_field_levels[field] = "required"
-                    else:
-                        cur_label = level_map.get(cur_level, "二级")
-                        lc1, lc2 = st.columns([3, 1.5])
-                        with lc1:
-                            st.caption(field)
-                        with lc2:
-                            new_label = st.selectbox(
-                                field, options=level_options,
-                                index=level_options.index(cur_label),
-                                key=f"disp_level_{cfg_tmpl_ver}_{field}",
-                                label_visibility="collapsed",
-                            )
-                        new_field_levels[field] = level_rev[new_label]
-                if st.button("保存显示设置", key="btn_save_disp", type="secondary"):
-                    try:
-                        save_display_levels({
-                            "default_collapse": disp_cfg.get("default_collapse", True),
-                            "field_levels": new_field_levels,
-                        })
-                        st.cache_data.clear()
-                        st.session_state["cfg_tmpl_version"] = cfg_tmpl_ver + 1
-                        st.success("显示设置已保存")
-                    except OSError as e:
-                        st.error(f"保存失败：{e}")
-
-    # ── 校验（需要 edited_config，从 Config 标签获取） ─────────────────────────
-    try:
-        _ = edited_config
-    except NameError:
-        edited_config = card_state_to_df(st.session_state.get(_CFG_CARD_KEY, []))
+        render_templates_tab()
 
     errors = validate(edited_config, st.session_state.datasets)
 
