@@ -824,8 +824,11 @@ def main():
 
     with btn_c1:
         draft_disabled = not st.session_state.protocol_name.strip()
+        if draft_disabled:
+            st.caption("请先填写方案简称")
         if st.button("💾 保存草稿", key="btn_draft", disabled=draft_disabled):
             try:
+                # 草稿有意跳过校验错误，允许保存中间状态；数据源用 edited_config（实时）
                 content = dump_yaml(
                     edited_config,
                     st.session_state.datasets,
@@ -835,7 +838,7 @@ def main():
                 dest = _repo_config_dir().parent / rel_path
                 dest.parent.mkdir(parents=True, exist_ok=True)
                 dest.write_text(content, encoding="utf-8")
-                st.toast(f"草稿已保存：{dest.name}")
+                st.success(f"草稿已保存：{dest}")
             except Exception as e:
                 st.error(f"保存草稿失败：{e}")
 
