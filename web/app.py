@@ -122,8 +122,7 @@ def _build_list_column_config() -> dict:
 
 def _invalidate_preview_cache(ds_name: str) -> None:
     """清除所有引用该数据集的 Config 卡片的静态预览缓存。"""
-    from config_editor import _CARD_STATE_KEY as _cfgkey_inv
-    _cs_inv = st.session_state.get(_cfgkey_inv, [])
+    _cs_inv = st.session_state.get(_CFG_CARD_KEY, [])
     for _c in _cs_inv:
         if str(_c.get("Datasets") or "").strip() == ds_name:
             _cid = _c["_id"]
@@ -429,6 +428,7 @@ def main():
                         _new_name = _new_name.strip()
                         if _new_name in st.session_state.datasets:
                             st.error(f"数据集名 `{_new_name}` 已存在，请换一个名称。")
+                            st.stop()
                         else:
                             # 1. 迁移数据
                             st.session_state.datasets[_new_name] = st.session_state.datasets.pop(ds_name)
