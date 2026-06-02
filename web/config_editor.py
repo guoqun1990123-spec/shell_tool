@@ -344,6 +344,10 @@ def _render_header(
                     st.session_state[_SELECTED_ID_KEY] = None
                 if st.session_state.get(_FOCUS_KEY) == card_id:
                     st.session_state[_FOCUS_KEY] = None
+                if st.session_state.get("selected_id") == card_id:
+                    st.session_state["selected_id"] = None
+                if st.session_state.get("section_nav_selected_id") == card_id:
+                    st.session_state["section_nav_selected_id"] = None
                 st.session_state[_CARD_STATE_KEY] = _delete_card(card_state, card_id)
                 st.rerun()
 
