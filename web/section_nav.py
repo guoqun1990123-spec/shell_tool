@@ -180,5 +180,6 @@ def render_section_nav(card_state: list[dict], nav_filt: dict | None = None) -> 
                     st.session_state[_NAV_STATE_KEY] = nav
                     st.session_state[_VIEW_MODE_KEY] = "card"
                     st.session_state["section_nav_selected_id"] = card_id
+                    st.session_state["selected_id"] = card_id
                     st.session_state["_cfg_focus_id"] = None
                     st.rerun()
