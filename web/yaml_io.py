@@ -112,9 +112,9 @@ def dump_yaml(
 
 
 def list_yaml_files(config_dir: str | Path) -> list[Path]:
-    """扫描目录下所有 .yaml 文件，按修改时间倒序返回。"""
+    """扫描目录下所有 config_*.yaml 文件，按修改时间倒序返回。"""
     d = Path(config_dir)
     if not d.exists():
         return []
-    files = sorted(d.glob("*.yaml"), key=lambda p: p.stat().st_mtime, reverse=True)
+    files = sorted(d.glob("config_*.yaml"), key=lambda p: p.stat().st_mtime, reverse=True)
     return files

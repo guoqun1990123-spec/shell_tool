@@ -136,6 +136,7 @@ def _extract_protocol(filename: str) -> str:
     """从 YAML 文件名提取方案简称。
     config_ISS.yaml → ISS
     config_ISS_20260601_093000.yaml → ISS（兼容旧时间戳格式）
+    不符合约定的文件名（如 temp.yaml）会将完整 stem 作为方案简称回填。
     """
     # 仅对 config_*.yaml 命名约定的文件有效
     stem = Path(filename).stem          # config_ISS 或 config_ISS_20260601_093000
