@@ -253,13 +253,12 @@ def main():
             {str(c.get("Section no", "") or "") for c in _current_card_state if c.get("Section no")},
             key=lambda s: [int(x) if x.isdigit() else x for x in s.replace("-", ".").split(".")],
         )
-        # section 状态统一用 section_nav_filter，cats/keyword 用 cfg_nav_filter
-        _snf = st.session_state.get("section_nav_filter", {"section": "", "scroll_to": None})
-        _nav_filt = st.session_state.get("cfg_nav_filter", {"cats": [], "keyword": ""})
+        # section/cats/keyword 筛选全部走 cfg_nav_filter，只影响左侧导航树可见性
+        _nav_filt = st.session_state.get("cfg_nav_filter", {"section": "", "cats": [], "keyword": ""})
         _fc1, _fc2, _fc3 = st.columns([1.5, 2.0, 2.5])
         with _fc1:
             _sec_opts = ["全部"] + _all_sections
-            _cur_sec = _snf.get("section", "")
+            _cur_sec = _nav_filt.get("section", "")
             _sel_sec = st.selectbox(
                 "Section", options=_sec_opts,
                 index=_sec_opts.index(_cur_sec) if _cur_sec in _sec_opts else 0,
@@ -267,13 +266,8 @@ def main():
             )
             _new_sec = "" if _sel_sec == "全部" else _sel_sec
             if _new_sec != _cur_sec:
-                _snf["section"] = _new_sec
-                _snf["scroll_to"] = None
-                st.session_state["section_nav_filter"] = _snf
-                st.session_state["section_nav_selected_id"] = None
-                if _new_sec:
-                    st.session_state["section_nav_view_mode"] = "table"
-                    st.session_state["section_nav_table_section"] = _new_sec
+                _nav_filt["section"] = _new_sec
+                st.session_state["cfg_nav_filter"] = _nav_filt
                 st.rerun()
         with _fc2:
             _new_cats = st.multiselect(
@@ -829,14 +823,19 @@ def main():
     btn_c1, btn_c2, btn_c3, btn_spacer = st.columns([1.4, 1.6, 2.0, 3])
 
     with btn_c1:
-        if st.button("💾 保存草稿", key="btn_draft"):
+        draft_disabled = not st.session_state.protocol_name.strip()
+        if st.button("💾 保存草稿", key="btn_draft", disabled=draft_disabled):
             try:
-                content = dump_yaml(edited_config, st.session_state.datasets,
-                                    st.session_state.protocol_name or "draft")
-                from renderer import _TEMP_YAML, _ensure_output_dir
-                _ensure_output_dir()
-                _TEMP_YAML.write_text(content, encoding="utf-8")
-                st.toast(f"草稿已保存至 {_TEMP_YAML.name}")
+                content = dump_yaml(
+                    edited_config,
+                    st.session_state.datasets,
+                    st.session_state.protocol_name,
+                )
+                rel_path = make_filename(st.session_state.protocol_name)
+                dest = _repo_config_dir().parent / rel_path
+                dest.parent.mkdir(parents=True, exist_ok=True)
+                dest.write_text(content, encoding="utf-8")
+                st.toast(f"草稿已保存：{dest.name}")
             except Exception as e:
                 st.error(f"保存草稿失败：{e}")
 
