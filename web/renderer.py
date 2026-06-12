@@ -130,17 +130,15 @@ def _parse_r_error(log: str) -> tuple[str, int | None]:
     return summary_line, seq_hint
 
 
-def run_preview(card: dict, datasets: dict, protocol_name: str = "preview",
-                fig_b64: str = "") -> dict:
+def run_preview(card: dict, datasets: dict, protocol_name: str = "preview") -> dict:
     """
     将单个卡片渲染为单条目YAML，复用 run_render() 生成单表Word文档。
     card: config_editor card dict（含 _* 元数据字段，会被过滤掉）
     datasets: 完整 datasets dict（只用到 card["Datasets"] 对应的 sheet）
-    fig_b64: 该卡片的嵌入图片 base64（来自 session 的 _fig_images）；非空时单图预览用真实图片
+    图形覆盖通过 card["FigTemplate"] 字段传入，R 端直接从磁盘读取模板图。
     """
     import pandas as pd
     import sys
-    import os
     sys.path.insert(0, str(Path(__file__).parent))
     from yaml_io import dump_yaml
     from schema import CONFIG_COLS
@@ -160,12 +158,5 @@ def run_preview(card: dict, datasets: dict, protocol_name: str = "preview",
     if macvar == "RptList" and "list" in datasets:
         preview_datasets["list"] = datasets["list"]
 
-    # 若卡片有嵌入图片，传入 figures 使单图预览也使用真实图片
-    figs: dict = {}
-    _b64 = str(fig_b64 or "").strip()
-    _tbl = str(card.get("table no", "") or "").strip()
-    if _b64 and _tbl:
-        figs = {_tbl: _b64}
-
-    yaml_content = dump_yaml(config_df, preview_datasets, protocol_name, figures=figs)
+    yaml_content = dump_yaml(config_df, preview_datasets, protocol_name)
     return run_render(yaml_content)

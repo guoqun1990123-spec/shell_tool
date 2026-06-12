@@ -23,7 +23,7 @@ CONFIG_COLS = [
     "Adcols", "Varlab", "Labparm",
     "footnote1", "footnote2", "footnote3", "footnote4",
     "footnote5", "footnote6", "footnote7",
-    "PgmNotes", "ByseqL", "RefTFL", "Dutoffdate", "Source_Data",
+    "PgmNotes", "ByseqL", "RefTFL", "Dutoffdate", "Source_Data", "FigTemplate",
 ]
 
 # 主表优先展示的列（其余列折叠到右侧）

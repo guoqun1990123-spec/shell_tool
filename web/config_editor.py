@@ -6,8 +6,6 @@ import uuid
 import pandas as pd
 import streamlit as st
 
-import base64
-
 from schema import CONFIG_COLS, VALID_MACVAR, FIGURE_MACVARS
 import tfl_preview as _tfl_preview
 from keys import (
@@ -24,9 +22,6 @@ _CARD_STATE_KEY = CFG_CARD_STATE
 _SELECTED_ID_KEY = CFG_SELECTED_ID
 _FOCUS_KEY = CFG_FOCUS_ID
 _SYNC_VER_KEY = "_cfg_editor_sync_ver"
-# 嵌入图片 base64 单独存放于此 dict（key=card _id），不进 card_state，
-# 避免 ~700KB base64 进入每次 rerun 都要拷贝/序列化的热路径导致页面卡死。
-_FIG_IMG_KEY = "_fig_images"
 _FILTER_KEY = "_cfg_filter"
 _MENU_OPEN_KEY = "cfg_menu_open"    # set[card_id]，⋮ 菜单展开状态
 _DS_OPEN_KEY = "cfg_ds_panel_open"  # set[card_id]，Datasets 面板展开状态
@@ -76,22 +71,6 @@ def df_to_card_state(df: pd.DataFrame) -> list[dict]:
         rows.append(card)
     return rows
 
-
-def collect_fig_images(card_state: list[dict]) -> dict[str, str]:
-    """从 session 的 _fig_images（按 card _id）收集图片 base64，按 table no 索引输出。
-    table no 为空的卡片跳过（不写入 figures 块）。
-    """
-    fig_by_id = st.session_state.get(_FIG_IMG_KEY, {})
-    figs: dict[str, str] = {}
-    for card in card_state:
-        b64 = str(fig_by_id.get(card["_id"], "") or "").strip()
-        if not b64:
-            continue
-        tbl_no = str(card.get("table no", "") or "").strip()
-        if not tbl_no:
-            continue  # 图号为空，静默跳过
-        figs[tbl_no] = b64
-    return figs
 
 
 def card_state_to_df(card_state: list[dict]) -> pd.DataFrame:
@@ -208,15 +187,6 @@ def _ensure_card_state(config_df: pd.DataFrame) -> None:
     ):
         card_state = _compute_table_nos(df_to_card_state(config_df))
         st.session_state[_CARD_STATE_KEY] = card_state
-        # 把 YAML figures 块（按 table no）映射到 _fig_images（按 card _id），
-        # base64 不进 card_state，避免热路径卡死。
-        figs = st.session_state.get("figures", {})
-        fig_by_id: dict[str, str] = {}
-        for c in card_state:
-            b64 = str(figs.get(str(c.get("table no", "") or "").strip(), "") or "").strip()
-            if b64:
-                fig_by_id[c["_id"]] = b64
-        st.session_state[_FIG_IMG_KEY] = fig_by_id
         st.session_state[_SYNC_VER_KEY] = ver
 
 
@@ -705,67 +675,51 @@ def _render_figure_panel(card: dict, card_id: str, version: int) -> None:
                         "若浏览器未弹出，请手动双击 d:/plot_tool/启动.bat"
                     )
 
-    fig_images: dict = st.session_state.setdefault(_FIG_IMG_KEY, {})
-    existing_b64 = str(fig_images.get(card_id, "") or "").strip()
-    if existing_b64:
-        try:
-            # 仅校验可解码 + 取字节数；不在卡片里渲染大图（渲染大图会导致页面卡顿/永久转圈）
-            # 嵌入图的真实用途是写进 YAML 供 R 端解码渲染 Word，编辑器里无需预览
-            _img_kb = len(base64.b64decode(existing_b64)) // 1024
-            st.success(
-                f"✅ 已嵌入图片（约 {_img_kb} KB）；生成 TFL 时将替换 R 端示意图。"
-                "（编辑器不显示大图预览，避免页面卡顿）"
-            )
-        except Exception:
-            st.warning("⚠️ 图片数据损坏，请重新上传")
-        if st.button("🗑 清除嵌入图", key=f"cfg_clr_img_{card_id}_{version}"):
-            fig_images.pop(card_id, None)
-            st.rerun()
+    # ── 模板图选择器 ──────────────────────────────────────────────────────────
+    # 画图工具导出 PNG → 放入 config/Figures_template/ → 在此下拉选择
+    # R 渲染时若 FigTemplate 非空则直接用磁盘图，否则按 MacVar 自动合成示意图
+    from pathlib import Path as _Path
+    _repo_root  = _Path(__file__).parent.parent
+    _tmpl_dir   = _repo_root / "config" / "Figures_template"
+    _tmpl_files = sorted(p.name for p in _tmpl_dir.glob("*.png")) if _tmpl_dir.exists() else []
 
-    _safe_id = card_id.replace("-", "_")
-    _processed_key = f"_fig_upload_done_{_safe_id}"
-    uploaded = st.file_uploader(
-        "重新上传图形 PNG" if existing_b64 else "导入图形 PNG（覆盖 R 端示意图）",
-        type=["png"],
-        key=f"cfg_fig_upload_{_safe_id}",
-        help="上传后生成 TFL Shell 时将使用该图替换 R 端 mock 示意图",
+    _NONE_LABEL = "（默认：R 合成示意图）"
+    _cur_tmpl   = str(card.get("FigTemplate", "") or "").strip()
+    _opts       = [_NONE_LABEL] + _tmpl_files
+    _cur_idx    = (_opts.index(_cur_tmpl) if _cur_tmpl in _opts else 0)
+
+    _new_tmpl_label = st.selectbox(
+        "模板图",
+        options=_opts,
+        index=_cur_idx,
+        key=f"cfg_fig_tmpl_{card_id}_{version}",
+        help="从 config/Figures_template/ 中选择 PNG 覆盖 R 合成示意图",
+        label_visibility="collapsed",
     )
-    if uploaded is not None:
-        _fingerprint = f"{uploaded.name}:{uploaded.size}"
-        if st.session_state.get(_processed_key) != _fingerprint:
-            fig_images[card_id] = base64.b64encode(uploaded.read()).decode()
-            st.session_state[_processed_key] = _fingerprint
-            st.rerun()
-
-    # 路径导入（兜底方案：直接读服务器本地文件，无需浏览器上传端点）
-    with st.expander("📁 按路径导入 PNG（plot_tool 导出图片后复制路径）", expanded=False):
-        _path_key = f"cfg_fig_path_{_safe_id}"
-        _png_path = st.text_input(
-            "PNG 文件绝对路径",
-            value=st.session_state.get(_path_key, ""),
-            placeholder=r"如 C:\Users\zhenw\Downloads\plot.png",
-            key=f"cfg_fig_path_input_{_safe_id}",
-            label_visibility="collapsed",
+    _new_tmpl = "" if _new_tmpl_label == _NONE_LABEL else _new_tmpl_label
+    if _new_tmpl != _cur_tmpl:
+        st.session_state[_CARD_STATE_KEY] = _update_card(
+            st.session_state[_CARD_STATE_KEY], card_id, FigTemplate=_new_tmpl
         )
-        if st.button("📁 按路径导入", key=f"cfg_fig_path_btn_{_safe_id}"):
-            import os as _os
-            _p = _png_path.strip().strip('"').strip("'")
-            if not _p:
-                st.error("请先填写 PNG 文件路径")
-            elif not _os.path.exists(_p):
-                st.error(f"找不到文件：{_p}")
-            elif not _p.lower().endswith(".png"):
-                st.error("仅支持 .png 文件")
-            else:
-                try:
-                    with open(_p, "rb") as _f:
-                        fig_images[card_id] = base64.b64encode(_f.read()).decode()
-                    st.session_state[_path_key] = _png_path
-                    st.rerun()
-                except Exception as _e:
-                    st.error(f"读取文件失败：{_e}")
+        st.rerun()
 
-    st.caption("💡 导入后将覆盖 R 端示意图；该行 Datasets 字段可留空")
+    if _new_tmpl:
+        _tmpl_path = _tmpl_dir / _new_tmpl
+        _tmpl_kb   = (_tmpl_path.stat().st_size // 1024) if _tmpl_path.exists() else 0
+        st.success(
+            f"✅ 已选模板图：{_new_tmpl}（约 {_tmpl_kb} KB）；"
+            "生成 TFL 时将替换 R 端合成示意图。"
+        )
+    else:
+        st.caption("生成 TFL 时 R 端按 MacVar 自动合成示意图（KM / 瀑布 / 游泳等）")
+
+    if not _tmpl_files:
+        st.info(
+            "💡 将 PNG 放入 `config/Figures_template/` 即可在此选择；"
+            "画图工具导出后复制到该目录。"
+        )
+    else:
+        st.caption(f"💡 模板图库：{_tmpl_dir}，当前 {len(_tmpl_files)} 张")
 
 
 # ── 预览 tab ─────────────────────────────────────────────────────────────────
@@ -814,9 +768,8 @@ def _render_card_preview(card: dict, card_id: str, version: int) -> None:
         if st.button("🔄 用R真实渲染", key=f"cfg_real_render_{card_id}_{version}",
                      help="调用R生成单表Word文档，可下载"):
             from renderer import run_preview as _run_preview
-            _fig_b64 = st.session_state.get(_FIG_IMG_KEY, {}).get(card_id, "")
             with st.spinner("R 渲染中..."):
-                result = _run_preview(cur_card, datasets, fig_b64=_fig_b64)
+                result = _run_preview(cur_card, datasets)
             st.session_state["preview_result"] = result
             st.session_state["preview_card_title"] = str(
                 cur_card.get("title") or cur_card.get("table no") or "TFL"

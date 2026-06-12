@@ -316,8 +316,10 @@ add_figure_to_doc <- function(doc, config_row, datasets, figures = list(), displ
   img_file  <- NULL
   is_custom <- FALSE
 
+  is_temp <- FALSE  # TRUE = 临时文件，插入后删除；FALSE = 磁盘持久文件，不删除
+
   if (!is.null(fig_b64) && nzchar(trimws(fig_b64))) {
-    # 用户已上传图片：base64 解码 → 临时 PNG
+    # 旧 YAML 兼容：base64 解码 → 临时 PNG
     if (!requireNamespace("base64enc", quietly = TRUE)) {
       cat("  警告：base64enc 包未安装，无法解码嵌入图片，改用 mock 示意图\n")
       cat("  请运行：install.packages('base64enc')\n")
@@ -327,7 +329,22 @@ add_figure_to_doc <- function(doc, config_row, datasets, figures = list(), displ
       writeBin(img_bytes, temp_path)
       img_file  <- temp_path
       is_custom <- TRUE
+      is_temp   <- TRUE  # base64 解码产生的临时文件，用完即删
       cat(sprintf("  使用嵌入图片（%s）\n", tbl_no))
+    }
+  }
+
+  # FigTemplate 覆盖：指定了模板文件名则用磁盘真实图（优先级低于 base64）
+  if (!is_custom && !is_empty(config_row$FigTemplate)) {
+    tmpl_path <- file.path("config", "Figures_template",
+                           trimws(config_row$FigTemplate))
+    if (file.exists(tmpl_path)) {
+      img_file  <- tmpl_path
+      is_custom <- TRUE
+      is_temp   <- FALSE  # 磁盘模板文件，用完不删
+      cat(sprintf("  使用模板图片（%s）\n", config_row$FigTemplate))
+    } else {
+      cat(sprintf("  警告：模板图 %s 不存在，改用合成示意图\n", tmpl_path))
     }
   }
 
@@ -402,8 +419,9 @@ add_figure_to_doc <- function(doc, config_row, datasets, figures = list(), displ
     } else {
       # mock 示意图：固定 6×4.5（与 8×6 生成尺寸同为 4:3）
       doc <- body_add_img(doc, src = img_file, width = 6, height = 4.5)
+      is_temp <- TRUE  # 合成示意图均为临时文件
     }
-    unlink(img_file)
+    if (is_temp) unlink(img_file)  # 仅删临时文件；磁盘模板图不删
   }
 
   # 添加脚注

@@ -110,7 +110,7 @@ read_yaml_input <- function(yaml_file) {
     "pop", "MacVar", "Datasets", "Trtlab", "Subgrp", "Adcols", "Varlab",
     "Labparm", "footnote1", "footnote2", "footnote3", "footnote4",
     "footnote5", "footnote6", "footnote7", "PgmNotes", "ByseqL",
-    "RefTFL", "Dutoffdate", "Source_Data"
+    "RefTFL", "Dutoffdate", "Source_Data", "FigTemplate"
   )
   unknown <- setdiff(colnames(config), known_cols)
   if (length(unknown) > 0) {

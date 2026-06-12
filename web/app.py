@@ -11,7 +11,7 @@ from git_ops import GitOps, make_commit_msg, make_filename
 from schema import CONFIG_COLS
 from validators import validate
 from config_templates_io import load_config_templates
-from config_editor import _CARD_STATE_KEY as _CFG_CARD_KEY, _FOCUS_KEY, _update_card, collect_fig_images
+from config_editor import _CARD_STATE_KEY as _CFG_CARD_KEY, _FOCUS_KEY, _update_card
 from renderer import run_render
 
 from yaml_io import dump_yaml, list_yaml_files, load_yaml
@@ -349,7 +349,6 @@ def main():
                     edited_config,
                     st.session_state.datasets,
                     st.session_state.protocol_name,
-                    figures=collect_fig_images(st.session_state.get(_CFG_CARD_KEY, [])),
                 )
                 rel_path = make_filename(st.session_state.protocol_name)
                 dest = _repo_config_dir().parent / rel_path
@@ -367,7 +366,6 @@ def main():
                 yaml_content = dump_yaml(
                     edited_config, st.session_state.datasets,
                     st.session_state.protocol_name or "preview",
-                    figures=collect_fig_images(st.session_state.get(_CFG_CARD_KEY, [])),
                 )
             except Exception as e:
                 st.error(f"YAML 序列化失败：{e}")
@@ -475,7 +473,6 @@ def main():
                     edited_config,
                     st.session_state.datasets,
                     st.session_state.protocol_name,
-                    figures=collect_fig_images(st.session_state.get(_CFG_CARD_KEY, [])),
                 )
             except Exception as e:
                 st.session_state[_yaml_preview_key] = f"序列化失败：{e}"
@@ -491,7 +488,6 @@ def _do_save(git_ops):
             st.session_state.config_df,
             st.session_state.datasets,
             protocol,
-            figures=collect_fig_images(st.session_state.get(_CFG_CARD_KEY, [])),
         )
     except Exception as e:
         st.error(f"YAML 序列化失败：{e}")

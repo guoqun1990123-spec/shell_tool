@@ -85,14 +85,13 @@ def dump_yaml(
     config_df: pd.DataFrame,
     datasets: dict[str, pd.DataFrame],
     protocol_name: str = "",
-    figures: dict[str, str] | None = None,
 ) -> str:
     """
     序列化为 YAML 字符串。
     - 键顺序稳定（sort_keys=False），减少 Git diff 噪声。
     - 含空格的列名（Section no / table no）自动被 pyyaml 加引号；Source_Data 无需引号。
     - 空字符串字段写成 ""，None 写成 null，与 R 端 is.na 兼容。
-    - figures: {table_no: base64_str}，非空时写入顶层 figures 块。
+    - 图形覆盖通过 config 行的 FigTemplate 字段（文件名）实现，不再写入 base64 figures 块。
     """
     config_records = _df_to_records(config_df)
 
@@ -105,10 +104,6 @@ def dump_yaml(
         "config": config_records,
         "datasets": datasets_out,
     }
-
-    # 仅在有嵌入图片时写入 figures 块，避免空块污染 YAML
-    if figures:
-        doc["figures"] = figures
 
     # yaml.dump 默认对含空格的键加引号，allow_unicode 保留中文
     return yaml.dump(
