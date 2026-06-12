@@ -153,9 +153,20 @@ def _render_pstab(card: dict, datasets: dict) -> str:
                 label_cell = f"<td class='tfl-indent2'>{label}</td>"
                 aval_class = "tfl-aval"
 
+            # 解析 BlankCol（1-based，与 R 端一致：1=Label列，2=第一数据列…）
+            blank_cols_str = str(row.get("BlankCol") or "").strip().rstrip("|")
+            blank_idx: set[int] = set()
+            if blank_cols_str:
+                for _part in blank_cols_str.split("|"):
+                    try:
+                        blank_idx.add(int(_part.strip()))
+                    except ValueError:
+                        pass
+
             body_html += f"<tr>{label_cell}"
-            for _ in data_cols:
-                body_html += f"<td class='{aval_class}'>{aval if aval else '────'}</td>"
+            for _ci, _ in enumerate(data_cols, start=2):  # 2 = 第一数据列（1 = Label列）
+                _cell = "" if _ci in blank_idx else (aval if aval else "────")
+                body_html += f"<td class='{aval_class}'>{_cell}</td>"
             body_html += "</tr>"
 
     body_html += "</tbody>"

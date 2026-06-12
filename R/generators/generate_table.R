@@ -97,12 +97,13 @@ build_table_data <- function(dataset, header, varlab = "指标") {
   }
 
   # 遍历数据集，在不同Class之间插入空行
+  header_rows <- c()
   for (i in 1:nrow(dataset)) {
     current_class <- dataset$Class[i]
 
-    # Class变化时插分隔空行；标题行（Class=0）前不插，由上一组变化自然触发
+    # Class变化时插分隔空行；标题行（Class=0）前后均不插
     if (!is.na(prev_class) && !is.na(current_class) &&
-        prev_class != current_class && current_class != 0) {
+        prev_class != current_class && current_class != 0 && prev_class != 0) {
       empty_row <- as.list(rep("", n_cols))
       names(empty_row) <- colnames(header)
       result_rows[[length(result_rows) + 1]] <- empty_row
@@ -144,6 +145,13 @@ build_table_data <- function(dataset, header, varlab = "指标") {
     }
 
     result_rows[[length(result_rows) + 1]] <- row_data
+
+    # 用 result 行号记录标题行，避免 spacer 插入导致的行号偏移
+    if (!is.na(current_class) && current_class == 0 &&
+        !is.na(dataset$Order[i]) && dataset$Order[i] == 0) {
+      header_rows <- c(header_rows, length(result_rows))
+    }
+
     prev_class <- current_class
   }
 
@@ -151,7 +159,6 @@ build_table_data <- function(dataset, header, varlab = "指标") {
   result <- do.call(rbind.data.frame, c(result_rows, stringsAsFactors = FALSE))
   colnames(result) <- colnames(header)
   attr(result, "spacer_rows") <- spacer_rows
-  header_rows <- which(dataset$Class == 0 & dataset$Order == 0)
   attr(result, "header_rows") <- header_rows
   return(result)
 }

@@ -55,10 +55,11 @@ def _records_to_df(records: list[dict], cols: list[str], num_cols: set[str]) -> 
 
 # ── 公开 API ───────────────────────────────────────────────────────────────
 
-def load_yaml(path: str | Path) -> tuple[pd.DataFrame, dict[str, pd.DataFrame]]:
+def load_yaml(path: str | Path) -> tuple[pd.DataFrame, dict[str, pd.DataFrame], dict[str, str]]:
     """
-    读取 YAML，返回 (config_df, datasets)。
+    读取 YAML，返回 (config_df, datasets, figures)。
     datasets 键名 = sheet 名；'list' sheet 使用 DATASET_LIST_COLS，其余用 DATASET_TABLE_COLS。
+    figures = {table_no: base64_str}，图形行的嵌入图片；无则返回空 dict。
     """
     with open(path, encoding="utf-8") as f:
         raw = yaml.safe_load(f)
@@ -75,19 +76,23 @@ def load_yaml(path: str | Path) -> tuple[pd.DataFrame, dict[str, pd.DataFrame]]:
         else:
             datasets[sheet] = _records_to_df(rows, DATASET_TABLE_COLS, DATASET_TABLE_NUM_COLS)
 
-    return config_df, datasets
+    figures: dict[str, str] = raw.get("figures", {}) or {}
+
+    return config_df, datasets, figures
 
 
 def dump_yaml(
     config_df: pd.DataFrame,
     datasets: dict[str, pd.DataFrame],
     protocol_name: str = "",
+    figures: dict[str, str] | None = None,
 ) -> str:
     """
     序列化为 YAML 字符串。
     - 键顺序稳定（sort_keys=False），减少 Git diff 噪声。
     - 含空格的列名（Section no / table no）自动被 pyyaml 加引号；Source_Data 无需引号。
     - 空字符串字段写成 ""，None 写成 null，与 R 端 is.na 兼容。
+    - figures: {table_no: base64_str}，非空时写入顶层 figures 块。
     """
     config_records = _df_to_records(config_df)
 
@@ -95,11 +100,15 @@ def dump_yaml(
     for sheet, df in datasets.items():
         datasets_out[sheet] = _df_to_records(df)
 
-    doc = {
+    doc: dict = {
         "version": 1,
         "config": config_records,
         "datasets": datasets_out,
     }
+
+    # 仅在有嵌入图片时写入 figures 块，避免空块污染 YAML
+    if figures:
+        doc["figures"] = figures
 
     # yaml.dump 默认对含空格的键加引号，allow_unicode 保留中文
     return yaml.dump(

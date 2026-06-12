@@ -20,12 +20,14 @@ generate_shell <- function(config_file, datasets_file, output_file) {
   cat("读取配置文件...\n")
   ext <- tolower(tools::file_ext(config_file))
   if (ext %in% c("yaml", "yml")) {
-    parsed <- read_yaml_input(config_file)
+    parsed   <- read_yaml_input(config_file)
     config   <- parsed$config
     datasets <- parsed$datasets
+    figures  <- if (!is.null(parsed$figures)) parsed$figures else list()
   } else {
     config   <- read_config(config_file)
     datasets <- read_datasets(datasets_file)
+    figures  <- list()   # Excel 输入路径暂不支持嵌入图片
   }
 
   # 初始化Word文档（使用无编号模板，继承页眉页脚）
@@ -75,7 +77,7 @@ generate_shell <- function(config_file, datasets_file, output_file) {
         displayed_sections <- c(displayed_sections, section_no)
       }
     } else if (tolower(row$MacVar) %in% c("kmplot", "forestplot", "swimplot", "waterfallplot", "spiderplot", "seriesplot")) {
-      doc <- add_figure_to_doc(doc, row, datasets, displayed_sections)
+      doc <- add_figure_to_doc(doc, row, datasets, figures, displayed_sections)
       # 更新已显示章节
       section_no <- row$`Section no`
       if (!is.null(section_no) && length(section_no) > 0 && !is.na(section_no)) {

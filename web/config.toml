@@ -15,3 +15,8 @@ branch = "main"
 # Commit 作者信息
 author_name  = "郭群-生物统计师"
 author_email = "qun.guo@immuneonco.com"
+
+[plot_tool]
+# 画图工具入口文件（用于「🎨 打开画图工具」按钮）
+# Windows 下用正斜杠或双反斜杠均可
+path = "d:/plot_tool/index.html"

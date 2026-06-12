@@ -5,6 +5,7 @@ import streamlit as st
 
 from config_editor import (
     _CARD_STATE_KEY,
+    _FIG_IMG_KEY,
     _FOCUS_KEY,
     _SELECTED_ID_KEY,
     _update_card,
@@ -335,8 +336,9 @@ def _render_row(
             card_state_now = st.session_state[_CARD_STATE_KEY]
             cur_card = next((c for c in card_state_now if c["_id"] == card_id), card)
             datasets = st.session_state.get("datasets", {})
+            _fig_b64 = st.session_state.get(_FIG_IMG_KEY, {}).get(card_id, "")
             with st.spinner("渲染中..."):
-                result = run_preview(cur_card, datasets)
+                result = run_preview(cur_card, datasets, fig_b64=_fig_b64)
             st.session_state["preview_result"] = result
             st.session_state["preview_card_title"] = str(cur_card.get("title") or cur_card.get("table no") or "TFL")
             st.session_state["preview_card_id"] = card_id

@@ -1,20 +1,21 @@
 version: 1
 config:
 - SeqNum: 1
-  Section no: '14.3'
-  Section title: 安全性分析
-  cat: 表
-  table no: 14.3.1.1
-  title: 药物暴露与依从性汇总
-  pop: SS
-  MacVar: PStab
-  Datasets: ex
-  Trtlab: 试验组(N=xx)|对照组(N=xx)|合计(N=xx)
-  Subgrp: 替雷利珠单抗|苯达莫司汀|吉西他滨
+  Section no: '14.2'
+  Section title: 疗效分析
+  cat: 图
+  table no: 14.2.3.1
+  title: IRC基于2014 Lugano淋巴瘤疗效评价标准评估的无进展生存期（PFS）Kaplan-Meier曲线图
+  pop: ITT
+  MacVar: KMplot
+  Datasets: survival
+  Trtlab: 试验组(N=xx)|对照组(N=xx)
+  Subgrp: ''
   Adcols: ''
   Varlab: ''
   Labparm: ''
-  footnote1: ''
+  footnote1: 无进展生存期(PFS)定义为从随机化日期至首次IRC基于Lugano 2014 评效标准评价为疾病进展或任何原因导致死亡（以先发生者为准）日期之间的时间。PFS时间（月）计算为（首次PD或死亡/删失日期-随机化日期
+    + 1）/30.4375。
   footnote2: ''
   footnote3: ''
   footnote4: ''
@@ -25,527 +26,905 @@ config:
   ByseqL: ''
   RefTFL: ''
   Dutoffdate: ''
-  Source_Data: ''
+  Source_Data: 列表 16.2.6.9.1
 datasets:
-  ex:
+  survival:
   - Class: ''
-    Label: 暴露持续时间（月）
-    Order: 0
+    Label: ''
+    Order: null
     Aval: ''
-    exclude: 0
+    exclude: null
     BlankCol: ''
     Drug: ''
     Visit: ''
     Base: ''
   - Class: ''
-    Label: 例数
-    Order: 2
-    Aval: xx
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 均值（标准差）
-    Order: 2
-    Aval: xx.x (xx.xx)
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 中位数
-    Order: 2
-    Aval: xx.x
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 最小值 - 最大值
-    Order: 2
-    Aval: xx – xx
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 暴露持续时间，例数（%）
-    Order: 0
+    Label: ''
+    Order: null
     Aval: ''
-    exclude: 0
+    exclude: null
     BlankCol: ''
     Drug: ''
     Visit: ''
     Base: ''
   - Class: ''
-    Label: <3个月
-    Order: 2
-    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 3-6个月
-    Order: 2
-    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 6-12个月
-    Order: 2
-    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 12个月以上
-    Order: 2
-    Aval: xx (xx.x)|xx (xx.x)|xx (xx.x)|xx (xx.x)
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 暴露持续周期（周期）
-    Order: 0
+    Label: ''
+    Order: null
     Aval: ''
-    exclude: 0
+    exclude: null
     BlankCol: ''
     Drug: ''
     Visit: ''
     Base: ''
   - Class: ''
-    Label: 例数
-    Order: 2
-    Aval: xx
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 均值（标准差）
-    Order: 2
-    Aval: xx.x (xx.xx)
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 中位数
-    Order: 2
-    Aval: xx.x
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 最小值 - 最大值
-    Order: 2
-    Aval: xx – xx
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 暴露持续周期，例数（%）
-    Order: 0
+    Label: ''
+    Order: null
     Aval: ''
-    exclude: 0
+    exclude: null
     BlankCol: ''
     Drug: ''
     Visit: ''
     Base: ''
   - Class: ''
-    Label: <3个周期
-    Order: 2
-    Aval: xx (xx.x)
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 3-6个周期
-    Order: 2
-    Aval: xx (xx.x)
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 6个周期以上
-    Order: 2
-    Aval: xx (xx.x)
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 总累积剂量（mg）
-    Order: 0
+    Label: ''
+    Order: null
     Aval: ''
-    exclude: 0
+    exclude: null
     BlankCol: ''
     Drug: ''
     Visit: ''
     Base: ''
   - Class: ''
-    Label: 例数
-    Order: 2
-    Aval: xx
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 均值（标准差）
-    Order: 2
-    Aval: xx.x (xx.xx)
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 中位数
-    Order: 2
-    Aval: xx.x
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 最小值 - 最大值
-    Order: 2
-    Aval: xx – xx
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 总校准累积剂量
-    Order: 0
+    Label: ''
+    Order: null
     Aval: ''
-    exclude: 0
+    exclude: null
     BlankCol: ''
     Drug: ''
     Visit: ''
     Base: ''
   - Class: ''
-    Label: 例数
-    Order: 2
-    Aval: xx
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 均值（标准差）
-    Order: 2
-    Aval: xx.x (xx.xx)
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 中位数
-    Order: 2
-    Aval: xx.x
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 最小值 - 最大值
-    Order: 2
-    Aval: xx – xx
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 实际剂量强度
-    Order: 0
+    Label: ''
+    Order: null
     Aval: ''
-    exclude: 0
+    exclude: null
     BlankCol: ''
     Drug: ''
     Visit: ''
     Base: ''
   - Class: ''
-    Label: 例数
-    Order: 2
-    Aval: xx
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 均值（标准差）
-    Order: 2
-    Aval: xx.x (xx.xx)
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 中位数
-    Order: 2
-    Aval: xx.x
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 最小值 - 最大值
-    Order: 2
-    Aval: xx – xx
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 相对剂量强度（%）
-    Order: 0
+    Label: ''
+    Order: null
     Aval: ''
-    exclude: 0
+    exclude: null
     BlankCol: ''
     Drug: ''
     Visit: ''
     Base: ''
   - Class: ''
-    Label: 例数
-    Order: 2
-    Aval: xx
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 均值（标准差）
-    Order: 2
-    Aval: xx.x (xx.xx)
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 中位数
-    Order: 2
-    Aval: xx.x
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 最小值 - 最大值
-    Order: 2
-    Aval: xx – xx
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 相对剂量强度，例数（%）
-    Order: 0
+    Label: ''
+    Order: null
     Aval: ''
-    exclude: 0
+    exclude: null
     BlankCol: ''
     Drug: ''
     Visit: ''
     Base: ''
   - Class: ''
-    Label: <75%
-    Order: 2
-    Aval: xx (xx.x)
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 75%-125%
-    Order: 2
-    Aval: xx (xx.x)
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 125%以上
-    Order: 2
-    Aval: xx (xx.x)
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 依从性（%）
-    Order: 0
+    Label: ''
+    Order: null
     Aval: ''
-    exclude: 0
+    exclude: null
     BlankCol: ''
     Drug: ''
     Visit: ''
     Base: ''
   - Class: ''
-    Label: 例数
-    Order: 2
-    Aval: xx
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 均值（标准差）
-    Order: 2
-    Aval: xx.x (xx.xx)
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 中位数
-    Order: 2
-    Aval: xx.x
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 最小值 - 最大值
-    Order: 2
-    Aval: xx – xx
-    exclude: 0
-    BlankCol: ''
-    Drug: ''
-    Visit: ''
-    Base: ''
-  - Class: ''
-    Label: 依从性，例数（%）
-    Order: 0
+    Label: ''
+    Order: null
     Aval: ''
-    exclude: 0
+    exclude: null
     BlankCol: ''
     Drug: ''
     Visit: ''
     Base: ''
   - Class: ''
-    Label: <75%
-    Order: 2
-    Aval: xx (xx.x)
-    exclude: 0
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
     BlankCol: ''
     Drug: ''
     Visit: ''
     Base: ''
   - Class: ''
-    Label: 75%-125%
-    Order: 2
-    Aval: xx (xx.x)
-    exclude: 0
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
     BlankCol: ''
     Drug: ''
     Visit: ''
     Base: ''
   - Class: ''
-    Label: 125%以上
-    Order: 2
-    Aval: xx (xx.x)
-    exclude: 0
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
     BlankCol: ''
     Drug: ''
     Visit: ''
     Base: ''
   - Class: ''
-    Label: 中断给药的受试者，例数（%）
-    Order: 0
-    Aval: xx (xx.x)
-    exclude: 0
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
     BlankCol: ''
     Drug: ''
     Visit: ''
     Base: ''
   - Class: ''
-    Label: 原因1
-    Order: 2
-    Aval: xx (xx.x)
-    exclude: 0
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
     BlankCol: ''
     Drug: ''
     Visit: ''
     Base: ''
   - Class: ''
-    Label: 原因2
-    Order: 2
-    Aval: xx (xx.x)
-    exclude: 0
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
     BlankCol: ''
     Drug: ''
     Visit: ''
     Base: ''
   - Class: ''
-    Label: 调整剂量的受试者，例数（%）
-    Order: 0
-    Aval: xx (xx.x)
-    exclude: 0
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
     BlankCol: ''
     Drug: ''
     Visit: ''
     Base: ''
   - Class: ''
-    Label: 原因1
-    Order: 2
-    Aval: xx (xx.x)
-    exclude: 0
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
     BlankCol: ''
     Drug: ''
     Visit: ''
     Base: ''
   - Class: ''
-    Label: 原因2
-    Order: 2
-    Aval: xx (xx.x)
-    exclude: 0
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
+    BlankCol: ''
+    Drug: ''
+    Visit: ''
+    Base: ''
+  - Class: ''
+    Label: ''
+    Order: null
+    Aval: ''
+    exclude: null
     BlankCol: ''
     Drug: ''
     Visit: ''

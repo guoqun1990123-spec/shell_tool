@@ -17,7 +17,7 @@ from dataset_editor import (
     state_key, df_to_card_state, render_dataset_editor,
     normalize_dataset_state, apply_normalize,
 )
-from templates_io import load_templates
+from templates_io import load_structure_templates
 from dataset_preview import render_preview, render_list_preview
 from config_editor import _update_card
 
@@ -230,7 +230,7 @@ def render_datasets_tab() -> None:
         else:
             card_key = state_key(ds_name)
             version_key = f"_ds_version_{ds_name}"
-            templates = load_templates()
+            templates = load_structure_templates()
             if st.session_state.get(version_key) != st.session_state.editor_version:
                 init_state = df_to_card_state(ds_df)
                 _, conflicts = normalize_dataset_state(init_state, templates)

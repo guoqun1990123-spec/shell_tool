@@ -18,6 +18,6 @@ if %errorlevel% neq 0 (
 
 REM 启动 streamlit 并自动打开浏览器
 start "" "http://localhost:8501"
-streamlit run web/app.py --server.port 8501 --server.headless true
+streamlit run web/app.py --server.port 8501 --server.headless true --server.enableXsrfProtection false --server.enableCORS false
 
 pause

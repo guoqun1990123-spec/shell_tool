@@ -10,7 +10,8 @@ from excel_io import list_excel_pairs, load_excel
 from git_ops import GitOps, make_commit_msg, make_filename
 from schema import CONFIG_COLS
 from validators import validate
-from config_editor import _CARD_STATE_KEY as _CFG_CARD_KEY, _FOCUS_KEY, _update_card
+from config_templates_io import load_config_templates
+from config_editor import _CARD_STATE_KEY as _CFG_CARD_KEY, _FOCUS_KEY, _update_card, collect_fig_images
 from renderer import run_render
 
 from yaml_io import dump_yaml, list_yaml_files, load_yaml
@@ -52,6 +53,15 @@ def _repo_config_dir() -> Path:
     return Path(cfg.get("git", {}).get("repo_path", str(Path(__file__).parent.parent))) / "config"
 
 
+def _plot_tool_path() -> str:
+    """从 config.toml 读取画图工具路径；未配置时返回空字符串。"""
+    if not CONFIG_TOML.exists():
+        return ""
+    with open(CONFIG_TOML, "rb") as f:
+        cfg = tomllib.load(f)
+    return cfg.get("plot_tool", {}).get("path", "")
+
+
 # ── Session state 初始化 ────────────────────────────────────────────────────
 
 def _empty_config() -> pd.DataFrame:
@@ -71,6 +81,8 @@ def _init_state():
         st.session_state.editor_version = 0
     if "tmpl_version" not in st.session_state:
         st.session_state.tmpl_version = 0
+    if "stat_tmpl_version" not in st.session_state:
+        st.session_state["stat_tmpl_version"] = 0
     if "render_status" not in st.session_state:
         st.session_state.render_status = {
             "status": "idle",      # idle / pending / success / error
@@ -87,6 +99,10 @@ def _init_state():
         st.session_state.default_trtlab = ""
     if "default_dutoffdate" not in st.session_state:
         st.session_state.default_dutoffdate = ""
+    if "figures" not in st.session_state:
+        st.session_state["figures"] = {}
+    if "_plot_tool_path" not in st.session_state:
+        st.session_state["_plot_tool_path"] = _plot_tool_path()
 
 
 def _clear_card_state():
@@ -119,11 +135,19 @@ def _guess_dataset_pair(cfg_name: str, ds_names: list[str]) -> str:
 
 
 def _do_load(loader, success_msg: str, protocol_name: str | None = None):
-    """统一加载入口：调用 loader()，成功则写入 session_state 并重置编辑器。"""
+    """统一加载入口：调用 loader()，成功则写入 session_state 并重置编辑器。
+    loader 可返回 2 元组 (config_df, datasets) 或 3 元组 (config_df, datasets, figures)。
+    """
     try:
-        cfg_df, dsets = loader()
+        result = loader()
+        if len(result) == 3:
+            cfg_df, dsets, figs = result
+        else:
+            cfg_df, dsets = result
+            figs = {}
         st.session_state.config_df = cfg_df
         st.session_state.datasets = dsets
+        st.session_state["figures"] = figs
         st.session_state.selected_id = None
         st.session_state.editor_version += 1
         if protocol_name is not None:
@@ -193,24 +217,58 @@ def main():
             _clear_card_state()
 
     # 工具栏第二行：Trtlab / Dutoffdate 统一填写
-    _tb_l1, _tb_l2, _tb_r1, _tb_r2 = st.columns([3, 1, 3, 1])
+    _trtlab_presets = load_config_templates().get("trtlab_presets", [])
+    _CUSTOM_TRTLAB = "✏️ 自定义"
+    _preset_labels = [p["label"] for p in _trtlab_presets if p.get("label")]
+    _preset_vals   = {p["label"]: p["value"] for p in _trtlab_presets if p.get("label")}
+
+    _tb_l1, _tb_l2, _tb_l3, _tb_r1, _tb_r2 = st.columns([1.4, 2.2, 0.9, 3, 1])
     with _tb_l1:
-        st.session_state.default_trtlab = st.text_input(
-            "默认 Trtlab（新增TFL时自动填入）",
-            value=st.session_state.default_trtlab,
-            placeholder="如 A组|B组|合计",
-            key="input_default_trtlab",
+        _sel_preset = st.selectbox(
+            "Trtlab 预设",
+            options=[_CUSTOM_TRTLAB] + _preset_labels,
+            key="trtlab_preset_sel",
+            label_visibility="visible",
         )
     with _tb_l2:
+        if _sel_preset == _CUSTOM_TRTLAB:
+            st.session_state.default_trtlab = st.text_input(
+                "自定义 Trtlab",
+                value=st.session_state.default_trtlab,
+                placeholder="如 A组|B组|合计",
+                key="input_default_trtlab",
+            )
+        else:
+            _preset_v = _preset_vals.get(_sel_preset, "")
+            st.session_state.default_trtlab = _preset_v
+            st.text_input(
+                "Trtlab（预设）",
+                value=_preset_v,
+                disabled=True,
+                key="input_default_trtlab",
+            )
+    with _tb_l3:
+        _sec_prefix = st.text_input(
+            "限 Section",
+            placeholder="如 14.1",
+            key="trtlab_sec_prefix",
+            help="填写后「统一替换」只更新该 Section 开头的行，留空则替换全部",
+        )
         st.write("")
-        st.write("")
-        if st.button("统一替换", key="btn_replace_trtlab", help="将所有行的 Trtlab 替换为上方输入值"):
+        if st.button("统一替换", key="btn_replace_trtlab",
+                     help="将所有（或指定 Section）行的 Trtlab 替换为左侧值"):
             _rv = st.session_state.default_trtlab.strip()
             if _rv:
-                _cs = st.session_state.get(_CFG_CARD_KEY, [])
-                for _c in list(_cs):
-                    _cs = _update_card(_cs, _c["_id"], Trtlab=_rv)
-                st.session_state[_CFG_CARD_KEY] = _cs
+                _pfx = _sec_prefix.strip()
+                _new_cs = []
+                for _c in st.session_state.get(_CFG_CARD_KEY, []):
+                    _sec_val = str(_c.get("Section no") or "")
+                    if not _pfx or _sec_val.startswith(_pfx):
+                        _c = dict(_c)
+                        _c["Trtlab"] = _rv
+                    _new_cs.append(_c)
+                st.session_state[_CFG_CARD_KEY] = _new_cs
+                st.session_state["_trtlab_field_ver"] = st.session_state.get("_trtlab_field_ver", 0) + 1
                 st.rerun()
     with _tb_r1:
         st.session_state.default_dutoffdate = st.text_input(
@@ -225,10 +283,13 @@ def main():
         if st.button("统一替换", key="btn_replace_dutoffdate", help="将所有行的 Dutoffdate 替换为上方输入值"):
             _rv2 = st.session_state.default_dutoffdate.strip()
             if _rv2:
-                _cs2 = st.session_state.get(_CFG_CARD_KEY, [])
-                for _c in list(_cs2):
-                    _cs2 = _update_card(_cs2, _c["_id"], Dutoffdate=_rv2)
-                st.session_state[_CFG_CARD_KEY] = _cs2
+                _new_cs2 = []
+                for _c in st.session_state.get(_CFG_CARD_KEY, []):
+                    _c = dict(_c)
+                    _c["Dutoffdate"] = _rv2
+                    _new_cs2.append(_c)
+                st.session_state[_CFG_CARD_KEY] = _new_cs2
+                st.session_state["_dutoffdate_field_ver"] = st.session_state.get("_dutoffdate_field_ver", 0) + 1
                 st.rerun()
 
     # ── 标签页 ──────────────────────────────────────────────────────────────
@@ -267,10 +328,9 @@ def main():
 
     # ── 校验状态 ─────────────────────────────────────────────────────────────
     if errors:
-        for e in errors[:5]:
-            st.error(str(e))
-        if len(errors) > 5:
-            st.warning(f"...还有 {len(errors) - 5} 条错误")
+        with st.expander(f"⚠️ {len(errors)} 条配置错误（点击展开）", expanded=False):
+            for e in errors:
+                st.error(str(e))
     else:
         st.success("校验通过")
 
@@ -289,6 +349,7 @@ def main():
                     edited_config,
                     st.session_state.datasets,
                     st.session_state.protocol_name,
+                    figures=collect_fig_images(st.session_state.get(_CFG_CARD_KEY, [])),
                 )
                 rel_path = make_filename(st.session_state.protocol_name)
                 dest = _repo_config_dir().parent / rel_path
@@ -305,7 +366,8 @@ def main():
             try:
                 yaml_content = dump_yaml(
                     edited_config, st.session_state.datasets,
-                    st.session_state.protocol_name or "preview"
+                    st.session_state.protocol_name or "preview",
+                    figures=collect_fig_images(st.session_state.get(_CFG_CARD_KEY, [])),
                 )
             except Exception as e:
                 st.error(f"YAML 序列化失败：{e}")
@@ -413,6 +475,7 @@ def main():
                     edited_config,
                     st.session_state.datasets,
                     st.session_state.protocol_name,
+                    figures=collect_fig_images(st.session_state.get(_CFG_CARD_KEY, [])),
                 )
             except Exception as e:
                 st.session_state[_yaml_preview_key] = f"序列化失败：{e}"
@@ -428,6 +491,7 @@ def _do_save(git_ops):
             st.session_state.config_df,
             st.session_state.datasets,
             protocol,
+            figures=collect_fig_images(st.session_state.get(_CFG_CARD_KEY, [])),
         )
     except Exception as e:
         st.error(f"YAML 序列化失败：{e}")

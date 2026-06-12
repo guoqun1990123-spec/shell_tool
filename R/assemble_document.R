@@ -205,17 +205,14 @@ add_mtext_to_doc <- function(doc, config_row, config, datasets, displayed_sectio
   # 获取引用的表格编号
   ref_tfl <- config_row$RefTFL
   if (is_empty(ref_tfl)) {
-    cat("  警告：mtext的RefTFL为空\n")
-    return(doc)
+    cat("  警告：mtext的RefTFL为空，将输出占位标题但无引用文字\n")
+  } else {
+    # 仅做存在性校验，查不到不中断渲染
+    ref_row <- config[config$`table no` == ref_tfl & !is.na(config$`table no`), ]
+    if (nrow(ref_row) == 0) {
+      cat(sprintf("  警告：未找到引用的表格 %s\n", ref_tfl))
+    }
   }
-
-  # 在config中查找引用的表格
-  ref_row <- config[config$`table no` == ref_tfl & !is.na(config$`table no`), ]
-  if (nrow(ref_row) == 0) {
-    cat(sprintf("  警告：未找到引用的表格 %s\n", ref_tfl))
-    return(doc)
-  }
-  ref_row <- ref_row[1, ]
 
   # 添加章节标题（仅当该章节首次出现时）
   section_no <- config_row$`Section no`
@@ -269,19 +266,27 @@ add_mtext_to_doc <- function(doc, config_row, config, datasets, displayed_sectio
   return(doc)
 }
 
+#' 读取 PNG IHDR 宽高像素（无外部依赖）
+#' PNG 格式：签名8字节 + 长度4字节 + 类型4字节 + 宽4字节 + 高4字节（大端序）
+#' @return c(width_px, height_px)，读取失败返回 c(800L, 600L)
+.png_dims <- function(file) {
+  tryCatch({
+    con <- file(file, "rb")
+    on.exit(close(con))
+    raw_bytes <- readBin(con, what = "raw", n = 24)
+    if (length(raw_bytes) < 24) return(c(800L, 600L))
+    width  <- sum(as.integer(raw_bytes[17:20]) * c(16777216L, 65536L, 256L, 1L))
+    height <- sum(as.integer(raw_bytes[21:24]) * c(16777216L, 65536L, 256L, 1L))
+    c(width, height)
+  }, error = function(e) c(800L, 600L))
+}
+
 #' 添加图形到Word文档
-add_figure_to_doc <- function(doc, config_row, datasets, displayed_sections = c()) {
+#' @param figures named list（table_no → base64 PNG），来自 YAML figures 块；
+#'   命中时跳过 mock 生成，解码插入用户上传的真实图片。
+add_figure_to_doc <- function(doc, config_row, datasets, figures = list(), displayed_sections = c()) {
 
-  # 获取数据集
-  dataset_name <- config_row$Datasets
-  if (is.null(datasets[[dataset_name]])) {
-    cat(sprintf("  警告：未找到数据集 %s\n", dataset_name))
-    return(doc)
-  }
-
-  dataset <- datasets[[dataset_name]]
-
-  # 添加章节标题
+  # 添加章节标题（仅当该章节首次出现时）
   section_no <- config_row$`Section no`
   if (!is_empty(section_no) && !is_empty(config_row$`Section title`)) {
     if (!section_no %in% displayed_sections) {
@@ -305,40 +310,99 @@ add_figure_to_doc <- function(doc, config_row, datasets, displayed_sections = c(
   }
   doc <- body_add_par(doc, fig_title, style = "heading 2")
 
-  # 根据MacVar类型生成图形
-  img_file <- NULL
-  if (tolower(config_row$MacVar) == "kmplot") {
-    img_file <- create_kmplot(dataset,
-                             title = config_row$title,
-                             xlab = "时间（月）",
-                             ylab = "生存率")
-  } else if (tolower(config_row$MacVar) == "swimplot") {
-    img_file <- create_swimplot(dataset,
-                               title = config_row$title,
-                               xlab = "时间（周）")
-  } else if (tolower(config_row$MacVar) == "waterfallplot") {
-    img_file <- create_waterfallplot(dataset,
-                                    title = config_row$title,
-                                    ylab = "肿瘤负荷变化 (%)")
-  } else if (tolower(config_row$MacVar) == "spiderplot") {
-    img_file <- create_spiderplot(dataset,
-                                 title = config_row$title,
-                                 xlab = "时间（周）",
-                                 ylab = "肿瘤负荷变化 (%)")
-  } else if (tolower(config_row$MacVar) == "seriesplot") {
-    img_file <- create_seriesplot(dataset,
-                                 title = config_row$title,
-                                 xlab = "时间",
-                                 ylab = "测量值")
-  } else if (tolower(config_row$MacVar) == "forestplot") {
-    img_file <- create_forestplot(dataset,
-                                 title = config_row$title)
+  # ── 图片来源：嵌入 base64 优先，否则生成 mock 示意图 ──────────────────
+  tbl_no    <- as.character(config_row$`table no`)
+  fig_b64   <- figures[[tbl_no]]
+  img_file  <- NULL
+  is_custom <- FALSE
+
+  if (!is.null(fig_b64) && nzchar(trimws(fig_b64))) {
+    # 用户已上传图片：base64 解码 → 临时 PNG
+    if (!requireNamespace("base64enc", quietly = TRUE)) {
+      cat("  警告：base64enc 包未安装，无法解码嵌入图片，改用 mock 示意图\n")
+      cat("  请运行：install.packages('base64enc')\n")
+    } else {
+      img_bytes <- base64enc::base64decode(fig_b64)
+      temp_path <- tempfile(fileext = ".png")
+      writeBin(img_bytes, temp_path)
+      img_file  <- temp_path
+      is_custom <- TRUE
+      cat(sprintf("  使用嵌入图片（%s）\n", tbl_no))
+    }
+  }
+
+  if (!is_custom) {
+    # 无嵌入图片（或解码失败）：生成 mock 示意图
+    dataset_name <- config_row$Datasets
+    if (is.null(datasets[[dataset_name]])) {
+      cat(sprintf("  警告：未找到数据集 %s，将使用内置示例数据\n", dataset_name))
+    }
+    dataset <- if (!is.null(datasets[[dataset_name]])) datasets[[dataset_name]] else data.frame()
+
+    # 解析图形配置：Trtlab → 图例向量，Varlab → 轴标签
+    fig_legend <- .fig_legend_labs(config_row$Trtlab)
+    macvar_lc  <- tolower(config_row$MacVar)
+
+    # 根据 MacVar 类型生成图形（轴标签优先读 Varlab，空则用各图默认值）
+    if (macvar_lc == "kmplot") {
+      ax <- .fig_axis_labels(config_row$Varlab, "时间（月）", "生存率")
+      img_file <- create_kmplot(dataset,
+                                title       = config_row$title,
+                                xlab        = ax[1],
+                                ylab        = ax[2],
+                                legend_labs = fig_legend)
+    } else if (macvar_lc == "swimplot") {
+      ax <- .fig_axis_labels(config_row$Varlab, "时间（周）", "受试者")
+      img_file <- create_swimplot(dataset,
+                                  title       = config_row$title,
+                                  xlab        = ax[1],
+                                  ylab        = ax[2],
+                                  legend_labs = fig_legend)
+    } else if (macvar_lc == "waterfallplot") {
+      ax <- .fig_axis_labels(config_row$Varlab, "受试者", "肿瘤负荷变化 (%)")
+      img_file <- create_waterfallplot(dataset,
+                                       title       = config_row$title,
+                                       xlab        = ax[1],
+                                       ylab        = ax[2],
+                                       legend_labs = fig_legend)
+    } else if (macvar_lc == "spiderplot") {
+      ax <- .fig_axis_labels(config_row$Varlab, "时间（周）", "肿瘤负荷变化 (%)")
+      img_file <- create_spiderplot(dataset,
+                                    title       = config_row$title,
+                                    xlab        = ax[1],
+                                    ylab        = ax[2],
+                                    legend_labs = fig_legend)
+    } else if (macvar_lc == "seriesplot") {
+      ax <- .fig_axis_labels(config_row$Varlab, "时间", "测量值")
+      img_file <- create_seriesplot(dataset,
+                                    title       = config_row$title,
+                                    xlab        = ax[1],
+                                    ylab        = ax[2],
+                                    legend_labs = fig_legend)
+    } else if (macvar_lc == "forestplot") {
+      ax <- .fig_axis_labels(config_row$Varlab, "风险比 (95% CI)", "")
+      img_file <- create_forestplot(dataset,
+                                    title       = config_row$title,
+                                    xlab        = ax[1],
+                                    ylab        = ax[2],
+                                    legend_labs = fig_legend)
+    }
   }
 
   # 插入图片
   if (!is.null(img_file) && file.exists(img_file)) {
-    doc <- body_add_img(doc, src = img_file, width = 6, height = 4.5)
-    # 删除临时文件
+    if (is_custom) {
+      # 嵌入图：按 PNG 真实宽高比等比缩放（最大宽 6in，最大高 7in）
+      dims  <- .png_dims(img_file)
+      max_w <- 6; max_h <- 7
+      ratio <- dims[1] / max(dims[2], 1L)
+      w     <- min(max_w, max_h * ratio)
+      h     <- w / ratio
+      doc <- body_add_img(doc, src = img_file, width = w, height = h)
+    } else {
+      # mock 示意图：固定 6×4.5（与 8×6 生成尺寸同为 4:3）
+      doc <- body_add_img(doc, src = img_file, width = 6, height = 4.5)
+    }
     unlink(img_file)
   }
 

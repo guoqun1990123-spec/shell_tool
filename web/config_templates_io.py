@@ -12,6 +12,7 @@ _DEFAULTS: dict = {
     "section_map": {},
     "pop_options": [],
     "footnote_snippets": [],
+    "trtlab_presets": [],
 }
 
 
@@ -25,6 +26,7 @@ def load_config_templates() -> dict:
         "section_map": dict(data.get("section_map", {})),
         "pop_options": list(data.get("pop_options", [])),
         "footnote_snippets": list(data.get("footnote_snippets", [])),
+        "trtlab_presets": list(data.get("trtlab_presets", [])),
     }
 
 

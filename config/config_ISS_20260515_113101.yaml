@@ -3725,7 +3725,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -3761,7 +3761,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -3806,7 +3806,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -3843,7 +3843,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -3888,7 +3888,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -3933,7 +3933,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -3979,7 +3979,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -4024,7 +4024,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -4078,7 +4078,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -4114,7 +4114,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -4160,7 +4160,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -4196,7 +4196,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -4233,7 +4233,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -4296,7 +4296,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -4359,7 +4359,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -4423,7 +4423,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -4468,7 +4468,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -4578,7 +4578,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -5267,7 +5267,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -5312,7 +5312,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -5376,7 +5376,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -5421,7 +5421,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -5476,7 +5476,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -5521,7 +5521,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -5576,7 +5576,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -5621,7 +5621,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -5676,7 +5676,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -5721,7 +5721,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -5776,7 +5776,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -5895,7 +5895,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 4
-    Aval: xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -5931,7 +5931,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 4
-    Aval: xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -5985,7 +5985,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 4
-    Aval: xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -6030,7 +6030,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 4
-    Aval: xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -6076,7 +6076,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 4
-    Aval: xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -6130,7 +6130,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 4
-    Aval: xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -6211,7 +6211,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 4
-    Aval: xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -6739,7 +6739,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 0
-    Aval: xx|xx|xx|xx|xx|xx|xx|xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -6821,7 +6821,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 0
-    Aval: xx|xx|xx|xx|xx|xx|xx|xx|xx|xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -6903,7 +6903,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 0
-    Aval: xx|xx|xx|xx|xx|xx|xx|xx|xx|xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -7684,7 +7684,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 4
-    Aval: xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -7729,7 +7729,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 4
-    Aval: xx|xx|xx|xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -7912,7 +7912,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 4
-    Aval: xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -7993,7 +7993,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 4
-    Aval: xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -8084,7 +8084,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 4
-    Aval: xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -8129,7 +8129,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 4
-    Aval: xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''
@@ -8284,7 +8284,7 @@ datasets:
   - Class: ''
     Label: 例数
     Order: 2
-    Aval: xx|xx|xx
+    Aval: xx
     exclude: 0
     BlankCol: ''
     Drug: ''

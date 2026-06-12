@@ -6,7 +6,9 @@ import uuid
 import pandas as pd
 import streamlit as st
 
-from schema import CONFIG_COLS, VALID_MACVAR
+import base64
+
+from schema import CONFIG_COLS, VALID_MACVAR, FIGURE_MACVARS
 import tfl_preview as _tfl_preview
 from keys import (
     ACTIVE_TAB, TAB_SWITCH_REQ,
@@ -22,6 +24,9 @@ _CARD_STATE_KEY = CFG_CARD_STATE
 _SELECTED_ID_KEY = CFG_SELECTED_ID
 _FOCUS_KEY = CFG_FOCUS_ID
 _SYNC_VER_KEY = "_cfg_editor_sync_ver"
+# 嵌入图片 base64 单独存放于此 dict（key=card _id），不进 card_state，
+# 避免 ~700KB base64 进入每次 rerun 都要拷贝/序列化的热路径导致页面卡死。
+_FIG_IMG_KEY = "_fig_images"
 _FILTER_KEY = "_cfg_filter"
 _MENU_OPEN_KEY = "cfg_menu_open"    # set[card_id]，⋮ 菜单展开状态
 _DS_OPEN_KEY = "cfg_ds_panel_open"  # set[card_id]，Datasets 面板展开状态
@@ -53,6 +58,9 @@ def _empty_card() -> dict:
 
 
 def df_to_card_state(df: pd.DataFrame) -> list[dict]:
+    """将 config DataFrame 转为卡片状态列表。
+    嵌入图片不在此回填（base64 单独存于 session 的 _fig_images，见 _ensure_card_state）。
+    """
     if df is None or df.empty:
         return []
     rows: list[dict] = []
@@ -67,6 +75,23 @@ def df_to_card_state(df: pd.DataFrame) -> list[dict]:
         card["_tableno_overridden"] = False
         rows.append(card)
     return rows
+
+
+def collect_fig_images(card_state: list[dict]) -> dict[str, str]:
+    """从 session 的 _fig_images（按 card _id）收集图片 base64，按 table no 索引输出。
+    table no 为空的卡片跳过（不写入 figures 块）。
+    """
+    fig_by_id = st.session_state.get(_FIG_IMG_KEY, {})
+    figs: dict[str, str] = {}
+    for card in card_state:
+        b64 = str(fig_by_id.get(card["_id"], "") or "").strip()
+        if not b64:
+            continue
+        tbl_no = str(card.get("table no", "") or "").strip()
+        if not tbl_no:
+            continue  # 图号为空，静默跳过
+        figs[tbl_no] = b64
+    return figs
 
 
 def card_state_to_df(card_state: list[dict]) -> pd.DataFrame:
@@ -181,7 +206,17 @@ def _ensure_card_state(config_df: pd.DataFrame) -> None:
         _CARD_STATE_KEY not in st.session_state
         or st.session_state.get(_SYNC_VER_KEY) != ver
     ):
-        st.session_state[_CARD_STATE_KEY] = _compute_table_nos(df_to_card_state(config_df))
+        card_state = _compute_table_nos(df_to_card_state(config_df))
+        st.session_state[_CARD_STATE_KEY] = card_state
+        # 把 YAML figures 块（按 table no）映射到 _fig_images（按 card _id），
+        # base64 不进 card_state，避免热路径卡死。
+        figs = st.session_state.get("figures", {})
+        fig_by_id: dict[str, str] = {}
+        for c in card_state:
+            b64 = str(figs.get(str(c.get("table no", "") or "").strip(), "") or "").strip()
+            if b64:
+                fig_by_id[c["_id"]] = b64
+        st.session_state[_FIG_IMG_KEY] = fig_by_id
         st.session_state[_SYNC_VER_KEY] = ver
 
 
@@ -193,12 +228,20 @@ def _ensure_filter() -> None:
 # ── 字段渲染辅助 ──────────────────────────────────────────────────────────────
 
 
+_FIELD_VER_KEYS: dict[str, str] = {
+    "Trtlab": "_trtlab_field_ver",
+    "Dutoffdate": "_dutoffdate_field_ver",
+}
+
+
 def _field(container, card: dict, field: str, card_id: str, version: int,
            label: str | None = None) -> None:
     val = str(card.get(field, "") or "")
+    _fver_key = _FIELD_VER_KEYS.get(field)
+    extra_ver = st.session_state.get(_fver_key, 0) if _fver_key else 0
     new_val = container.text_input(
         label or field, value=val,
-        key=f"cfg_{field}_{card_id}_{version}",
+        key=f"cfg_{field}_{card_id}_{version}_{extra_ver}",
     )
     if new_val != val:
         st.session_state[_CARD_STATE_KEY] = _update_card(
@@ -527,8 +570,29 @@ def _render_level1(
                 st.session_state[TAB_SWITCH_REQ] = st.session_state.get(TAB_SWITCH_REQ, 0) + 1
                 st.rerun()
 
-        # 行D: Trtlab
-        _field(st, card, "Trtlab", card_id, version)
+        # 行D: mtext 时显示 RefTFL 选择器，否则显示 Trtlab
+        if cur_macvar == "mtext":
+            reftfl_opts = [""] + sorted({
+                str(c.get("table no", "") or "").strip()
+                for c in card_state
+                if c["_id"] != card_id
+                and str(c.get("MacVar", "") or "") != "mtext"
+                and str(c.get("table no", "") or "").strip()
+            })
+            cur_reftfl = str(card.get("RefTFL", "") or "")
+            new_reftfl = st.selectbox(
+                "RefTFL（引用表格）",
+                options=reftfl_opts,
+                index=reftfl_opts.index(cur_reftfl) if cur_reftfl in reftfl_opts else 0,
+                key=f"cfg_reftfl_{card_id}_{version}",
+            )
+            if new_reftfl != cur_reftfl:
+                st.session_state[_CARD_STATE_KEY] = _update_card(
+                    card_state, card_id, RefTFL=new_reftfl
+                )
+                st.rerun()
+        else:
+            _field(st, card, "Trtlab", card_id, version)
 
         # Datasets 迷你面板
         ds_open_set = _ds_open()
@@ -594,6 +658,115 @@ def _render_level1(
         with tab_preview:
             _render_card_preview(card, card_id, version)
 
+    # 图形行专属：画图工具面板（在 tab_edit/tab_preview 之外，始终可见）
+    if cur_macvar in FIGURE_MACVARS:
+        _render_figure_panel(card, card_id, version)
+
+
+# ── 图形面板 ──────────────────────────────────────────────────────────────────
+
+
+def _render_figure_panel(card: dict, card_id: str, version: int) -> None:
+    """图形行专属：打开画图工具 + 导入/清除嵌入 PNG。"""
+    st.markdown("---")
+    st.caption("🖼️ 图形制作")
+
+    col_open, _ = st.columns([1.5, 5])
+    with col_open:
+        plot_tool_path = st.session_state.get("_plot_tool_path", "")
+        if st.button(
+            "🎨 打开画图工具",
+            key=f"cfg_open_plot_{card_id}_{version}",
+            disabled=not plot_tool_path,
+            help=plot_tool_path if plot_tool_path else "请在 config.toml 中配置 [plot_tool] path",
+        ):
+            import os
+            import webbrowser
+            from pathlib import Path as _Path
+            p = os.path.abspath(plot_tool_path)
+            if not os.path.exists(p):
+                st.error(f"找不到画图工具文件：{p}\n请检查 config.toml 中 [plot_tool] path 配置")
+            else:
+                opened = False
+                try:
+                    os.startfile(p)
+                    opened = True
+                except Exception:
+                    pass
+                if not opened:
+                    try:
+                        webbrowser.open(_Path(p).as_uri())
+                        opened = True
+                    except Exception as e:
+                        st.error(f"打开画图工具失败：{e}")
+                if opened:
+                    st.success(
+                        f"已尝试打开：{p}\n"
+                        "若浏览器未弹出，请手动双击 d:/plot_tool/启动.bat"
+                    )
+
+    fig_images: dict = st.session_state.setdefault(_FIG_IMG_KEY, {})
+    existing_b64 = str(fig_images.get(card_id, "") or "").strip()
+    if existing_b64:
+        try:
+            # 仅校验可解码 + 取字节数；不在卡片里渲染大图（渲染大图会导致页面卡顿/永久转圈）
+            # 嵌入图的真实用途是写进 YAML 供 R 端解码渲染 Word，编辑器里无需预览
+            _img_kb = len(base64.b64decode(existing_b64)) // 1024
+            st.success(
+                f"✅ 已嵌入图片（约 {_img_kb} KB）；生成 TFL 时将替换 R 端示意图。"
+                "（编辑器不显示大图预览，避免页面卡顿）"
+            )
+        except Exception:
+            st.warning("⚠️ 图片数据损坏，请重新上传")
+        if st.button("🗑 清除嵌入图", key=f"cfg_clr_img_{card_id}_{version}"):
+            fig_images.pop(card_id, None)
+            st.rerun()
+
+    _safe_id = card_id.replace("-", "_")
+    _processed_key = f"_fig_upload_done_{_safe_id}"
+    uploaded = st.file_uploader(
+        "重新上传图形 PNG" if existing_b64 else "导入图形 PNG（覆盖 R 端示意图）",
+        type=["png"],
+        key=f"cfg_fig_upload_{_safe_id}",
+        help="上传后生成 TFL Shell 时将使用该图替换 R 端 mock 示意图",
+    )
+    if uploaded is not None:
+        _fingerprint = f"{uploaded.name}:{uploaded.size}"
+        if st.session_state.get(_processed_key) != _fingerprint:
+            fig_images[card_id] = base64.b64encode(uploaded.read()).decode()
+            st.session_state[_processed_key] = _fingerprint
+            st.rerun()
+
+    # 路径导入（兜底方案：直接读服务器本地文件，无需浏览器上传端点）
+    with st.expander("📁 按路径导入 PNG（plot_tool 导出图片后复制路径）", expanded=False):
+        _path_key = f"cfg_fig_path_{_safe_id}"
+        _png_path = st.text_input(
+            "PNG 文件绝对路径",
+            value=st.session_state.get(_path_key, ""),
+            placeholder=r"如 C:\Users\zhenw\Downloads\plot.png",
+            key=f"cfg_fig_path_input_{_safe_id}",
+            label_visibility="collapsed",
+        )
+        if st.button("📁 按路径导入", key=f"cfg_fig_path_btn_{_safe_id}"):
+            import os as _os
+            _p = _png_path.strip().strip('"').strip("'")
+            if not _p:
+                st.error("请先填写 PNG 文件路径")
+            elif not _os.path.exists(_p):
+                st.error(f"找不到文件：{_p}")
+            elif not _p.lower().endswith(".png"):
+                st.error("仅支持 .png 文件")
+            else:
+                try:
+                    with open(_p, "rb") as _f:
+                        fig_images[card_id] = base64.b64encode(_f.read()).decode()
+                    st.session_state[_path_key] = _png_path
+                    st.rerun()
+                except Exception as _e:
+                    st.error(f"读取文件失败：{_e}")
+
+    st.caption("💡 导入后将覆盖 R 端示意图；该行 Datasets 字段可留空")
+
 
 # ── 预览 tab ─────────────────────────────────────────────────────────────────
 
@@ -605,27 +778,32 @@ def _render_card_preview(card: dict, card_id: str, version: int) -> None:
     card_state = st.session_state.get(_CARD_STATE_KEY, [])
     cur_card = next((c for c in card_state if c["_id"] == card_id), card)
 
-    # 计算轻量 cache key：card 数据字段 + 对应 dataset 的行数和列名
-    ds_name = str(cur_card.get("Datasets") or "")
-    ds = datasets.get(ds_name)
-    if ds is not None and not ds.empty:
-        # 用行数+列名作轻量签名；单元格内容变化但结构不变时缓存不更新（已知 tradeoff，可接受）
-        ds_sig = f"{len(ds)}_{list(ds.columns)}"
+    macvar = str(cur_card.get("MacVar") or "").strip()
+
+    # 图形类型：preview 只是占位 HTML，无需 sig 计算和缓存
+    if macvar not in FIGURE_MACVARS:
+        # 计算轻量 cache key：card 数据字段 + 对应 dataset 的行数和列名
+        ds_name = str(cur_card.get("Datasets") or "")
+        ds = datasets.get(ds_name)
+        if ds is not None and not ds.empty:
+            ds_sig = f"{len(ds)}_{list(ds.columns)}"
+        else:
+            ds_sig = "empty"
+        card_data = {k: v for k, v in cur_card.items() if not k.startswith("_")}
+        card_sig = json.dumps(card_data, ensure_ascii=False, sort_keys=True)
+        current_sig = hashlib.md5((card_sig + ds_sig).encode()).hexdigest()
+
+        cache_key = f"_preview_html_{card_id}"
+        sig_key   = f"_preview_sig_{card_id}"
+
+        if st.session_state.get(sig_key) != current_sig:
+            html = _tfl_preview.render_preview(cur_card, datasets)
+            st.session_state[cache_key] = html
+            st.session_state[sig_key]   = current_sig
+        else:
+            html = st.session_state[cache_key]
     else:
-        ds_sig = "empty"
-    card_data = {k: v for k, v in cur_card.items() if not k.startswith("_")}
-    card_sig = json.dumps(card_data, ensure_ascii=False, sort_keys=True)
-    current_sig = hashlib.md5((card_sig + ds_sig).encode()).hexdigest()
-
-    cache_key = f"_preview_html_{card_id}"
-    sig_key   = f"_preview_sig_{card_id}"
-
-    if st.session_state.get(sig_key) != current_sig:
         html = _tfl_preview.render_preview(cur_card, datasets)
-        st.session_state[cache_key] = html
-        st.session_state[sig_key]   = current_sig
-    else:
-        html = st.session_state[cache_key]
 
     st.markdown(html, unsafe_allow_html=True)
 
@@ -636,8 +814,9 @@ def _render_card_preview(card: dict, card_id: str, version: int) -> None:
         if st.button("🔄 用R真实渲染", key=f"cfg_real_render_{card_id}_{version}",
                      help="调用R生成单表Word文档，可下载"):
             from renderer import run_preview as _run_preview
+            _fig_b64 = st.session_state.get(_FIG_IMG_KEY, {}).get(card_id, "")
             with st.spinner("R 渲染中..."):
-                result = _run_preview(cur_card, datasets)
+                result = _run_preview(cur_card, datasets, fig_b64=_fig_b64)
             st.session_state["preview_result"] = result
             st.session_state["preview_card_title"] = str(
                 cur_card.get("title") or cur_card.get("table no") or "TFL"
@@ -801,8 +980,8 @@ def render_config_editor(
             "",
         )
         if first_sec:
-            st.session_state[NAV_FILTER] = {**nav_filt, "section": first_sec}
-            st.rerun()
+            nav_filt = {**nav_filt, "section": first_sec}
+            st.session_state[NAV_FILTER] = nav_filt
     scroll_to_id = nav_filt.get("scroll_to")
     if scroll_to_id:
         card_state_now = st.session_state[_CARD_STATE_KEY]
@@ -819,7 +998,7 @@ def render_config_editor(
         st.session_state[NAV_SELECTED_ID] = scroll_to_id
         nav_filt["scroll_to"] = None
         st.session_state[NAV_FILTER] = nav_filt
-        st.rerun()
+        card_state = new_state  # 本轮直接用更新后的状态渲染，无需第二次 rerun
 
     # 专注模式横幅
     if focus_id:

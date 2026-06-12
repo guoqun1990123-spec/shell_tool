@@ -26,6 +26,8 @@ def _new_meta(
         "_linked": linked,
         "_expanded": expanded,
         "_is_header": is_header,
+        "_format_mode": "structural",
+        "_endpoint_type": "",
     }
 
 
@@ -49,7 +51,8 @@ def df_to_card_state(df: pd.DataFrame) -> list[dict]:
     current_parent_class: int = 0
 
     for rec in records:
-        order = int(rec.get("Order") or 0)
+        _ord = rec.get("Order")
+        order = int(_ord) if _ord is not None and str(_ord) not in ("", "nan", "NaN") else 0
         if order != 0 and current_parent_id is None:
             order = 0
         data = {col: rec.get(col, "") for col in DATASET_TABLE_COLS}
@@ -81,6 +84,9 @@ def df_to_card_state(df: pd.DataFrame) -> list[dict]:
 
     # 推断小节标题行
     result = _infer_is_header(result)
+
+    # 按 Label 自动填充已知 Aval（如 例数 → xx）
+    result = _fill_aval_by_label(result)
 
     return result
 
@@ -226,6 +232,23 @@ def sync_children_class(state: list[dict], parent_id: str, new_class: int) -> li
     ]
 
 
+# Label → Aval 默认值映射：Aval 为空且 Label 精确匹配时自动填充
+_LABEL_AVAL_DEFAULTS: dict[str, str] = {
+    "例数": "xx",
+}
+
+
+def _fill_aval_by_label(state: list[dict]) -> list[dict]:
+    """对 Aval 为空且 Label 在 _LABEL_AVAL_DEFAULTS 中的行自动填充 Aval。"""
+    return [
+        {**r, "Aval": _LABEL_AVAL_DEFAULTS[str(r.get("Label") or "").strip()]}
+        if (str(r.get("Aval") or "").strip() == ""
+            and str(r.get("Label") or "").strip() in _LABEL_AVAL_DEFAULTS)
+        else r
+        for r in state
+    ]
+
+
 _CONTINUOUS_AVAL_PATTERNS = {
     "xx", "xx.x", "xx.xx", "xx.xxx",
     "xx.x (xx.xx)", "xx.x (xx.x)",
@@ -365,7 +388,12 @@ def normalize_dataset_state(state: list[dict], templates: dict) -> tuple[list[di
 
             if vtype == "分类变量-有子分类":
                 aval_opts = tmpl.get("aval_options", [])
-                tmpl_aval = aval_opts[0] if aval_opts else "xx (xx.x)"
+                parent_aval = str(row.get("Aval") or "").strip()
+                # 以父行实际选定的 Aval 为期望值；未选或选空时回退到模板首选项
+                base_aval = parent_aval if parent_aval in aval_opts else (aval_opts[0] if aval_opts else "xx (xx.x)")
+                # Label 有固定默认值（如"例数"→"xx"）时优先使用
+                child_label = str(child.get("Label") or "").strip()
+                tmpl_aval = _LABEL_AVAL_DEFAULTS.get(child_label, base_aval)
                 if cur == tmpl_aval:
                     continue
             else:
@@ -460,6 +488,108 @@ def _infer_is_header(state: list[dict]) -> list[dict]:
             inferred = (aval == "" and label != "")
             result.append({**row, "_is_header": inferred})
     return result
+
+
+def move_child(state: list[dict], parent_id: str, child_id: str, direction: int) -> list[dict]:
+    """
+    将子行在父行内上移（-1）或下移（+1）。
+    越出当前父行边界时，迁入相邻 Order=0 父行并更新 _parent_id / Class。
+    """
+    parent_linked = [r for r in state if r.get("_parent_id") == parent_id and r.get("_linked")]
+    ci = next((i for i, r in enumerate(parent_linked) if r["_id"] == child_id), None)
+    if ci is None:
+        return state
+
+    # ── 父行内交换 ────────────────────────────────────────────
+    target_ci = ci + direction
+    if 0 <= target_ci < len(parent_linked):
+        id_a, id_b = parent_linked[ci]["_id"], parent_linked[target_ci]["_id"]
+        pos_a = next(i for i, r in enumerate(state) if r["_id"] == id_a)
+        pos_b = next(i for i, r in enumerate(state) if r["_id"] == id_b)
+        new_state = list(state)
+        new_state[pos_a], new_state[pos_b] = new_state[pos_b], new_state[pos_a]
+        return new_state
+
+    # ── 跨父行边界 ────────────────────────────────────────────
+    all_parents = [r for r in state if r.get("_parent_id") is None and int(r.get("Order") or 0) == 0]
+    pidx = next((i for i, r in enumerate(all_parents) if r["_id"] == parent_id), None)
+    if pidx is None:
+        return state
+    neighbor_pidx = pidx + direction
+    if not (0 <= neighbor_pidx < len(all_parents)):
+        return state  # 已到边界，不操作
+
+    neighbor = all_parents[neighbor_pidx]
+    neighbor_id = neighbor["_id"]
+    neighbor_class = int(neighbor.get("Class") or 0)
+
+    child_row = {
+        **next(r for r in state if r["_id"] == child_id),
+        "_parent_id": neighbor_id,
+        "_linked": True,
+        "Class": neighbor_class,
+    }
+
+    new_state = [r for r in state if r["_id"] != child_id]
+    neighbor_linked = [r for r in new_state if r.get("_parent_id") == neighbor_id and r.get("_linked")]
+
+    if direction == -1:
+        # 向上越界 → 插到邻居子行末尾
+        ref_id = neighbor_linked[-1]["_id"] if neighbor_linked else neighbor_id
+        insert_pos = next(i for i, r in enumerate(new_state) if r["_id"] == ref_id) + 1
+    else:
+        # 向下越界 → 插到邻居首个子行之前（邻居父行行之后）
+        if neighbor_linked:
+            insert_pos = next(i for i, r in enumerate(new_state) if r["_id"] == neighbor_linked[0]["_id"])
+        else:
+            insert_pos = next(i for i, r in enumerate(new_state) if r["_id"] == neighbor_id) + 1
+
+    return new_state[:insert_pos] + [child_row] + new_state[insert_pos:]
+
+
+def split_child_to_parent(state: list[dict], parent_id: str, child_id: str) -> list[dict]:
+    """
+    将子行提升为独立父行。
+    - 目标子行：变为 Order=0 父行，Class 继承原父行（避免 R 端插入分组空行）
+    - 目标子行之后 Order 更高的连续兄弟行：成为新父行的 linked 子行
+    """
+    parent = next((r for r in state if r["_id"] == parent_id), None)
+    if parent is None:
+        return state
+
+    parent_class = int(parent.get("Class") or 0)
+    parent_linked = [r for r in state if r.get("_parent_id") == parent_id and r.get("_linked")]
+
+    target_idx = next((i for i, r in enumerate(parent_linked) if r["_id"] == child_id), None)
+    if target_idx is None:
+        return state
+
+    target = parent_linked[target_idx]
+    target_order = int(target.get("Order") or 1)
+
+    # 找 sub-group：target 之后 Order 严格更高的连续兄弟行
+    sub_group: list[dict] = []
+    for r in parent_linked[target_idx + 1:]:
+        if int(r.get("Order") or 1) > target_order:
+            sub_group.append(r)
+        else:
+            break
+
+    new_parent_id = target["_id"]
+    new_parent = {**target, "_parent_id": None, "_linked": False, "Order": 0, "Class": parent_class}
+    new_sub = [{**r, "_parent_id": new_parent_id, "_linked": True} for r in sub_group]
+
+    remove_ids = {child_id} | {r["_id"] for r in sub_group}
+    new_state = [r for r in state if r["_id"] not in remove_ids]
+
+    # 插入位置：原父行剩余子行末尾之后
+    remaining = [r for r in new_state if r.get("_parent_id") == parent_id and r.get("_linked")]
+    if remaining:
+        insert_pos = next(i for i, r in enumerate(new_state) if r["_id"] == remaining[-1]["_id"]) + 1
+    else:
+        insert_pos = next(i for i, r in enumerate(new_state) if r["_id"] == parent_id) + 1
+
+    return new_state[:insert_pos] + [new_parent] + new_sub + new_state[insert_pos:]
 
 
 def _parent_order(state: list[dict]) -> list[dict]:
@@ -558,6 +688,59 @@ def insert_after(state: list[dict], parent_id: str) -> list[dict]:
 
 # ── Streamlit UI ────────────────────────────────────────────────────────────
 
+def _get_child_aval_opts(child_label: str, endpoint_type: str) -> tuple[list[str], list[str]]:
+    """
+    根据子行 Label 和终点类型返回 (aval_options, special_values)。
+    优先匹配与 Label 最相似的 StatItem；无匹配时返回全类型聚合列表。
+    """
+    from templates_io import get_group_by_id
+    ep_group = get_group_by_id(endpoint_type)
+    if not ep_group:
+        return [], []
+
+    cl = (child_label or "").strip()
+
+    def _score(item_label: str) -> int:
+        il = item_label.strip()
+        if not cl:
+            return 0
+        if cl == il:
+            return 100
+        if il in cl or cl in il:
+            return max(len(il), len(cl))
+        # 统计 cl 中长度≥2子串出现在 il 中的数量（中文关键词匹配）
+        return sum(1 for i in range(len(cl) - 1) if cl[i:i + 2] in il)
+
+    best_item = None
+    best_score = 0
+    for sg in ep_group.subgroups:
+        for it in sg.items:
+            s = _score(it.label)
+            if s > best_score:
+                best_score = s
+                best_item = it
+
+    if best_item and best_score >= 2:
+        return best_item.aval_options, best_item.special_values
+
+    # 回退：全类型聚合（去重保序）
+    seen_opts: set[str] = set()
+    seen_sv: set[str] = set()
+    all_opts: list[str] = []
+    all_sv: list[str] = []
+    for sg in ep_group.subgroups:
+        for it in sg.items:
+            for opt in it.aval_options:
+                if opt not in seen_opts:
+                    all_opts.append(opt)
+                    seen_opts.add(opt)
+            for sv in it.special_values:
+                if sv not in seen_sv:
+                    all_sv.append(sv)
+                    seen_sv.add(sv)
+    return all_opts, all_sv
+
+
 def state_key(ds_name: str) -> str:
     return f"card_state_{ds_name}"
 
@@ -624,18 +807,20 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
             cur = _reindex_class(cur)
             cur = _infer_is_header(cur)
             cur = _infer_var_types(cur)
+            cur = _fill_aval_by_label(cur)
             _, conflicts = normalize_dataset_state(cur, templates)
             if conflicts:
                 selected = {c["child_id"] or c["parent_id"] for c in conflicts}
                 cur = apply_normalize(cur, conflicts, selected)
                 st.session_state[key] = cur
-                # Clear widget state keys so Streamlit doesn't overwrite normalized Aval
                 for c in conflicts:
                     rid = c["child_id"] or c["parent_id"]
-                    for wkey in (f"child_aval_{rid}", f"child_aval_sel_{rid}",
-                                 f"parent_aval_{rid}", f"unlinked_aval_{rid}"):
+                    # 自定义文本框直接删除
+                    for wkey in (f"child_aval_{rid}", f"parent_aval_{rid}", f"unlinked_aval_{rid}"):
                         if wkey in st.session_state:
                             del st.session_state[wkey]
+                    # selectbox 显式赋值（比删 key 后依赖 index 更可靠）
+                    st.session_state[f"child_aval_sel_{rid}"] = c["template_aval"]
                 labels = list(dict.fromkeys(c["parent_label"] for c in conflicts))
                 summary = "、".join(labels[:3]) + ("…" if len(labels) > 3 else "")
                 st.toast(f"✅ 已矫正 {len(conflicts)} 处 Aval（{summary}）")
@@ -671,6 +856,8 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
         p_idx = parent_ids.index(row_id) if row_id in parent_ids else 0
         is_first = p_idx == 0
         is_last = p_idx == len(parent_ids) - 1
+        format_mode = row.get("_format_mode", "structural")
+        endpoint_type = row.get("_endpoint_type", "")
 
         # ── 父行卡片 ──────────────────────────────────────────────────
         # header 行注入浅蓝灰底色
@@ -680,6 +867,10 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                 div[data-testid="stVerticalBlock"]:has(> div > div button[kind="primary"][title="切换为小节标题行"][key="{ds_name}_hdr_{row_id}"]) {{
                     background-color: #eef2ff;
                     border-radius: 6px;
+                }}
+                div[data-testid="stVerticalBlockWithBorder"]:has(button[kind="primary"][title="切换为小节标题行"][key="{ds_name}_hdr_{row_id}"]) {{
+                    margin-top: 1rem;
+                    margin-bottom: 0 !important;
                 }}
                 </style>""",
                 unsafe_allow_html=True,
@@ -739,13 +930,9 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                         key=f"class_{row_id}"
                     )
                     if new_class != int(row.get("Class") or 0):
-                        if linked_children:
-                            st.session_state[f"pending_class_{row_id}"] = new_class
-                        else:
-                            st.session_state[key] = [
-                                {**r, "Class": new_class} if r["_id"] == row_id else r
-                                for r in st.session_state[key]
-                            ]
+                        st.session_state[key] = sync_children_class(
+                            st.session_state[key], row_id, new_class
+                        )
 
             with c_label:
                 st.text_input(
@@ -760,35 +947,36 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
             if not is_header:
                 with c_type:
                     cur_type = row.get("_var_type", "手动输入")
-                    new_type = st.selectbox(
-                        "类型", options=VAR_TYPES,
-                        index=VAR_TYPES.index(cur_type) if cur_type in VAR_TYPES else 0,
-                        label_visibility="collapsed",
-                        key=f"vartype_{row_id}"
-                    )
-                    if new_type != cur_type:
-                        pending_sub_key = f"pending_subclass_{row_id}"
-                        if pending_sub_key in st.session_state:
-                            del st.session_state[pending_sub_key]
-                        if linked_children and new_type != VAR_TYPE_DEFAULT:
-                            # 有现有子行且新类型非手动输入 → 询问处理方式
-                            # 不调 st.rerun()，确认框在同一轮渲染里直接出现，避免无限 rerun
-                            st.session_state[f"pending_vartype_{row_id}"] = new_type
-                        else:
-                            new_state = expand_var_type(
-                                st.session_state[key], row_id, new_type, templates
-                            )
-                            new_state = [
-                                {**r, "_var_type_locked": True} if r["_id"] == row_id else r
-                                for r in new_state
-                            ]
-                            st.session_state[key] = new_state
-                            if new_type == "分类变量-有子分类":
-                                st.session_state[pending_sub_key] = ""
-                            st.rerun()
+                    if format_mode == "structural":
+                        new_type = st.selectbox(
+                            "类型", options=VAR_TYPES,
+                            index=VAR_TYPES.index(cur_type) if cur_type in VAR_TYPES else 0,
+                            label_visibility="collapsed",
+                            key=f"vartype_{row_id}"
+                        )
+                        if new_type != cur_type:
+                            pending_sub_key = f"pending_subclass_{row_id}"
+                            if pending_sub_key in st.session_state:
+                                del st.session_state[pending_sub_key]
+                            if linked_children and new_type != VAR_TYPE_DEFAULT:
+                                # 有现有子行且新类型非手动输入 → 询问处理方式
+                                # 不调 st.rerun()，确认框在同一轮渲染里直接出现，避免无限 rerun
+                                st.session_state[f"pending_vartype_{row_id}"] = new_type
+                            else:
+                                new_state = expand_var_type(
+                                    st.session_state[key], row_id, new_type, templates
+                                )
+                                new_state = [
+                                    {**r, "_var_type_locked": True} if r["_id"] == row_id else r
+                                    for r in new_state
+                                ]
+                                st.session_state[key] = new_state
+                                if new_type == "分类变量-有子分类":
+                                    st.session_state[pending_sub_key] = ""
+                                st.rerun()
 
                 with c_aval:
-                    if cur_type == "分类变量-有子分类":
+                    if format_mode == "structural" and cur_type == "分类变量-有子分类":
                         cur_aval = str(row.get("Aval") or "")
                         # 从模板读取候选值，不硬编码
                         tmpl_aval_opts = templates.get("分类变量-有子分类", {}).get("aval_options", ["xx (xx.x)"])
@@ -809,6 +997,16 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                                 {**r, "Aval": new_aval_val} if r["_id"] == row_id else r
                                 for r in st.session_state[key]
                             ]
+                    elif format_mode == "statistical":
+                        # 统计量格式模式下父行可以填 Aval（如 ORR 的 xx (xx.x)）
+                        st.text_input(
+                            "父行Aval", value=str(row.get("Aval") or ""),
+                            label_visibility="collapsed",
+                            placeholder="xx (xx.x)",
+                            key=f"stat_parent_aval_{row_id}",
+                            on_change=_update_field,
+                            args=(f"stat_parent_aval_{row_id}", key, row_id, "Aval"),
+                        )
 
             with c_del:
                 if st.button("🗑", key=f"del_{row_id}", help="删除此变量行"):
@@ -818,6 +1016,55 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                     else:
                         st.session_state[key] = delete_row(st.session_state[key], row_id, cascade=True)
                         st.rerun()
+
+            # ── 变量类型模式选择（非 header 行）──────────────────────
+            if not is_header:
+                fmc1, fmc2 = st.columns([1.2, 7])
+                with fmc1:
+                    st.caption("变量类型:")
+                with fmc2:
+                    sel_mode_disp = st.radio(
+                        "变量类型",
+                        ["变量结构", "统计量格式"],
+                        index=0 if format_mode == "structural" else 1,
+                        horizontal=True,
+                        key=f"fmt_mode_{row_id}",
+                        label_visibility="collapsed",
+                    )
+                new_format_mode = "structural" if sel_mode_disp == "变量结构" else "statistical"
+                if new_format_mode != format_mode:
+                    st.session_state[key] = [
+                        {**r, "_format_mode": new_format_mode} if r["_id"] == row_id else r
+                        for r in st.session_state[key]
+                    ]
+                    st.rerun()
+
+                # ── 终点类型按钮（统计量格式模式）────────────────────
+                if format_mode == "statistical":
+                    _ENDPOINT_BUTTONS = [
+                        ("📊", "时间事件",  "time_to_event"),
+                        ("📈", "二分类终点", "binary"),
+                        ("📉", "连续终点",  "continuous"),
+                        ("📋", "分类有序",  "categorical_ordered"),
+                        ("🔬", "通用统计",  "general"),
+                        ("🔬", "PK/ADA",   "pk_ada"),
+                    ]
+                    et_cols = st.columns(len(_ENDPOINT_BUTTONS))
+                    for _i, (_icon, _label, _gid) in enumerate(_ENDPOINT_BUTTONS):
+                        with et_cols[_i]:
+                            _is_sel = endpoint_type == _gid
+                            if st.button(
+                                f"{_icon} {_label}",
+                                key=f"ep_type_{row_id}_{_gid}",
+                                type="primary" if _is_sel else "secondary",
+                                use_container_width=True,
+                            ):
+                                if endpoint_type != _gid:
+                                    st.session_state[key] = [
+                                        {**r, "_endpoint_type": _gid} if r["_id"] == row_id else r
+                                        for r in st.session_state[key]
+                                    ]
+                                    st.rerun()
 
         # ── 变量类型切换确认（有现有子行时）──────────────────────────
         pending_vt_key = f"pending_vartype_{row_id}"
@@ -856,26 +1103,6 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                     # 重置 selectbox 回旧类型
                     if f"vartype_{row_id}" in st.session_state:
                         del st.session_state[f"vartype_{row_id}"]
-                    st.rerun()
-
-        # ── Class 修改确认 ────────────────────────────────────────────
-        pending_class_key = f"pending_class_{row_id}"
-        if pending_class_key in st.session_state:
-            new_cls = st.session_state[pending_class_key]
-            st.warning(f"变量「{row.get('Label')}」有 {len(linked_children)} 个子行，是否同步修改 Class → {new_cls}？")
-            col_y, col_n = st.columns(2)
-            with col_y:
-                if st.button("是，同步子行", key=f"cls_yes_{row_id}"):
-                    st.session_state[key] = sync_children_class(st.session_state[key], row_id, new_cls)
-                    del st.session_state[pending_class_key]
-                    st.rerun()
-            with col_n:
-                if st.button("否，仅当前行", key=f"cls_no_{row_id}"):
-                    st.session_state[key] = [
-                        {**r, "Class": new_cls} if r["_id"] == row_id else r
-                        for r in st.session_state[key]
-                    ]
-                    del st.session_state[pending_class_key]
                     st.rerun()
 
         # ── 删除确认 ─────────────────────────────────────────────────
@@ -918,7 +1145,7 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                     for name in names:
                         child_data = _new_data_row(class_val=cls, order=1)
                         child_data["Label"] = name
-                        child_data["Aval"] = aval_val
+                        child_data["Aval"] = _LABEL_AVAL_DEFAULTS.get(name, aval_val)
                         child_meta = _new_meta(parent_id=row_id, linked=True)
                         new_children.append({**child_data, **child_meta})
                     cur_state = st.session_state[key]
@@ -1042,16 +1269,25 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                             for r in st.session_state[key]
                         ]
                         for c in linked_children:
-                            for wk in (f"child_aval_{c['_id']}", f"child_aval_sel_{c['_id']}"):
-                                if wk in st.session_state:
-                                    del st.session_state[wk]
+                            if f"child_aval_{c['_id']}" in st.session_state:
+                                del st.session_state[f"child_aval_{c['_id']}"]
+                            # 显式赋值，不依赖 index 重置
+                            st.session_state[f"child_aval_sel_{c['_id']}"] = bulk_val
                         st.rerun()
             for child in linked_children:
                 child_id = child["_id"]
                 with st.container():
-                    cc_link, cc_class, cc_order, cc_label, cc_aval, cc_ins, cc_unlink = st.columns([0.4, 0.8, 0.8, 2.8, 3, 0.6, 1.5])
+                    cc_link, cc_up, cc_down, cc_class, cc_order, cc_label, cc_aval, cc_blankcol, cc_ins, cc_split, cc_unlink = st.columns([0.3, 0.4, 0.4, 0.75, 0.75, 2.6, 2.2, 0.9, 0.5, 0.75, 0.75])
                     with cc_link:
                         st.markdown("🔗")
+                    with cc_up:
+                        if st.button("▲", key=f"child_up_{child_id}", help="上移（可跨父行）"):
+                            st.session_state[key] = move_child(st.session_state[key], row_id, child_id, -1)
+                            st.rerun()
+                    with cc_down:
+                        if st.button("▼", key=f"child_down_{child_id}", help="下移（可跨父行）"):
+                            st.session_state[key] = move_child(st.session_state[key], row_id, child_id, 1)
+                            st.rerun()
                     with cc_class:
                         st.text_input(
                             "Class", value=str(child.get("Class") or ""),
@@ -1082,7 +1318,14 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                         )
                     with cc_aval:
                         parent_vtype = row.get("_var_type", VAR_TYPE_DEFAULT)
-                        aval_opts_for_child = templates.get(parent_vtype, {}).get("aval_options", [])
+                        _special_vals_for_child: list[str] = []
+                        if format_mode == "statistical" and endpoint_type:
+                            _child_label = str(child.get("Label") or "")
+                            aval_opts_for_child, _special_vals_for_child = _get_child_aval_opts(
+                                _child_label, endpoint_type
+                            )
+                        else:
+                            aval_opts_for_child = templates.get(parent_vtype, {}).get("aval_options", [])
                         cur_child_aval = str(child.get("Aval") or "")
                         if aval_opts_for_child:
                             _CUSTOM = "✏️ 自定义"
@@ -1123,6 +1366,35 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                                 {**r, "Aval": new_aval} if r["_id"] == child_id else r
                                 for r in st.session_state[key]
                             ]
+                        # special_values 快捷 chip（统计量格式模式）
+                        if _special_vals_for_child:
+                            sv_cols = st.columns(len(_special_vals_for_child))
+                            for _svi, _sv in enumerate(_special_vals_for_child):
+                                with sv_cols[_svi]:
+                                    if st.button(
+                                        _sv,
+                                        key=f"sv_{child_id}_{_svi}",
+                                        help=f"填入特殊值: {_sv}",
+                                        use_container_width=True,
+                                    ):
+                                        st.session_state[key] = [
+                                            {**r, "Aval": _sv} if r["_id"] == child_id else r
+                                            for r in st.session_state[key]
+                                        ]
+                                        for _wk in (f"child_aval_{child_id}", f"child_aval_sel_{child_id}"):
+                                            if _wk in st.session_state:
+                                                del st.session_state[_wk]
+                                        st.rerun()
+                    with cc_blankcol:
+                        st.text_input(
+                            "BlankCol", value=str(child.get("BlankCol") or ""),
+                            label_visibility="collapsed",
+                            placeholder="空白列",
+                            help="空白列号，如 1|2（组间比较行仅在差异列填值时使用）",
+                            key=f"child_blankcol_{child_id}",
+                            on_change=_update_field,
+                            args=(f"child_blankcol_{child_id}", key, child_id, "BlankCol"),
+                        )
                     with cc_ins:
                         if st.button("＋", key=f"child_ins_{child_id}", help="在此后插入子行"):
                             parent_cls = int(row.get("Class") or 0)
@@ -1139,8 +1411,20 @@ def render_dataset_editor(ds_name: str, df, templates: dict):
                                     cur_state[:child_pos + 1] + [new_child] + cur_state[child_pos + 1:]
                                 )
                             st.rerun()
+                    with cc_split:
+                        if st.button(
+                            "提升", key=f"split_{child_id}",
+                            help="提升为独立父行（后续 Order 更高的兄弟行一并迁入）",
+                            use_container_width=True,
+                        ):
+                            st.session_state[key] = split_child_to_parent(
+                                st.session_state[key], row_id, child_id
+                            )
+                            st.rerun()
                     with cc_unlink:
-                        if st.button("断开链接", key=f"unlink_{child_id}"):
+                        if st.button("断链", key=f"unlink_{child_id}",
+                                     help="断开与父行的链接，变为独立行",
+                                     use_container_width=True):
                             st.session_state[key] = unlink_child(st.session_state[key], child_id)
                             st.rerun()
 

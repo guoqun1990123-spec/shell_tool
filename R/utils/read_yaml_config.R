@@ -126,5 +126,8 @@ read_yaml_input <- function(yaml_file) {
     }))
   })
 
-  list(config = config, datasets = datasets)
+  # 读取 figures 块（可选，用于嵌入图片覆盖 mock 示意图）
+  figures <- if (!is.null(raw$figures)) raw$figures else list()
+
+  list(config = config, datasets = datasets, figures = figures)
 }

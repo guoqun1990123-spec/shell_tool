@@ -1,20 +1,416 @@
-连续变量:
-  children:
-  - Label: 例数
-    Aval: xx
-  - Label: 均值（标准差）
-    Aval: xx.x (xx.xx)
-  - Label: 中位数
-    Aval: xx.x
-  - Label: 最小值 - 最大值
-    Aval: xx – xx
-分类变量-有子分类:
-  children: []
-  aval_options:
-  - xx (xx.x)
-分类变量-无子分类:
-  aval: xx (xx.x)
-日期变量:
-  aval: YYYY-MM-DD
-  children: []
-手动输入: {}
+version: 2
+
+# 原有：变量结构模板（基线特征表用）
+templates:
+  - type: "连续变量"
+    category: "基础"
+    children:
+      - {Label: "例数", Aval: "xx"}
+      - {Label: "均值（标准差）", Aval: "xx.x (xx.x)"}
+      - {Label: "中位数", Aval: "xx.x"}
+      - {Label: "最小值-最大值", Aval: "xx.x – xx.x"}
+    aval_options: null
+
+  - type: "分类变量-有子分类"
+    category: "基础"
+    children: []
+    aval_options: ["xx (xx.x)"]
+
+  - type: "分类变量-无子分类"
+    category: "基础"
+    aval: "xx (xx.x)"
+    children: []
+
+  - type: "日期变量"
+    category: "基础"
+    aval: "YYYY-MM-DD"
+    children: []
+
+  - type: "手动输入"
+    category: "基础"
+    aval: null
+    children: []
+
+# 新增：统计量格式模板（疗效终点用）
+statistical_formats:
+  endpoint_groups:
+    - group_id: "time_to_event"
+      group_name: "📊 时间-事件终点"
+      icon: "📊"
+      description: "OS、PFS、DFS、TTP 等生存分析"
+      subgroups:
+        - subgroup_id: "primary"
+          subgroup_name: "📈 主要分析"
+          default_expanded: true
+          items:
+            - item_id: "median_survival"
+              label: "中位生存时间 (95% CI)"
+              aval_template: "xx.x (xx.x, xx.x)"
+              aval_options: ["xx.x (xx.x, xx.x)", "xx.xx (xx.xx, xx.xx)"]
+              special_values: ["NE", "NR"]
+              unit_hint: "月"
+              default_checked: true
+
+            - item_id: "hr_ci"
+              label: "风险比 (95% CI)"
+              aval_template: "x.xxx (x.xxx, x.xxx)"
+              aval_options: ["x.xxx (x.xxx, x.xxx)", "x.xx (x.xx, x.xx)", "x.xx"]
+              default_checked: true
+
+            - item_id: "hr_p"
+              label: "风险比 (95% CI) + p值"
+              aval_template: "x.xxx (x.xxx, x.xxx), p=x.xxx"
+              aval_options: ["x.xxx (x.xxx, x.xxx), p=x.xxx", "x.xx (x.xx, x.xx), p=x.xx"]
+              default_checked: false
+
+            - item_id: "logrank_p"
+              label: "Log-Rank检验p值"
+              aval_template: "x.xxx"
+              aval_options: ["x.xxx"]
+              special_values: ["<<0.001", "NS", "NA"]
+              default_checked: true
+
+        - subgroup_id: "event_rates"
+          subgroup_name: "📅 时点生存率"
+          default_expanded: true
+          items:
+            - item_id: "event_rate"
+              label: "事件发生率"
+              aval_template: "xx.x (xx/xx)"
+              aval_options: ["xx.x (xx/xx)"]
+              default_checked: false
+
+            - item_id: "timepoint_rates"
+              label: "时点生存率 (95% CI)"
+              aval_template: "xx.x (xx.x, xx.x)"
+              aval_options: ["xx.x (xx.x, xx.x)", "xx.x"]
+              default_checked: true
+
+        - subgroup_id: "sensitivity"
+          subgroup_name: "📉 敏感性分析"
+          default_expanded: false
+          items:
+            - item_id: "censor_rate"
+              label: "删失率"
+              aval_template: "xx.x (xx/xx)"
+              aval_options: ["xx.x (xx/xx)"]
+              default_checked: false
+
+            - item_id: "competing_risk"
+              label: "竞争风险模型 (95% CI)"
+              aval_template: "xx.x (xx.x, xx.x)"
+              aval_options: ["xx.x (xx.x, xx.x)"]
+              default_checked: false
+
+    - group_id: "binary"
+      group_name: "📈 二分类终点"
+      icon: "📈"
+      description: "ORR、pCR、DCR 等客观缓解指标"
+      subgroups:
+        - subgroup_id: "response_rates"
+          subgroup_name: "📈 缓解率"
+          default_expanded: true
+          items:
+            - item_id: "orr"
+              label: "客观缓解率 (ORR)"
+              aval_template: "xx.x (xx/xx)"
+              aval_options: ["xx.x (xx/xx)", "xx.x%"]
+              default_checked: true
+
+            - item_id: "cr_rate"
+              label: "完全缓解率 (CRR)"
+              aval_template: "xx.x (xx/xx)"
+              aval_options: ["xx.x (xx/xx)", "xx.x%"]
+              default_checked: false
+
+            - item_id: "pr_rate"
+              label: "部分缓解率"
+              aval_template: "xx.x (xx/xx)"
+              aval_options: ["xx.x (xx/xx)", "xx.x%"]
+              default_checked: false
+
+            - item_id: "dcr"
+              label: "疾病控制率 (DCR)"
+              aval_template: "xx.x (xx/xx)"
+              aval_options: ["xx.x (xx/xx)", "xx.x%"]
+              default_checked: false
+
+        - subgroup_id: "comparisons"
+          subgroup_name: "📊 组间比较"
+          default_expanded: true
+          items:
+            - item_id: "rate_diff_ci"
+              label: "率差 (95% CI)"
+              aval_template: "xx.x (xx.x, xx.x)"
+              aval_options: ["xx.x (xx.x, xx.x)"]
+              default_checked: false
+
+            - item_id: "rate_diff_p"
+              label: "率差 (95% CI) + p值"
+              aval_template: "xx.x (xx.x, xx.x), p=x.xxx"
+              aval_options: ["xx.x (xx.x, xx.x), p=x.xxx"]
+              default_checked: false
+
+            - item_id: "or_ci"
+              label: "比值比 OR (95% CI)"
+              aval_template: "x.xx (x.xx, x.xx)"
+              aval_options: ["x.xx (x.xx, x.xx)", "x.xxx (x.xxx, x.xxx)"]
+              default_checked: false
+
+            - item_id: "rr_ci"
+              label: "相对风险 RR (95% CI)"
+              aval_template: "x.xx (x.xx, x.xx)"
+              aval_options: ["x.xx (x.xx, x.xx)", "x.xxx (x.xxx, x.xxx)"]
+              default_checked: false
+
+            - item_id: "ci_comma"
+              label: "95%置信区间（逗号分隔）"
+              aval_template: "xx.x, xx.x"
+              aval_options: ["xx.x, xx.x", "xx.xx, xx.xx"]
+              default_checked: false
+
+            - item_id: "compare_p"
+              label: "比较p值"
+              aval_template: "x.xxx"
+              aval_options: ["x.xxx"]
+              special_values: ["<<0.001", "NS", "NA"]
+              default_checked: false
+
+    - group_id: "continuous"
+      group_name: "📉 连续终点"
+      icon: "📉"
+      description: "血压、FEV1、量表评分等变化值"
+      subgroups:
+        - subgroup_id: "descriptive"
+          subgroup_name: "📊 描述性统计"
+          default_expanded: true
+          items:
+            - item_id: "mean_sd"
+              label: "均值 (标准差)"
+              aval_template: "xx.x (xx.x)"
+              aval_options: ["xx.x (xx.x)", "xx.xx (xx.xx)"]
+              default_checked: true
+
+            - item_id: "mean_pm_sd"
+              label: "均值 ± 标准差"
+              aval_template: "xx.x ± xx.x"
+              aval_options: ["xx.x ± xx.x", "xx.xx ± xx.xx"]
+              default_checked: false
+
+            - item_id: "median_iqr"
+              label: "中位数 (Q1, Q3)"
+              aval_template: "xx.x (xx.x, xx.x)"
+              aval_options: ["xx.x (xx.x, xx.x)"]
+              default_checked: false
+
+        - subgroup_id: "ancova"
+          subgroup_name: "📈 ANCOVA/重复测量"
+          default_expanded: true
+          items:
+            - item_id: "lsm_se"
+              label: "最小二乘均值 (SE)"
+              aval_template: "xx.x (xx.xx)"
+              aval_options: ["xx.x (xx.xx)", "xx.xx (xx.xxx)"]
+              default_checked: false
+
+            - item_id: "baseline_sd"
+              label: "基线值 (SD)"
+              aval_template: "xx.x (xx.x)"
+              aval_options: ["xx.x (xx.x)"]
+              default_checked: false
+
+            - item_id: "post_sd"
+              label: "治疗后值 (SD)"
+              aval_template: "xx.x (xx.x)"
+              aval_options: ["xx.x (xx.x)"]
+              default_checked: false
+
+            - item_id: "change_sd"
+              label: "基线变化值 (SD)"
+              aval_template: "-xx.x (xx.x)"
+              aval_options: ["-xx.x (xx.x)", "xx.x (xx.x)"]
+              default_checked: true
+
+        - subgroup_id: "group_comparison"
+          subgroup_name: "📊 组间比较"
+          default_expanded: false
+          items:
+            - item_id: "diff_ci"
+              label: "组间均值差 (95% CI)"
+              aval_template: "xx.x (xx.x, xx.x)"
+              aval_options: ["xx.x (xx.x, xx.x)", "xx.xx (xx.xx, xx.xx)"]
+              default_checked: false
+
+            - item_id: "diff_p"
+              label: "组间均值差 (95% CI) + p值"
+              aval_template: "xx.x (xx.x, xx.x), p=x.xxx"
+              aval_options: ["xx.x (xx.x, xx.x), p=x.xxx"]
+              default_checked: false
+
+    - group_id: "categorical_ordered"
+      group_name: "📋 分类/有序终点"
+      icon: "📋"
+      description: "Likert量表、mRS评分、AE等级等"
+      subgroups:
+        - subgroup_id: "frequency"
+          subgroup_name: "📊 频数分布"
+          default_expanded: true
+          items:
+            - item_id: "freq_dist"
+              label: "各等级例数（%）"
+              aval_template: "xx (xx.x)"
+              aval_options: ["xx (xx.x)", "xx.x (xx.x)"]
+              default_checked: true
+              has_children: true
+              children_template:
+                - {Label: "等级1", Aval: "xx (xx.x)"}
+                - {Label: "等级2", Aval: "xx (xx.x)"}
+                - {Label: "等级3", Aval: "xx (xx.x)"}
+
+            - item_id: "responder"
+              label: "应答者分析"
+              aval_template: "xx.x (xx/xx)"
+              aval_options: ["xx.x (xx/xx)"]
+              default_checked: false
+
+        - subgroup_id: "ordinal"
+          subgroup_name: "📈 有序模型"
+          default_expanded: false
+          items:
+            - item_id: "cumulative_or"
+              label: "累积比数比 (95% CI)"
+              aval_template: "x.xx (x.xx, x.xx)"
+              aval_options: ["x.xx (x.xx, x.xx)", "x.xxx (x.xxx, x.xxx)"]
+              default_checked: false
+
+    - group_id: "general"
+      group_name: "🔬 通用统计量"
+      icon: "🔬"
+      description: "跨终点类型复用的通用指标"
+      subgroups:
+        - subgroup_id: "p_values"
+          subgroup_name: "p值"
+          default_expanded: true
+          items:
+            - item_id: "p_value"
+              label: "p值"
+              aval_template: "x.xxx"
+              aval_options: ["x.xxx"]
+              special_values: ["<<0.001", "NS", "NA", "NR"]
+              default_checked: false
+
+        - subgroup_id: "counts"
+          subgroup_name: "例数"
+          default_expanded: false
+          items:
+            - item_id: "count"
+              label: "例数"
+              aval_template: "xx"
+              aval_options: ["xx"]
+              default_checked: false
+
+    - group_id: "pk_ada"
+      group_name: "🔬 PK/ADA 终点"
+      icon: "🔬"
+      description: "药代动力学、免疫原性分析"
+      subgroups:
+        - subgroup_id: "descriptive"
+          subgroup_name: "📊 描述性统计"
+          default_expanded: true
+          items:
+            - item_id: "n_missing"
+              label: "例数（缺失）"
+              aval_template: "xx (x)"
+              aval_options: ["xx (x)"]
+              special_values: []
+              unit_hint: null
+              default_checked: true
+              has_children: false
+              children_template: []
+
+            - item_id: "n_bql"
+              label: "BQL例数"
+              aval_template: "xx"
+              aval_options: ["xx"]
+              special_values: []
+              unit_hint: null
+              default_checked: false
+              has_children: false
+              children_template: []
+
+            - item_id: "mean"
+              label: "算术均值"
+              aval_template: "xx.x"
+              aval_options: ["xx.x", "xx.xx"]
+              special_values: []
+              unit_hint: null
+              default_checked: true
+              has_children: false
+              children_template: []
+
+            - item_id: "sd"
+              label: "标准差"
+              aval_template: "xx.x"
+              aval_options: ["xx.x", "xx.xx"]
+              special_values: []
+              unit_hint: null
+              default_checked: true
+              has_children: false
+              children_template: []
+
+            - item_id: "median"
+              label: "中位数"
+              aval_template: "xx.x"
+              aval_options: ["xx.x", "xx.xx"]
+              special_values: []
+              unit_hint: null
+              default_checked: false
+              has_children: false
+              children_template: []
+
+            - item_id: "min_max"
+              label: "最小值 - 最大值"
+              aval_template: "xx.x – xx.x"
+              aval_options: ["xx.x – xx.x", "xx.xx – xx.xx"]
+              special_values: []
+              unit_hint: null
+              default_checked: false
+              has_children: false
+              children_template: []
+
+            - item_id: "cv_pct"
+              label: "CV (%)"
+              aval_template: "xx.x"
+              aval_options: ["xx.x", "xx.xx"]
+              special_values: []
+              unit_hint: "%"
+              default_checked: false
+              has_children: false
+              children_template: []
+
+            - item_id: "geomean"
+              label: "几何均值"
+              aval_template: "xx.x"
+              aval_options: ["xx.x", "xx.xx", "xx.x (xx.x%)"]
+              special_values: []
+              unit_hint: null
+              default_checked: false
+              has_children: false
+              children_template: []
+
+            - item_id: "geocv_pct"
+              label: "几何CV (%)"
+              aval_template: "xx.x"
+              aval_options: ["xx.x", "xx.xx"]
+              special_values: []
+              unit_hint: "%"
+              default_checked: false
+              has_children: false
+              children_template: []
+
+# 格式校验规则
+validation_rules:
+  "xx.x (xx.x, xx.x)": '^\d+\.\d\s+\(\d+\.\d,\s*\d+\.\d\)$'
+  "x.xxx (x.xxx, x.xxx)": '^\d+\.\d{3}\s+\(\d+\.\d{3},\s*\d+\.\d{3}\)$'
+  "xx.x (xx/xx)": '^\d+\.\d\s+\(\d+/\d+\)$'
+  "x.xxx": '^(?:\d+\.\d{3}|<0\.001|<<0\.001|NS|NA|NR)$'

@@ -133,6 +133,32 @@ web/
 | `datasets` | `dict[str, DataFrame]` | 所有数据集 |
 | `render_status` | `dict` | 最近渲染状态（status/output_bytes/elapsed等） |
 
+## 变量类型模板（web/variable_templates.yaml）
+
+模板配置定义每种变量类型在 Datasets 编辑器中的默认子行结构和 Aval 值，存储于 `web/variable_templates.yaml`，由 `web/templates_io.py` 读写。
+
+**内置 5 种类型（不可删除，固定顺序）：**
+
+| 类型 | 模板字段 | 效果 |
+|------|----------|------|
+| `连续变量` | `children`（例数/均值/中位数/最小-最大 4条子行） | 切换后自动插入子行并填充 Label+Aval |
+| `分类变量-有子分类` | `children: []` + `aval_options: ["xx (xx.x)"]` | 切换后弹出文本框让用户输入子分类名，批量生成子行 |
+| `分类变量-无子分类` | `aval: "xx (xx.x)"` | 直接设父行 Aval，无子行 |
+| `日期变量` | `aval: "YYYY-MM-DD"` + `children: []` | 直接设父行 Aval |
+| `手动输入` | `{}` | 不注入任何默认值 |
+
+用户可在「⚙️ 模板配置」标签页新增自定义类型，追加在内置类型之后。
+
+**模板与 Datasets 页的联动（均在 `web/dataset_editor.py`）：**
+
+1. **导入时自动推断类型**（`_infer_var_types`）：从 Excel/YAML 读入后按子行数量和 Aval 模式推断 `_var_type`；有子行且 Aval 匹配 `_CONTINUOUS_AVAL_PATTERNS` → 连续变量，匹配 `_CATEGORICAL_AVAL_PATTERNS` → 分类变量-有子分类，无子行匹配分类 → 分类变量-无子分类。
+2. **切换变量类型时展开模板子行**（`expand_var_type`）：删除旧 linked 子行，按模板插入新子行，父行 Aval 更新为模板 `aval` 字段。
+3. **子行 Aval 控件由 `aval_options` 驱动**：模板有 `aval_options` 时子行显示 selectbox（含「✏️ 自定义」项），否则为 text_input。
+4. **🔧 自动矫正**（`normalize_dataset_state` + `apply_normalize`）：Aval 为空的行自动填充模板值；Aval 非空但不符的行列为 conflict，一键全部应用。
+5. **批量设子行 Aval**：候选值来自父行变量类型的 `aval_options`。
+
+**特殊规则**：`_LABEL_AVAL_DEFAULTS`（当前仅 `"例数" → "xx"`）优先于模板 `aval_options`，用于子行按 Label 自动填充 Aval。
+
 ## 关键设计约定
 
 **列名处理：** `openxlsx` 读取Excel时将空格转为点号，`read_config.R` 会自动还原，并做旧列名兼容映射（如 `Datesets` → `Datasets`，`Subgrop` → `Subgrp`）。

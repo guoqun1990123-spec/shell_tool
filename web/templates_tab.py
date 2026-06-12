@@ -4,10 +4,13 @@ from __future__ import annotations
 
 import streamlit as st
 
-from templates_io import load_templates, save_templates, _BASE_TYPES
+from templates_io import (
+    load_structure_templates, save_structure_templates, _BASE_TYPES,
+    load_stat_groups_for_edit, save_statistical_formats,
+)
 from config_templates_io import load_config_templates, save_config_templates
 from config_display_io import load_display_levels, save_display_levels, REQUIRED_FIELDS
-from schema import CONFIG_COLS
+from schema import CONFIG_COLS, StatItem, VALIDATION_RULES
 
 
 # ── UI 辅助函数 ──────────────────────────────────────────────────────────────
@@ -18,7 +21,7 @@ def _edit_str_list(items: list, key_prefix: str, ver: int) -> list:
     for j, val in enumerate(items):
         c1, c2 = st.columns([5, 0.5])
         with c1:
-            new_val = st.text_input("", value=val, label_visibility="collapsed",
+            new_val = st.text_input("值", value=val, label_visibility="collapsed",
                                     key=f"{key_prefix}_{ver}_{j}")
         with c2:
             if not st.button("🗑", key=f"{key_prefix}_del_{ver}_{j}"):
@@ -48,13 +51,114 @@ def _edit_children_list(children: list, key_prefix: str, ver: int) -> list:
 
 # ── 主渲染函数 ────────────────────────────────────────────────────────────────
 
+def render_stat_format_section(stat_ver: int) -> None:
+    """渲染统计量格式模板编辑区。"""
+    groups = load_stat_groups_for_edit()
+    if not groups:
+        st.info("未找到统计量格式模板，请检查 variable_templates.yaml")
+        return
+
+    tab_labels = [g.group_name for g in groups]
+    tabs = st.tabs(tab_labels)
+
+    for group, tab in zip(groups, tabs):
+        with tab:
+            if group.description:
+                st.caption(group.description)
+
+            for sg in group.subgroups:
+                with st.expander(sg.subgroup_name, expanded=sg.default_expanded):
+                    delete_indices: list[int] = []
+
+                    for ii, item in enumerate(sg.items):
+                        kb = f"sf_{group.group_id}_{sg.subgroup_id}_{ii}"
+
+                        # 统计量名称 | 默认格式 | 默认勾选 | 删除
+                        hc1, hc2, hc3, hc4 = st.columns([3.5, 2.5, 1, 0.5])
+                        with hc1:
+                            item.label = st.text_input(
+                                "名称", value=item.label,
+                                key=f"{kb}_lbl_{stat_ver}",
+                                label_visibility="collapsed",
+                                placeholder="统计量名称",
+                            )
+                        with hc2:
+                            item.aval_template = st.text_input(
+                                "默认格式", value=item.aval_template,
+                                key=f"{kb}_tmpl_{stat_ver}",
+                                label_visibility="collapsed",
+                                placeholder="xx.x (xx.x, xx.x)",
+                            )
+                        with hc3:
+                            item.default_checked = st.checkbox(
+                                "默认勾选", value=item.default_checked,
+                                key=f"{kb}_chk_{stat_ver}",
+                            )
+                        with hc4:
+                            if st.button("🗑", key=f"{kb}_del_{stat_ver}", help="删除此统计量"):
+                                delete_indices.append(ii)
+
+                        # Aval 候选格式列表
+                        oc1, oc2 = st.columns([6, 0.6])
+                        with oc1:
+                            st.caption("Aval 候选格式：")
+                        with oc2:
+                            if st.button("＋", key=f"{kb}_opt_add_{stat_ver}", help="添加候选格式"):
+                                item.aval_options.append("")
+                        item.aval_options = _edit_str_list(
+                            item.aval_options, f"{kb}_opt", stat_ver
+                        )
+
+                        # 特殊值列表（NE / NR / <<0.001 等）
+                        sv_list = list(item.special_values)
+                        sc1, sc2 = st.columns([6, 0.6])
+                        with sc1:
+                            st.caption("特殊值（如 NE、NR、<<0.001）：")
+                        with sc2:
+                            if st.button("＋", key=f"{kb}_sv_add_{stat_ver}", help="添加特殊值"):
+                                sv_list.append("")
+                        item.special_values = _edit_str_list(
+                            sv_list, f"{kb}_sv", stat_ver
+                        )
+                        st.divider()
+
+                    # 应用删除
+                    if delete_indices:
+                        sg.items = [it for i, it in enumerate(sg.items) if i not in delete_indices]
+                        st.cache_data.clear()
+                        st.rerun()
+
+                    # 新增统计量
+                    if st.button(
+                        "＋ 添加统计量",
+                        key=f"sf_{group.group_id}_{sg.subgroup_id}_add_{stat_ver}",
+                    ):
+                        sg.items.append(StatItem(
+                            item_id=f"custom_{len(sg.items)}",
+                            label="",
+                            aval_template="",
+                        ))
+                        st.cache_data.clear()
+                        st.rerun()
+
+    st.divider()
+    if st.button("保存统计量格式模板", key="btn_save_stat_tmpl", type="secondary"):
+        try:
+            save_statistical_formats(groups, VALIDATION_RULES)
+            st.cache_data.clear()
+            st.session_state["stat_tmpl_version"] = stat_ver + 1
+            st.success("统计量格式模板已保存")
+        except OSError as e:
+            st.error(f"保存失败：{e}")
+
+
 def render_templates_tab() -> None:
     """渲染「模板配置」标签页全部内容。"""
     cfg_tmpl_ver = st.session_state.get("cfg_tmpl_version", 0)
     tmpl_ver = st.session_state.tmpl_version
 
     with st.expander("变量类型模板配置", expanded=True):
-        templates_edit = load_templates()
+        templates_edit = load_structure_templates()
 
         st.caption("连续变量子行（Label + Aval 模板）")
         cont_children = templates_edit.get("连续变量", {}).get("children", [])
@@ -129,7 +233,7 @@ def render_templates_tab() -> None:
 
         if st.button("保存模板", key="btn_save_tmpl", type="secondary"):
             try:
-                save_templates(templates_edit)
+                save_structure_templates(templates_edit)
                 st.cache_data.clear()
                 st.session_state.tmpl_version += 1
                 st.success("模板已保存")
@@ -137,7 +241,45 @@ def render_templates_tab() -> None:
                 st.error(f"保存失败：{e}")
 
     with st.expander("⚙️ Config 模板配置", expanded=True):
-        tab_sec, tab_pop, tab_fn, tab_levels = st.tabs(["Section 映射", "pop 选项", "脚注片段", "显示级别"])
+        tab_trtlab, tab_sec, tab_pop, tab_fn, tab_levels = st.tabs(
+            ["Trtlab 预设", "Section 映射", "pop 选项", "脚注片段", "显示级别"]
+        )
+
+        with tab_trtlab:
+            cfg_tmpl_trt = load_config_templates()
+            trt_presets: list = list(cfg_tmpl_trt.get("trtlab_presets", []))
+            new_trt_presets: list = []
+            for j, preset in enumerate(trt_presets):
+                tc1, tc2, tc3 = st.columns([2.5, 3.5, 0.5])
+                with tc1:
+                    new_lbl = st.text_input(
+                        "标签", value=preset.get("label", ""),
+                        label_visibility="collapsed",
+                        placeholder="如：14.1 三组",
+                        key=f"cfgtmpl_trtlbl_{cfg_tmpl_ver}_{j}",
+                    )
+                with tc2:
+                    new_val = st.text_input(
+                        "值", value=preset.get("value", ""),
+                        label_visibility="collapsed",
+                        placeholder="如：试验组(N=xx)|对照组(N=xx)|合计(N=xx)",
+                        key=f"cfgtmpl_trtval_{cfg_tmpl_ver}_{j}",
+                    )
+                with tc3:
+                    if not st.button("🗑", key=f"cfgtmpl_trtdel_{cfg_tmpl_ver}_{j}"):
+                        if new_lbl.strip():
+                            new_trt_presets.append({"label": new_lbl.strip(), "value": new_val})
+            if st.button("＋ 添加预设", key="cfgtmpl_trtadd"):
+                new_trt_presets.append({"label": "", "value": ""})
+            cfg_tmpl_trt["trtlab_presets"] = new_trt_presets
+            if st.button("保存 Trtlab 预设", key="btn_save_trtlab", type="secondary"):
+                try:
+                    save_config_templates(cfg_tmpl_trt)
+                    st.cache_data.clear()
+                    st.session_state["cfg_tmpl_version"] = cfg_tmpl_ver + 1
+                    st.success("已保存")
+                except OSError as e:
+                    st.error(f"保存失败：{e}")
 
         with tab_sec:
             cfg_tmpl_edit = load_config_templates()
@@ -241,3 +383,7 @@ def render_templates_tab() -> None:
                     st.success("显示设置已保存")
                 except OSError as e:
                     st.error(f"保存失败：{e}")
+
+    stat_ver = st.session_state.get("stat_tmpl_version", 0)
+    with st.expander("📊 统计量格式模板配置", expanded=False):
+        render_stat_format_section(stat_ver)

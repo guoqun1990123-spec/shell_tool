@@ -328,7 +328,7 @@ def test_df_to_card_state_child_inherits_parent_class():
 
 
 # ── _infer_var_types / normalize_dataset_state / apply_normalize ────────────
-from dataset_editor import _infer_var_types, normalize_dataset_state, apply_normalize
+from dataset_editor import _infer_var_types, normalize_dataset_state, apply_normalize, _fill_aval_by_label
 
 
 def test_infer_var_type_continuous():
@@ -434,3 +434,71 @@ def test_normalize_categorical_already_single_correct():
     ]
     _, conflicts = normalize_dataset_state(state, templates)
     assert conflicts == []
+
+
+def test_normalize_categorical_parent_aval_used_as_expected():
+    """父行已选定非默认 Aval（如 xx (xx.x%)）时，矫正期望值应与父行一致而非 aval_options[0]。"""
+    templates = {"分类变量-有子分类": {"children": [], "aval_options": ["xx (xx.x)", "xx (xx.x%)"]}}
+    state = [
+        {"_id": "p1", "_parent_id": None, "_linked": False, "_expanded": True,
+         "_var_type": "分类变量-有子分类", "Class": 1, "Order": 0, "Label": "缓解",
+         "Aval": "xx (xx.x%)", "exclude": 0, "BlankCol": ""},
+        {"_id": "c1", "_parent_id": "p1", "_linked": True, "_expanded": True,
+         "_var_type": "手动输入", "Class": 1, "Order": 1, "Label": "完全缓解",
+         "Aval": "xx (xx.x)", "exclude": 0, "BlankCol": ""},
+    ]
+    _, conflicts = normalize_dataset_state(state, templates)
+    # 子行 Aval 与父行不符，应报 conflict
+    assert len(conflicts) == 1
+    assert conflicts[0]["template_aval"] == "xx (xx.x%)"
+
+
+def test_normalize_categorical_child_matches_parent_aval_no_conflict():
+    """子行 Aval 与父行选定值一致时，不应产生 conflict，即使不是 aval_options[0]。"""
+    templates = {"分类变量-有子分类": {"children": [], "aval_options": ["xx (xx.x)", "xx (xx.x%)"]}}
+    state = [
+        {"_id": "p1", "_parent_id": None, "_linked": False, "_expanded": True,
+         "_var_type": "分类变量-有子分类", "Class": 1, "Order": 0, "Label": "缓解",
+         "Aval": "xx (xx.x%)", "exclude": 0, "BlankCol": ""},
+        {"_id": "c1", "_parent_id": "p1", "_linked": True, "_expanded": True,
+         "_var_type": "手动输入", "Class": 1, "Order": 1, "Label": "完全缓解",
+         "Aval": "xx (xx.x%)", "exclude": 0, "BlankCol": ""},
+    ]
+    _, conflicts = normalize_dataset_state(state, templates)
+    assert conflicts == []
+
+
+# ── _fill_aval_by_label ──────────────────────────────────────────────────────
+
+def test_fill_aval_by_label_fills_empty_aval():
+    """Label='例数' 且 Aval 为空时应自动填充为 'xx'。"""
+    state = [{"_id": "c1", "_parent_id": "p1", "_linked": True, "Label": "例数", "Aval": ""}]
+    result = _fill_aval_by_label(state)
+    assert result[0]["Aval"] == "xx"
+
+
+def test_fill_aval_by_label_skips_nonempty_aval():
+    """Aval 已有值时不覆盖。"""
+    state = [{"_id": "c1", "_parent_id": "p1", "_linked": True, "Label": "例数", "Aval": "N"}]
+    result = _fill_aval_by_label(state)
+    assert result[0]["Aval"] == "N"
+
+
+def test_fill_aval_by_label_ignores_unknown_label():
+    """未知 Label 不受影响。"""
+    state = [{"_id": "c1", "_parent_id": "p1", "_linked": True, "Label": "均值", "Aval": ""}]
+    result = _fill_aval_by_label(state)
+    assert result[0]["Aval"] == ""
+
+
+def test_df_to_card_state_fills_aval_for_count_row():
+    """从 DataFrame 导入时，Label='例数' 且 Aval 为空的行应被自动填充为 'xx'。"""
+    df = pd.DataFrame([
+        {"Class": 1, "Label": "年龄", "Order": 0, "Aval": "", "exclude": 0,
+         "BlankCol": "", "Drug": "", "Visit": "", "Base": ""},
+        {"Class": 1, "Label": "例数", "Order": 1, "Aval": "", "exclude": 0,
+         "BlankCol": "", "Drug": "", "Visit": "", "Base": ""},
+    ])
+    result = df_to_card_state(df)
+    count_row = next(r for r in result if r["Label"] == "例数")
+    assert count_row["Aval"] == "xx"
