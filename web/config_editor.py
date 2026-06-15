@@ -198,6 +198,10 @@ def _ensure_card_state(config_df: pd.DataFrame) -> None:
         card_state = _compute_table_nos(df_to_card_state(config_df))
         st.session_state[_CARD_STATE_KEY] = card_state
         st.session_state[_SYNC_VER_KEY] = ver
+        # 重建产生了新 uuid，nav 已用旧 uuid 渲染——立刻 rerun 让 nav 与
+        # card_state 同步，避免第一次点击 nav 时 NAV_SELECTED_ID 找不到匹配
+        st.session_state[NAV_SELECTED_ID] = None
+        st.rerun()
 
 
 def _ensure_filter() -> None:
