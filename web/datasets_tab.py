@@ -10,7 +10,7 @@ from schema import (
 )
 from keys import (
     CFG_CARD_STATE as _CFG_CARD_KEY,
-    CFG_FOCUS_ID, ACTIVE_TAB as _ACTIVE_TAB_KEY, TAB_SWITCH_REQ,
+    ACTIVE_TAB as _ACTIVE_TAB_KEY, TAB_SWITCH_REQ,
     MAIN_SELECTED_ID,
 )
 from dataset_editor import (
@@ -117,8 +117,8 @@ def render_datasets_tab() -> None:
                 sel_id = st.session_state.get(MAIN_SELECTED_ID)
                 if sel_id:
                     cs_back = st.session_state.get(_CFG_CARD_KEY, [])
-                    st.session_state[_CFG_CARD_KEY] = _update_card(cs_back, sel_id, _level="focus")
-                    st.session_state[CFG_FOCUS_ID] = sel_id
+                    # 展开为 level1（已移除 focus 专注模式）
+                    st.session_state[_CFG_CARD_KEY] = _update_card(cs_back, sel_id, _level="level1")
                     st.session_state["section_nav_view_mode"] = "card"
                 st.session_state[_ACTIVE_TAB_KEY] = "config"
                 st.session_state[TAB_SWITCH_REQ] = st.session_state.get(TAB_SWITCH_REQ, 0) + 1

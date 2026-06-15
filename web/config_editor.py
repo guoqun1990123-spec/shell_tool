@@ -17,7 +17,7 @@ from keys import (
 # ── 常量 ─────────────────────────────────────────────────────────────────────
 
 CAT_OPTIONS = ["", "表", "图", "列表"]
-# Re-export：section_table.py 从此处导入，保持向后兼容
+# Re-export（历史兼容别名，app.py 仍依赖这些符号）
 _CARD_STATE_KEY = CFG_CARD_STATE
 _SELECTED_ID_KEY = CFG_SELECTED_ID
 _FOCUS_KEY = CFG_FOCUS_ID
@@ -25,6 +25,16 @@ _SYNC_VER_KEY = "_cfg_editor_sync_ver"
 _FILTER_KEY = "_cfg_filter"
 _MENU_OPEN_KEY = "cfg_menu_open"    # set[card_id]，⋮ 菜单展开状态
 _DS_OPEN_KEY = "cfg_ds_panel_open"  # set[card_id]，Datasets 面板展开状态
+
+
+@st.cache_data(ttl=10)
+def _list_fig_templates(tmpl_dir: str) -> list[str]:
+    """扫描模板图库目录，返回文件名列表（ttl=10s 缓存，避免每轮 rerun 都 glob 磁盘）。"""
+    from pathlib import Path
+    d = Path(tmpl_dir)
+    if not d.exists():
+        return []
+    return sorted(p.name for p in d.glob("*.png"))
 
 
 def _menu_open() -> set:
@@ -233,7 +243,6 @@ def _render_header(
     card_id = card["_id"]
     level = card.get("_level", "collapsed")
     is_collapsed = level == "collapsed"
-    is_focus = level == "focus"
 
     seq = idx + 1
     sec = str(card.get("Section no", "") or "")
@@ -255,9 +264,9 @@ def _render_header(
         info_parts.append(tbl_display)
     info_str = " · ".join(info_parts)
 
-    # 8 列布局：收起 | 专注 | ▲ | ▼ | + | ⋮ | 🗂 | 信息/标题
-    c_collapse, c_focus, c_up, c_dn, c_ins, c_more, c_ds, c_info = st.columns(
-        [0.55, 0.45, 0.28, 0.28, 0.28, 0.28, 0.45, 4.5]
+    # 7 列布局：收起 | ▲ | ▼ | + | ⋮ | 🗂 | 信息/标题
+    c_collapse, c_up, c_dn, c_ins, c_more, c_ds, c_info = st.columns(
+        [0.55, 0.28, 0.28, 0.28, 0.28, 0.45, 4.5]
     )
 
     # 收起按钮（仅展开时显示）
@@ -268,24 +277,6 @@ def _render_header(
                 st.session_state[_MENU_OPEN_KEY] = menu
                 st.session_state[_CARD_STATE_KEY] = _update_card(
                     card_state, card_id, _level="collapsed"
-                )
-                st.rerun()
-
-    # 专注 / 退出专注
-    with c_focus:
-        if is_focus:
-            if st.button("退出🔍", key=f"cfg_unfocus_{card_id}_{version}"):
-                st.session_state[_FOCUS_KEY] = None
-                st.session_state[_CARD_STATE_KEY] = _update_card(
-                    card_state, card_id, _level="level1"
-                )
-                st.rerun()
-        else:
-            if st.button("🔍", key=f"cfg_focus_{card_id}_{version}"):
-                st.session_state[_FOCUS_KEY] = card_id
-                st.session_state[_SELECTED_ID_KEY] = card_id
-                st.session_state[_CARD_STATE_KEY] = _update_card(
-                    card_state, card_id, _level="focus"
                 )
                 st.rerun()
 
@@ -681,7 +672,8 @@ def _render_figure_panel(card: dict, card_id: str, version: int) -> None:
     from pathlib import Path as _Path
     _repo_root  = _Path(__file__).parent.parent
     _tmpl_dir   = _repo_root / "config" / "Figures_template"
-    _tmpl_files = sorted(p.name for p in _tmpl_dir.glob("*.png")) if _tmpl_dir.exists() else []
+    # 使用模块级缓存函数（ttl=10s），避免每轮 rerun 都 glob 磁盘
+    _tmpl_files = _list_fig_templates(str(_tmpl_dir))
 
     _NONE_LABEL = "（默认：R 合成示意图）"
     _cur_tmpl   = str(card.get("FigTemplate", "") or "").strip()
@@ -828,20 +820,12 @@ def _render_card(
     dataset_keys: list[str],
     templates: dict,
     version: int,
-    focus_id: str | None,
 ) -> None:
     card_id = card["_id"]
     level = card.get("_level", "collapsed")
-    # 兼容旧数据：level2 视为 level1（level2 字段已移入 expander）
-    if level == "level2":
+    # 兼容旧数据：level2 / focus 视为 level1（level2 字段已移入 expander；focus 已移除）
+    if level in ("level2", "focus"):
         level = "level1"
-
-    # 专注模式下其他卡片只显示占位
-    if focus_id and focus_id != card_id:
-        sec = str(card.get("Section no", "") or "—")
-        title = str(card.get("title", "") or "")
-        st.caption(f"··· {idx + 1}. {sec} {title[:30]}")
-        return
 
     _render_header(card, idx, total, card_state, version)
 
@@ -921,13 +905,12 @@ def render_config_editor(
     _ensure_card_state(config_df)
     card_state: list[dict] = st.session_state[_CARD_STATE_KEY]
     version: int = st.session_state.get("editor_version", 0)
-    focus_id: str | None = st.session_state.get(_FOCUS_KEY)
 
     # 处理章节导航树的 scroll_to 定位请求
     nav_filt = st.session_state.get(NAV_FILTER, {})
 
     # 若无选中 section，自动选中第一个，避免渲染全部卡片
-    if not focus_id and not nav_filt.get("section"):
+    if not nav_filt.get("section"):
         first_sec = next(
             (str(c.get("Section no", "") or "") for c in card_state if c.get("Section no")),
             "",
@@ -953,17 +936,6 @@ def render_config_editor(
         st.session_state[NAV_FILTER] = nav_filt
         card_state = new_state  # 本轮直接用更新后的状态渲染，无需第二次 rerun
 
-    # 专注模式横幅
-    if focus_id:
-        col_info, col_back = st.columns([4, 1])
-        with col_info:
-            st.info("🔍 专注模式中 — 点击卡片上的「退出🔍」按钮退出")
-        with col_back:
-            if st.button("← 返回表格", key="cfg_back_to_table"):
-                st.session_state["section_nav_view_mode"] = "table"
-                st.session_state[_FOCUS_KEY] = None
-                st.rerun()
-
     # 顶部添加按钮
     if st.button("＋ 添加行", key=f"cfg_add_{version}"):
         new_state = _add_card(card_state)
@@ -986,12 +958,12 @@ def render_config_editor(
 
     total = len(card_state)
     for i, card in enumerate(card_state):
-        if not focus_id and nav_section and str(card.get("Section no") or "") != nav_section:
+        if nav_section and str(card.get("Section no") or "") != nav_section:
             continue
         # 导航树选中具体条目时，只渲染该卡片
-        if not focus_id and nav_selected_id and card.get("_id") != nav_selected_id:
+        if nav_selected_id and card.get("_id") != nav_selected_id:
             continue
-        _render_card(card, i, total, card_state, dataset_keys, templates, version, focus_id)
+        _render_card(card, i, total, card_state, dataset_keys, templates, version)
 
     final_state: list[dict] = st.session_state[_CARD_STATE_KEY]
     df = card_state_to_df(final_state)

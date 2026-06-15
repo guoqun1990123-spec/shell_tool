@@ -25,6 +25,23 @@ body_add_rich_par <- function(doc, text, style = "Normal",
   return(doc)
 }
 
+#' 插入红色错误占位段落（generate_shell.R tryCatch 容错时调用）
+#' @param doc officer 文档对象
+#' @param row  当前 config 行（用于提取 table no / title 做提示）
+#' @param msg  错误信息字符串
+add_error_placeholder <- function(doc, row, msg) {
+  tbl_no <- if (!is_empty(row$`table no`)) as.character(row$`table no`) else "?"
+  title  <- if (!is_empty(row$title))      as.character(row$title)      else ""
+  label  <- if (nchar(title) > 0) paste(tbl_no, title, sep = " ") else tbl_no
+  # 截断超长错误信息，防止段落撑大文档
+  short_msg <- substr(msg, 1, 200)
+  text <- paste0("⚠ 此条生成失败 [", label, "]: ", short_msg)
+  # 用红色 fp_text 渲染，body_add_fpar 不依赖 Word 段落样式中的颜色
+  err_prop <- fp_text(font.size = 10.5, font.family = "宋体", color = "#CC0000")
+  doc <- body_add_fpar(doc, fpar(ftext(text, err_prop)), style = "Normal")
+  return(doc)
+}
+
 #' 添加表格到Word文档
 add_table_to_doc <- function(doc, config_row, datasets, displayed_sections = c()) {
 

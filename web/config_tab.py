@@ -1,5 +1,5 @@
 # web/config_tab.py
-"""Config 章节标签页 —— 筛选栏 + 导航树 + 卡片/表格编辑器。"""
+"""Config 章节标签页 —— 筛选栏 + 导航树 + 卡片编辑器。"""
 from __future__ import annotations
 
 import pandas as pd
@@ -11,7 +11,6 @@ from config_editor import (
 )
 from config_templates_io import load_config_templates
 from section_nav import render_section_nav
-from section_table import render_section_table
 
 
 def render_config_tab() -> pd.DataFrame:
@@ -68,40 +67,11 @@ def render_config_tab() -> pd.DataFrame:
         dataset_keys = list(st.session_state.datasets.keys())
         cfg_templates = load_config_templates()
 
-        _view_mode = st.session_state.get("section_nav_view_mode", "table")
-        _table_sec = st.session_state.get("section_nav_table_section", "")
-        _nav_selected = st.session_state.get(NAV_SELECTED_ID)
-
-        # 有选中条目时强制卡片视图
-        if _nav_selected:
-            _view_mode = "card"
-
-        # 默认表格视图：若无选中 section，自动选第一个
-        if _view_mode == "table" and not _table_sec:
-            _card_state_now = st.session_state.get(_CFG_CARD_KEY, [])
-            _first_sec = next(
-                (str(c.get("Section no", "") or "") for c in _card_state_now if c.get("Section no")),
-                "",
-            )
-            if _first_sec:
-                st.session_state["section_nav_table_section"] = _first_sec
-                st.session_state["section_nav_view_mode"] = "table"
-                _table_sec = _first_sec
-
-        if _view_mode == "table" and _table_sec:
-            render_section_table(
-                st.session_state.get(_CFG_CARD_KEY, []),
-                _table_sec,
-                dataset_keys,
-                cfg_templates,
-            )
-            return card_state_to_df(st.session_state.get(_CFG_CARD_KEY, []))
-        else:
-            edited_config, selected_id = render_config_editor(
-                st.session_state.config_df,
-                dataset_keys,
-                cfg_templates,
-            )
-            if selected_id is not None:
-                st.session_state.selected_id = selected_id
-            return edited_config
+        edited_config, selected_id = render_config_editor(
+            st.session_state.config_df,
+            dataset_keys,
+            cfg_templates,
+        )
+        if selected_id is not None:
+            st.session_state.selected_id = selected_id
+        return edited_config

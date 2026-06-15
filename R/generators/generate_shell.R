@@ -46,46 +46,54 @@ generate_shell <- function(config_file, datasets_file, output_file) {
 
   # 追踪已显示的章节
   displayed_sections <- c()
+  # 记录生成失败的条目，用于汇总
+  failed_items <- c()
 
   # 遍历每个TFL
   for (i in 1:nrow(config)) {
     row <- config[i, ]
     cat(sprintf("生成 [%s] %s...\n", row$SeqNum, row$`table no`))
 
-    # 根据MacVar类型生成内容
-    if (is.na(row$MacVar) || row$MacVar == "") {
-      cat("  跳过：MacVar为空\n")
-    } else if (row$MacVar == "PStab") {
-      doc <- add_table_to_doc(doc, row, datasets, displayed_sections)
-      # 更新已显示章节
-      section_no <- row$`Section no`
-      if (!is.null(section_no) && length(section_no) > 0 && !is.na(section_no)) {
-        displayed_sections <- c(displayed_sections, section_no)
+    # tryCatch 容错：单条出错只插红色占位，不中断整份文档生成
+    doc <- tryCatch({
+      # 根据MacVar类型生成内容
+      if (is.na(row$MacVar) || row$MacVar == "") {
+        cat("  跳过：MacVar为空\n")
+        doc  # 不做任何操作，返回当前 doc
+      } else if (row$MacVar == "PStab") {
+        add_table_to_doc(doc, row, datasets, displayed_sections)
+      } else if (row$MacVar == "RptList") {
+        add_listing_to_doc(doc, row, datasets, displayed_sections)
+      } else if (row$MacVar == "mtext") {
+        add_mtext_to_doc(doc, row, config, datasets, displayed_sections)
+      } else if (tolower(row$MacVar) %in% c("kmplot", "forestplot", "swimplot",
+                                             "waterfallplot", "spiderplot", "seriesplot")) {
+        add_figure_to_doc(doc, row, datasets, figures, displayed_sections)
+      } else {
+        cat(sprintf("  跳过未知类型: %s\n", row$MacVar))
+        doc  # 不做任何操作，返回当前 doc
       }
-    } else if (row$MacVar == "RptList") {
-      doc <- add_listing_to_doc(doc, row, datasets, displayed_sections)
-      # 更新已显示章节
-      section_no <- row$`Section no`
-      if (!is.null(section_no) && length(section_no) > 0 && !is.na(section_no)) {
-        displayed_sections <- c(displayed_sections, section_no)
-      }
-    } else if (row$MacVar == "mtext") {
-      doc <- add_mtext_to_doc(doc, row, config, datasets, displayed_sections)
-      # 更新已显示章节
-      section_no <- row$`Section no`
-      if (!is.null(section_no) && length(section_no) > 0 && !is.na(section_no)) {
-        displayed_sections <- c(displayed_sections, section_no)
-      }
-    } else if (tolower(row$MacVar) %in% c("kmplot", "forestplot", "swimplot", "waterfallplot", "spiderplot", "seriesplot")) {
-      doc <- add_figure_to_doc(doc, row, datasets, figures, displayed_sections)
-      # 更新已显示章节
-      section_no <- row$`Section no`
-      if (!is.null(section_no) && length(section_no) > 0 && !is.na(section_no)) {
-        displayed_sections <- c(displayed_sections, section_no)
-      }
-    } else {
-      cat(sprintf("  跳过未知类型: %s\n", row$MacVar))
+    }, error = function(e) {
+      # 打印错误供排查（不抑制），插红色占位后继续
+      msg <- conditionMessage(e)
+      cat(sprintf("  ！生成失败（SeqNum=%s，%s）：%s\n",
+                  row$SeqNum, row$`table no`, msg))
+      failed_items <<- c(failed_items,
+                         sprintf("[%s] %s", row$`table no`, row$title))
+      add_error_placeholder(doc, row, msg)
+    })
+
+    # 更新已显示章节（成功/占位均更新，保持章节标题去重逻辑正常）
+    section_no <- row$`Section no`
+    if (!is.null(section_no) && length(section_no) > 0 && !is.na(section_no)) {
+      displayed_sections <- c(displayed_sections, section_no)
     }
+  }
+
+  # 汇总失败条目
+  if (length(failed_items) > 0) {
+    cat(sprintf("\n⚠ 共 %d 条生成失败，已用红色占位替代：\n", length(failed_items)))
+    for (item in failed_items) cat(sprintf("  - %s\n", item))
   }
 
   # 保存文档

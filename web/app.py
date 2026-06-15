@@ -11,15 +11,13 @@ from git_ops import GitOps, make_commit_msg, make_filename
 from schema import CONFIG_COLS
 from validators import validate
 from config_templates_io import load_config_templates
-from config_editor import _CARD_STATE_KEY as _CFG_CARD_KEY, _FOCUS_KEY, _update_card
+from config_editor import _CARD_STATE_KEY as _CFG_CARD_KEY, _update_card
 from renderer import run_render
 
 from yaml_io import dump_yaml, list_yaml_files, load_yaml
-from overview import render_overview
-from templates_tab import render_templates_tab
 from datasets_tab import render_datasets_tab
 from config_tab import render_config_tab
-from keys import ACTIVE_TAB as _ACTIVE_TAB_KEY, TAB_SWITCH_REQ, CFG_FOCUS_ID
+from keys import ACTIVE_TAB as _ACTIVE_TAB_KEY, TAB_SWITCH_REQ
 
 # ── 配置加载 ────────────────────────────────────────────────────────────────
 
@@ -155,6 +153,7 @@ def _do_load(loader, success_msg: str, protocol_name: str | None = None):
         # 清除所有数据集的 card state，避免旧编辑状态污染新文件
         _clear_card_state()
         st.success(success_msg)
+        st.rerun()   # 补 rerun：确保 card_state 在本轮重建后所有视图立即读到新值
     except Exception as e:
         st.error(f"加载失败：{e}")
 
@@ -215,6 +214,7 @@ def main():
             st.session_state.selected_id = None
             st.session_state.editor_version += 1
             _clear_card_state()
+            st.rerun()  # 与加载按钮保持一致：当轮重跑，下方视图立即刷新
 
     # 工具栏第二行：Trtlab / Dutoffdate 统一填写
     _trtlab_presets = load_config_templates().get("trtlab_presets", [])
@@ -294,32 +294,22 @@ def main():
 
     # ── 标签页 ──────────────────────────────────────────────────────────────
     _active = st.session_state.get(_ACTIVE_TAB_KEY, "config")
-    _tab_names = ["📋 Config章节", "🗂 Datasets", "📊 项目总览", "⚙️ 模板配置"]
-    _tab_keys  = ["config",        "datasets",   "overview",   "templates"]
+    _tab_names = ["📋 Config章节", "🗂 Datasets"]
+    _tab_keys  = ["config",        "datasets"]
     _tab_index = _tab_keys.index(_active) if _active in _tab_keys else 0
     _default_tab = _tab_names[_tab_index]
 
     _tab_ver = st.session_state.get(TAB_SWITCH_REQ, 0)
-    tab_config, tab_datasets, tab_overview, tab_templates = st.tabs(
+    tab_config, tab_datasets = st.tabs(
         _tab_names, default=_default_tab, key=f"main_tabs_v{_tab_ver}"
     )
 
-    # ── 四个标签页 ───────────────────────────────────────────────────────────
+    # ── 两个标签页 ───────────────────────────────────────────────────────────
     with tab_config:
         edited_config = render_config_tab()
 
     with tab_datasets:
         render_datasets_tab()
-
-    with tab_overview:
-        render_overview(
-            card_state=st.session_state.get(_CFG_CARD_KEY, []),
-            render_status=st.session_state.render_status,
-            protocol_name=st.session_state.protocol_name,
-        )
-
-    with tab_templates:
-        render_templates_tab()
 
     errors = validate(edited_config, st.session_state.datasets)
 
@@ -421,7 +411,7 @@ def main():
 
         if seq_hint is not None:
             if st.button(f"📍 定位到 Seq {seq_hint}", key="btn_locate_seq"):
-                # 把 focus 设到对应卡片
+                # 展开对应卡片（level1），已移除 focus 专注模式
                 card_state = st.session_state.get(_CFG_CARD_KEY, [])
                 target = None
                 for i, c in enumerate(card_state):
@@ -429,9 +419,8 @@ def main():
                         target = c["_id"]
                         break
                 if target:
-                    st.session_state[_FOCUS_KEY] = target
-                    st.session_state[_CARD_STATE_KEY] = _update_card(
-                        card_state, target, _level="focus"
+                    st.session_state[_CFG_CARD_KEY] = _update_card(
+                        card_state, target, _level="level1"
                     )
                     st.rerun()
 
