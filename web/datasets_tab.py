@@ -213,19 +213,17 @@ def render_datasets_tab() -> None:
         ds_df = st.session_state.datasets[ds_name]
 
         if is_list:
-            tab_edit, tab_preview = st.tabs(["✏️ 编辑", "👁️ Listing 预览"])
-            with tab_edit:
-                ds_cc = _build_list_column_config()
-                edited_ds = st.data_editor(
-                    ds_df,
-                    column_config=ds_cc,
-                    num_rows="dynamic",
-                    width="stretch",
-                    key=f"ds_editor_{ds_name}_{st.session_state.editor_version}",
-                )
-                st.session_state.datasets[ds_name] = edited_ds
-                _invalidate_preview_cache(ds_name)
-            with tab_preview:
+            ds_cc = _build_list_column_config()
+            edited_ds = st.data_editor(
+                ds_df,
+                column_config=ds_cc,
+                num_rows="dynamic",
+                width="stretch",
+                key=f"ds_editor_{ds_name}_{st.session_state.editor_version}",
+            )
+            st.session_state.datasets[ds_name] = edited_ds
+            _invalidate_preview_cache(ds_name)
+            with st.expander("👁️ Listing 预览"):
                 render_list_preview(st.session_state.datasets[ds_name])
         else:
             card_key = state_key(ds_name)
@@ -246,12 +244,10 @@ def render_datasets_tab() -> None:
                 st.session_state[card_key] = init_state
                 st.session_state[version_key] = st.session_state.editor_version
 
-            tab_edit, tab_preview = st.tabs(["✏️ 编辑", "👁️ 结构预览"])
-            with tab_edit:
-                result_df = render_dataset_editor(ds_name, ds_df, templates)
-                st.session_state.datasets[ds_name] = result_df
-                _invalidate_preview_cache(ds_name)
-            with tab_preview:
+            result_df = render_dataset_editor(ds_name, ds_df, templates)
+            st.session_state.datasets[ds_name] = result_df
+            _invalidate_preview_cache(ds_name)
+            with st.expander("👁️ 结构预览"):
                 render_preview(ds_name, st.session_state.get(card_key, []))
 
     elif ds_name:

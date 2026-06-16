@@ -590,42 +590,39 @@ def _render_level1(
                 else:
                     st.caption("未关联 Datasets 或数据表尚未创建")
 
-        # ── 编辑 / 预览 双 tab ────────────────────────────────────────────────
-        tab_edit, tab_preview = st.tabs(["✏️ 编辑", "👁️ 预览"])
-
-        with tab_edit:
-            with st.expander("展开更多 ▼"):
-                fn_snippets: list = templates.get("footnote_snippets", [])
-                for fn in ["footnote1", "footnote2", "footnote3", "footnote4",
-                           "footnote5", "footnote6", "footnote7"]:
-                    if fn_snippets:
-                        fn_col, fn_ins_col = st.columns([5, 1])
-                        val = str(card.get(fn, "") or "")
-                        new_val = fn_col.text_input(fn, value=val, key=f"cfg_{fn}_{card_id}_{version}")
-                        if new_val != val:
-                            st.session_state[_CARD_STATE_KEY] = _update_card(
-                                st.session_state[_CARD_STATE_KEY], card_id, **{fn: new_val}
-                            )
-                            st.rerun()
-                        chosen = fn_ins_col.selectbox(
-                            "插入", ["＋"] + fn_snippets,
-                            key=f"cfg_{fn}_ins_{card_id}_{version}",
-                            label_visibility="collapsed",
+        # ── 编辑区（直接显示）+ 预览（expander）────────────────────────────
+        with st.expander("展开更多 ▼"):
+            fn_snippets: list = templates.get("footnote_snippets", [])
+            for fn in ["footnote1", "footnote2", "footnote3", "footnote4",
+                       "footnote5", "footnote6", "footnote7"]:
+                if fn_snippets:
+                    fn_col, fn_ins_col = st.columns([5, 1])
+                    val = str(card.get(fn, "") or "")
+                    new_val = fn_col.text_input(fn, value=val, key=f"cfg_{fn}_{card_id}_{version}")
+                    if new_val != val:
+                        st.session_state[_CARD_STATE_KEY] = _update_card(
+                            st.session_state[_CARD_STATE_KEY], card_id, **{fn: new_val}
                         )
-                        if chosen != "＋":
-                            cur = str(card.get(fn, "") or "")
-                            merged = (cur + "；" + chosen).lstrip("；")
-                            st.session_state[_CARD_STATE_KEY] = _update_card(
-                                st.session_state[_CARD_STATE_KEY], card_id, **{fn: merged}
-                            )
-                            st.rerun()
-                    else:
-                        _field(st, card, fn, card_id, version)
-                # 图形卡片无 Subgrp/Adcols/Varlab 等字段
-                if not is_figure:
-                    _render_level2(card, card_state, version)
+                        st.rerun()
+                    chosen = fn_ins_col.selectbox(
+                        "插入", ["＋"] + fn_snippets,
+                        key=f"cfg_{fn}_ins_{card_id}_{version}",
+                        label_visibility="collapsed",
+                    )
+                    if chosen != "＋":
+                        cur = str(card.get(fn, "") or "")
+                        merged = (cur + "；" + chosen).lstrip("；")
+                        st.session_state[_CARD_STATE_KEY] = _update_card(
+                            st.session_state[_CARD_STATE_KEY], card_id, **{fn: merged}
+                        )
+                        st.rerun()
+                else:
+                    _field(st, card, fn, card_id, version)
+            # 图形卡片无 Subgrp/Adcols/Varlab 等字段
+            if not is_figure:
+                _render_level2(card, card_state, version)
 
-        with tab_preview:
+        with st.expander("👁️ 预览"):
             _render_card_preview(card, card_id, version)
 
     # 图形行专属：画图工具面板（在 tab_edit/tab_preview 之外，始终可见）
