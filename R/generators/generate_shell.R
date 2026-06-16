@@ -110,5 +110,5 @@ source("R/utils/read_yaml_config.R")
 source("R/utils/parse_rich_text.R")
 source("R/generators/generate_table.R")
 source("R/generators/generate_listing.R")
-source("R/generators/generate_figure.R")
+# generate_figure.R（mock 合成图）已不再使用，改为 assemble 侧插入文字占位框
 source("R/assemble_document.R")

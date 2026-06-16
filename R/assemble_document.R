@@ -366,78 +366,30 @@ add_figure_to_doc <- function(doc, config_row, datasets, figures = list(), displ
   }
 
   if (!is_custom) {
-    # 无嵌入图片（或解码失败）：生成 mock 示意图
-    dataset_name <- config_row$Datasets
-    if (is.null(datasets[[dataset_name]])) {
-      cat(sprintf("  警告：未找到数据集 %s，将使用内置示例数据\n", dataset_name))
-    }
-    dataset <- if (!is.null(datasets[[dataset_name]])) datasets[[dataset_name]] else data.frame()
-
-    # 解析图形配置：Trtlab → 图例向量，Varlab → 轴标签
-    fig_legend <- .fig_legend_labs(config_row$Trtlab)
-    macvar_lc  <- tolower(config_row$MacVar)
-
-    # 根据 MacVar 类型生成图形（轴标签优先读 Varlab，空则用各图默认值）
-    if (macvar_lc == "kmplot") {
-      ax <- .fig_axis_labels(config_row$Varlab, "时间（月）", "生存率")
-      img_file <- create_kmplot(dataset,
-                                title       = config_row$title,
-                                xlab        = ax[1],
-                                ylab        = ax[2],
-                                legend_labs = fig_legend)
-    } else if (macvar_lc == "swimplot") {
-      ax <- .fig_axis_labels(config_row$Varlab, "时间（周）", "受试者")
-      img_file <- create_swimplot(dataset,
-                                  title       = config_row$title,
-                                  xlab        = ax[1],
-                                  ylab        = ax[2],
-                                  legend_labs = fig_legend)
-    } else if (macvar_lc == "waterfallplot") {
-      ax <- .fig_axis_labels(config_row$Varlab, "受试者", "肿瘤负荷变化 (%)")
-      img_file <- create_waterfallplot(dataset,
-                                       title       = config_row$title,
-                                       xlab        = ax[1],
-                                       ylab        = ax[2],
-                                       legend_labs = fig_legend)
-    } else if (macvar_lc == "spiderplot") {
-      ax <- .fig_axis_labels(config_row$Varlab, "时间（周）", "肿瘤负荷变化 (%)")
-      img_file <- create_spiderplot(dataset,
-                                    title       = config_row$title,
-                                    xlab        = ax[1],
-                                    ylab        = ax[2],
-                                    legend_labs = fig_legend)
-    } else if (macvar_lc == "seriesplot") {
-      ax <- .fig_axis_labels(config_row$Varlab, "时间", "测量值")
-      img_file <- create_seriesplot(dataset,
-                                    title       = config_row$title,
-                                    xlab        = ax[1],
-                                    ylab        = ax[2],
-                                    legend_labs = fig_legend)
-    } else if (macvar_lc == "forestplot") {
-      ax <- .fig_axis_labels(config_row$Varlab, "风险比 (95% CI)", "")
-      img_file <- create_forestplot(dataset,
-                                    title       = config_row$title,
-                                    xlab        = ax[1],
-                                    ylab        = ax[2],
-                                    legend_labs = fig_legend)
-    }
+    # 无嵌入图片且无 FigTemplate：插入文字占位框
+    tbl_no_str <- if (!is_empty(config_row$`table no`)) as.character(config_row$`table no`) else "?"
+    title_str  <- if (!is_empty(config_row$title)) as.character(config_row$title) else ""
+    macvar_str <- if (!is_empty(config_row$MacVar)) as.character(config_row$MacVar) else "图形"
+    placeholder_text <- paste0(
+      "[此处为图形：", tbl_no_str,
+      if (nchar(title_str) > 0) paste0(" ", title_str) else "",
+      "（MacVar=", macvar_str, "）",
+      "——在 config/Figures_template/ 放入 PNG 并设 FigTemplate]"
+    )
+    ph_prop <- fp_text(font.size = 10.5, font.family = "宋体", color = "#888888",
+                       italic = TRUE)
+    doc <- body_add_fpar(doc, fpar(ftext(placeholder_text, ph_prop)), style = "Normal")
+    cat(sprintf("  图形占位：%s %s\n", tbl_no_str, title_str))
   }
 
-  # 插入图片
-  if (!is.null(img_file) && file.exists(img_file)) {
-    if (is_custom) {
-      # 嵌入图：按 PNG 真实宽高比等比缩放（最大宽 6in，最大高 7in）
-      dims  <- .png_dims(img_file)
-      max_w <- 6; max_h <- 7
-      ratio <- dims[1] / max(dims[2], 1L)
-      w     <- min(max_w, max_h * ratio)
-      h     <- w / ratio
-      doc <- body_add_img(doc, src = img_file, width = w, height = h)
-    } else {
-      # mock 示意图：固定 6×4.5（与 8×6 生成尺寸同为 4:3）
-      doc <- body_add_img(doc, src = img_file, width = 6, height = 4.5)
-      is_temp <- TRUE  # 合成示意图均为临时文件
-    }
+  # 插入图片（仅在 is_custom=TRUE 且文件存在时）
+  if (is_custom && !is.null(img_file) && file.exists(img_file)) {
+    dims  <- .png_dims(img_file)
+    max_w <- 6; max_h <- 7
+    ratio <- dims[1] / max(dims[2], 1L)
+    w     <- min(max_w, max_h * ratio)
+    h     <- w / ratio
+    doc <- body_add_img(doc, src = img_file, width = w, height = h)
     if (is_temp) unlink(img_file)  # 仅删临时文件；磁盘模板图不删
   }
 

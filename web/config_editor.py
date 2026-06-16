@@ -559,33 +559,36 @@ def _render_level1(
         else:
             _field(st, card, "Trtlab", card_id, version)
 
-        # Datasets 迷你面板
-        ds_open_set = _ds_open()
-        is_ds_open = card_id in ds_open_set
-        ds_btn_label = (
-            f"📎 {cur_ds}  {'收起▲' if is_ds_open else '展开▼'}"
-            if cur_ds else "📎 未关联 Datasets"
-        )
-        if st.button(ds_btn_label, key=f"cfg_ds_toggle_{card_id}_{version}"):
-            if is_ds_open:
-                ds_open_set.discard(card_id)
-            else:
-                ds_open_set.add(card_id)
-            st.session_state[_DS_OPEN_KEY] = ds_open_set
-            st.rerun()
+        is_figure = cur_macvar in FIGURE_MACVARS
 
-        if is_ds_open:
-            datasets = st.session_state.get("datasets", {})
-            if cur_ds and cur_ds in datasets:
-                ds_df = datasets[cur_ds]
-                st.dataframe(ds_df.head(20), height=150, use_container_width=True)
-                if st.button("🗂 编辑 Datasets", key=f"cfg_ds_edit_{card_id}_{version}"):
-                    st.session_state[_SELECTED_ID_KEY] = card_id
-                    st.session_state[ACTIVE_TAB] = "datasets"
-                    st.session_state[TAB_SWITCH_REQ] = st.session_state.get(TAB_SWITCH_REQ, 0) + 1
-                    st.rerun()
-            else:
-                st.caption("未关联 Datasets 或数据表尚未创建")
+        # Datasets 迷你面板（图形卡片不需要，走 FigTemplate 模板图工作流）
+        if not is_figure:
+            ds_open_set = _ds_open()
+            is_ds_open = card_id in ds_open_set
+            ds_btn_label = (
+                f"📎 {cur_ds}  {'收起▲' if is_ds_open else '展开▼'}"
+                if cur_ds else "📎 未关联 Datasets"
+            )
+            if st.button(ds_btn_label, key=f"cfg_ds_toggle_{card_id}_{version}"):
+                if is_ds_open:
+                    ds_open_set.discard(card_id)
+                else:
+                    ds_open_set.add(card_id)
+                st.session_state[_DS_OPEN_KEY] = ds_open_set
+                st.rerun()
+
+            if is_ds_open:
+                datasets = st.session_state.get("datasets", {})
+                if cur_ds and cur_ds in datasets:
+                    ds_df = datasets[cur_ds]
+                    st.dataframe(ds_df.head(20), height=150, use_container_width=True)
+                    if st.button("🗂 编辑 Datasets", key=f"cfg_ds_edit_{card_id}_{version}"):
+                        st.session_state[_SELECTED_ID_KEY] = card_id
+                        st.session_state[ACTIVE_TAB] = "datasets"
+                        st.session_state[TAB_SWITCH_REQ] = st.session_state.get(TAB_SWITCH_REQ, 0) + 1
+                        st.rerun()
+                else:
+                    st.caption("未关联 Datasets 或数据表尚未创建")
 
         # ── 编辑 / 预览 双 tab ────────────────────────────────────────────────
         tab_edit, tab_preview = st.tabs(["✏️ 编辑", "👁️ 预览"])
@@ -618,7 +621,9 @@ def _render_level1(
                             st.rerun()
                     else:
                         _field(st, card, fn, card_id, version)
-                _render_level2(card, card_state, version)
+                # 图形卡片无 Subgrp/Adcols/Varlab 等字段
+                if not is_figure:
+                    _render_level2(card, card_state, version)
 
         with tab_preview:
             _render_card_preview(card, card_id, version)
@@ -730,32 +735,32 @@ def _render_card_preview(card: dict, card_id: str, version: int) -> None:
 
     macvar = str(cur_card.get("MacVar") or "").strip()
 
-    # 图形类型：preview 只是占位 HTML，无需 sig 计算和缓存
-    if macvar not in FIGURE_MACVARS:
-        # 计算轻量 cache key：card 数据字段 + 对应 dataset 的行数和列名
-        ds_name = str(cur_card.get("Datasets") or "")
-        ds = datasets.get(ds_name)
-        if ds is not None and not ds.empty:
-            ds_sig = f"{len(ds)}_{list(ds.columns)}"
-        else:
-            ds_sig = "empty"
-        card_data = {k: v for k, v in cur_card.items() if not k.startswith("_")}
-        card_sig = json.dumps(card_data, ensure_ascii=False, sort_keys=True)
-        current_sig = hashlib.md5((card_sig + ds_sig).encode()).hexdigest()
-
-        cache_key = f"_preview_html_{card_id}"
-        sig_key   = f"_preview_sig_{card_id}"
-
-        if st.session_state.get(sig_key) != current_sig:
-            html = _tfl_preview.render_preview(cur_card, datasets)
-            st.session_state[cache_key] = html
-            st.session_state[sig_key]   = current_sig
-        else:
-            html = st.session_state[cache_key]
+    # 所有类型统一走 md5 sig 缓存（图形预览也是纯占位 HTML，缓存无损）
+    ds_name = str(cur_card.get("Datasets") or "")
+    ds = datasets.get(ds_name)
+    if ds is not None and not ds.empty:
+        ds_sig = f"{len(ds)}_{list(ds.columns)}"
     else:
+        ds_sig = "empty"
+    card_data = {k: v for k, v in cur_card.items() if not k.startswith("_")}
+    card_sig = json.dumps(card_data, ensure_ascii=False, sort_keys=True)
+    current_sig = hashlib.md5((card_sig + ds_sig).encode()).hexdigest()
+
+    cache_key = f"_preview_html_{card_id}"
+    sig_key   = f"_preview_sig_{card_id}"
+
+    if st.session_state.get(sig_key) != current_sig:
         html = _tfl_preview.render_preview(cur_card, datasets)
+        st.session_state[cache_key] = html
+        st.session_state[sig_key]   = current_sig
+    else:
+        html = st.session_state[cache_key]
 
     st.markdown(html, unsafe_allow_html=True)
+
+    # 图形类型使用模板图工作流，不提供 R 实时预览按钮
+    if macvar in FIGURE_MACVARS:
+        return
 
     st.divider()
 

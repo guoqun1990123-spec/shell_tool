@@ -116,8 +116,10 @@ def render_section_nav(card_state: list[dict], nav_filt: dict | None = None) -> 
         if not visible_items and (filt_cats or filt_kw):
             continue
         count = len(visible_items)
-        is_collapsed = nav.get(sec_no, False)
+        # 默认折叠；选中章节或筛选栏指定章节时强制展开
         is_active_sec = cur_section == sec_no
+        is_pinned_open = is_active_sec or (filt_section == sec_no)
+        is_collapsed = False if is_pinned_open else nav.get(sec_no, True)
 
         toggle_icon = "▼" if not is_collapsed else "▶"
         active_mark = "● " if is_active_sec else "  "
